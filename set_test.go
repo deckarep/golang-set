@@ -26,6 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -352,6 +353,43 @@ func Test_SetEqual(t *testing.T) {
 	if !a.Equal(b) {
 		t.Error("a and b should be equal with the same number of elements")
 	}
+}
+
+func Test_Example(t *testing.T) {
+	requiredClasses := NewSet()
+	requiredClasses.Add("Cooking")
+	requiredClasses.Add("English")
+	requiredClasses.Add("Math")
+	requiredClasses.Add("Biology")
+
+	scienceClasses := NewSet()
+	scienceClasses.Add("Biology")
+	scienceClasses.Add("Chemistry")
+
+	electiveClasses := NewSet()
+	electiveClasses.Add("Welding")
+	electiveClasses.Add("Music")
+	electiveClasses.Add("Automotive")
+
+	bonusClasses := NewSet()
+	bonusClasses.Add("Go Programming")
+	bonusClasses.Add("Python Programming")
+
+	//Show me all the available classes I can take
+	allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
+	fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
+
+	//Is cooking considered a science class?
+	fmt.Println(scienceClasses.Contains("Cooking")) //false
+
+	//Show me all classes that are not science classes, since I hate science.
+	fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
+
+	//Which science classes are also required classes?
+	fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
+
+	//How many bonus classes do you offer?
+	fmt.Println(bonusClasses.Size()) //2
 }
 
 /*

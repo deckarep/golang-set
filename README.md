@@ -16,9 +16,47 @@ and carry-on and to the rest that find this useful please contribute in helping 
 
 I have to give some credit for helping seed the idea with this post on [stackoverflow.](http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang)
 
-Please see the unit test file for usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind 
+Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind 
 however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
 also, this set has not been battle-tested or used in production.  Also, this set is not goroutine safe...you have been warned.
+
+Examples but not exhaustive
+```go
+requiredClasses := NewSet()
+requiredClasses.Add("Cooking")
+requiredClasses.Add("English")
+requiredClasses.Add("Math")
+requiredClasses.Add("Biology")
+
+scienceClasses := NewSet()
+scienceClasses.Add("Biology")
+scienceClasses.Add("Chemistry")
+
+electiveClasses := NewSet()
+electiveClasses.Add("Welding")
+electiveClasses.Add("Music")
+electiveClasses.Add("Automotive")
+
+bonusClasses := NewSet()
+bonusClasses.Add("Go Programming")
+bonusClasses.Add("Python Programming")
+
+//Show me all the available classes I can take
+allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
+fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
+
+//Is cooking considered a science class?
+fmt.Println(scienceClasses.Contains("Cooking")) //false
+
+//Show me all classes that are not science classes, since I hate science.
+fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
+
+//Which science classes are also required classes?
+fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
+
+//How many bonus classes do you offer?
+fmt.Println(bonusClasses.Size()) //2
+```
 
 Thanks!
 
