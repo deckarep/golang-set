@@ -14,7 +14,7 @@ and carry-on and to the rest that find this useful please contribute in helping 
 * Helping to add documentation.
 * Simply offering feedback and suggestions, since I am a Go n00b.  (Positive, constructive feedback is appreciated.)
 
-I have to give some credit for helping seed the idea with this post on stackoverflow: [stackoverflow.com.](http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang)
+I have to give some credit for helping seed the idea with this post on [stackoverflow.](http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang)
 
 Please see the unit test file for usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind 
 however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
