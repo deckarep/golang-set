@@ -29,22 +29,26 @@ import "fmt"
 import "strings"
 
 type Set struct {
-	set map[interface{}]bool
+	set map[interface{}]_placeHolder
 }
 
+type _placeHolder struct{}
+
 func NewSet() *Set {
-	return &Set{make(map[interface{}]bool)}
+	return &Set{make(map[interface{}]_placeHolder)}
 }
 
 func (set *Set) Add(i interface{}) bool {
 	_, found := set.set[i]
-	set.set[i] = true
-	return !found //False if it existed already
+	set.set[i] = _placeHolder{} //not working this line
+	return !found               //False if it existed already
 }
 
 func (set *Set) Contains(i interface{}) bool {
-	_, found := set.set[i]
-	return found //true if it existed already
+	if _, found := set.set[i]; found {
+		return found //true if it existed already
+	}
+	return false
 }
 
 func (set *Set) IsSubset(other *Set) bool {
@@ -129,7 +133,7 @@ func (set *Set) SymmetricDifference(other *Set) *Set {
 }
 
 func (set *Set) Clear() {
-	set.set = make(map[interface{}]bool)
+	set.set = make(map[interface{}]_placeHolder)
 }
 
 func (set *Set) Remove(i interface{}) {
