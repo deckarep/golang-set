@@ -185,7 +185,6 @@ func Test_SetIsSubset(t *testing.T) {
 	if b.IsSubset(a) {
 		t.Error("set b should not be a subset of set a because it contains 72 which is not in the set of a")
 	}
-
 }
 
 func Test_SetIsSuperSet(t *testing.T) {

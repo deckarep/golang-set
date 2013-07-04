@@ -27,7 +27,6 @@ package mapset
 
 import "fmt"
 import "strings"
-import "strconv"
 
 type Set struct {
 	set map[interface{}]bool
@@ -149,20 +148,8 @@ func (set *Set) Size() int {
 func (set *Set) String() string {
 	items := make([]string, 0, len(set.set))
 
-	for key, _ := range set.set {
-		switch t := key.(type) {
-		case string:
-			items = append(items, fmt.Sprintf(`"%s"`, t))
-		case int:
-			items = append(items, strconv.Itoa(t))
-		case int64:
-			items = append(items, strconv.Itoa(int(t)))
-		case int32:
-			items = append(items, strconv.Itoa(int(t)))
-		case fmt.Stringer:
-			items = append(items, t.String())
-		}
+	for key := range set.set {
+		items = append(items, fmt.Sprintf("%v", key))
 	}
-
-	return fmt.Sprintf("Set{" + strings.Join(items, ", ") + "}")
+	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
 }
