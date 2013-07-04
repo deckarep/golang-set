@@ -102,15 +102,9 @@ func (set *Set) Difference(other *Set) *Set {
 		differencedSet := NewSet()
 
 		for key, _ := range set.set {
-			differencedSet.Add(key)
-		}
-
-		for key, _ := range other.set {
-			differencedSet.Add(key)
-		}
-
-		for key, _ := range other.set {
-			differencedSet.Remove(key)
+			if !other.Contains(key) {
+				differencedSet.Add(key)
+			}
 		}
 
 		return differencedSet
