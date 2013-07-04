@@ -23,6 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// Package mapset implements a simple and generic set collection.
+// Items stored within it are unordered and unique
+// It supports typical set operations: membership testing, intersection, union, difference and symmetric difference
+
 package mapset
 
 import "fmt"
@@ -132,10 +136,14 @@ func (set *Set) Remove(i interface{}) {
 	delete(set.set, i)
 }
 
+// Size returns the how many items are currently in the set.
 func (set *Set) Size() int {
 	return len(set.set)
 }
 
+// Equal determines if two sets are equal to each other.
+// If they both are the same size and have the same items they are considered equal.
+// Order of items is not relevent for sets to be equal.
 func (set *Set) Equal(other *Set) bool {
 	if set != nil && other != nil {
 		if !(set.Size() == other.Size()) {
