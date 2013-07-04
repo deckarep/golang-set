@@ -90,11 +90,6 @@ func (set *Set) Intersect(other *Set) *Set {
 				intersectedSet.Add(key)
 			}
 		}
-		for key, _ := range other.set {
-			if set.Contains(key) {
-				intersectedSet.Add(key)
-			}
-		}
 		return intersectedSet
 	}
 	return nil
