@@ -52,23 +52,21 @@ func (set *Set) Contains(i interface{}) bool {
 }
 
 func (set *Set) IsSubset(other *Set) bool {
-	counter := 0
 	for key, _ := range set.set {
-		if other.Contains(key) {
-			counter++
+		if !other.Contains(key) {
+			return false
 		}
 	}
-	return counter == set.Size()
+	return true
 }
 
 func (set *Set) IsSuperset(other *Set) bool {
-	counter := 0
 	for key, _ := range other.set {
-		if set.Contains(key) {
-			counter++
+		if !set.Contains(key) {
+			return false
 		}
 	}
-	return counter == other.Size()
+	return true
 }
 
 func (set *Set) Union(other *Set) *Set {
