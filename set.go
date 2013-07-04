@@ -40,8 +40,8 @@ func NewSet() *Set {
 
 func (set *Set) Add(i interface{}) bool {
 	_, found := set.set[i]
-	set.set[i] = _placeHolder{} //not working this line
-	return !found               //False if it existed already
+	set.set[i] = _placeHolder{}
+	return !found //False if it existed already
 }
 
 func (set *Set) Contains(i interface{}) bool {
@@ -134,6 +134,22 @@ func (set *Set) Remove(i interface{}) {
 
 func (set *Set) Size() int {
 	return len(set.set)
+}
+
+func (set *Set) Equal(other *Set) bool {
+	if set != nil && other != nil {
+		if !(set.Size() == other.Size()) {
+			return false
+		} else {
+			for key, _ := range set.set {
+				if !other.Contains(key) {
+					return false
+				}
+			}
+			return true
+		}
+	}
+	return false
 }
 
 func (set *Set) String() string {
