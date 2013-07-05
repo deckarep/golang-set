@@ -91,8 +91,20 @@ func (set *Set) Union(other *Set) *Set {
 func (set *Set) Intersect(other *Set) *Set {
 	if set != nil && other != nil {
 		intersectedSet := NewSet()
-		for key, _ := range set.set {
-			if other.Contains(key) {
+		var smallerSet *Set = nil
+		var largerSet *Set = nil
+
+		//figure out the smaller of the two sets and loop on that one as an optimization.
+		if set.Size() < other.Size() {
+			smallerSet = set
+			largerSet = other
+		} else {
+			smallerSet = other
+			largerSet = set
+		}
+
+		for key, _ := range smallerSet.set {
+			if largerSet.Contains(key) {
 				intersectedSet.Add(key)
 			}
 		}

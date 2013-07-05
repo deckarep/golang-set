@@ -26,7 +26,6 @@ SOFTWARE.
 package mapset
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -356,113 +355,40 @@ func Test_SetEqual(t *testing.T) {
 }
 
 func Test_Example(t *testing.T) {
-	requiredClasses := NewSet()
-	requiredClasses.Add("Cooking")
-	requiredClasses.Add("English")
-	requiredClasses.Add("Math")
-	requiredClasses.Add("Biology")
+	/*
+		requiredClasses := NewSet()
+		requiredClasses.Add("Cooking")
+		requiredClasses.Add("English")
+		requiredClasses.Add("Math")
+		requiredClasses.Add("Biology")
 
-	scienceClasses := NewSet()
-	scienceClasses.Add("Biology")
-	scienceClasses.Add("Chemistry")
+		scienceClasses := NewSet()
+		scienceClasses.Add("Biology")
+		scienceClasses.Add("Chemistry")
 
-	electiveClasses := NewSet()
-	electiveClasses.Add("Welding")
-	electiveClasses.Add("Music")
-	electiveClasses.Add("Automotive")
+		electiveClasses := NewSet()
+		electiveClasses.Add("Welding")
+		electiveClasses.Add("Music")
+		electiveClasses.Add("Automotive")
 
-	bonusClasses := NewSet()
-	bonusClasses.Add("Go Programming")
-	bonusClasses.Add("Python Programming")
+		bonusClasses := NewSet()
+		bonusClasses.Add("Go Programming")
+		bonusClasses.Add("Python Programming")
 
-	//Show me all the available classes I can take
-	allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
-	fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
+		//Show me all the available classes I can take
+		allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
+		fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
 
-	//Is cooking considered a science class?
-	fmt.Println(scienceClasses.Contains("Cooking")) //false
+		//Is cooking considered a science class?
+		fmt.Println(scienceClasses.Contains("Cooking")) //false
 
-	//Show me all classes that are not science classes, since I hate science.
-	fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
+		//Show me all classes that are not science classes, since I hate science.
+		fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
 
-	//Which science classes are also required classes?
-	fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
+		//Which science classes are also required classes?
+		fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
 
-	//How many bonus classes do you offer?
-	fmt.Println(bonusClasses.Size()) //2
+		//How many bonus classes do you offer?
+		fmt.Println(bonusClasses.Size()) //2
+	*/
 }
-
-/*
-func main() {
-
-	a := NewSet()
-	a.Add("Ralph")
-	a.Add("John")
-	a.Add("Caroline")
-	a.Add("Paul")
-	a.Add("Ralphie")
-
-	b := NewSet()
-	b.Add("Ralph")
-	b.Add("Caroline")
-
-	fmt.Println("IsSubset: ", b.IsSubset(a))
-	fmt.Println("IsSuperset: ", a.IsSuperset(b))
-
-	b.Add("Willis")
-	fmt.Println("Union: ", a.Union(b))
-
-	fmt.Println("Intersected: ", a.Intersect(b))
-
-	fmt.Println("Differenced: ", a.Difference(b))
-
-	fmt.Println("SymmetricDifferenced: ", a.SymmetricDifference(b))
-
-	fmt.Println("Before Clear: ", a)
-	a.Clear()
-	fmt.Println("After Clear: ", a)
-
-	//person test with set
-	ralph := &Person{Name: "Ralph", Age: 34}
-	ralphB := &Person{Name: "Ralph", Age: 34}
-	sam := &Person{Name: "Sam", Age: 30}
-	francois := &Person{Name: "Francois", Age: 38}
-	peter := &Person{Name: "Peter", Age: 30}
-	charles := &Person{Name: "Charles", Age: 40}
-	chris := &Person{Name: "Chris", Age: 31}
-
-	personSet := NewSet()
-	personSet.Add(ralph)
-	personSet.Add(sam)
-	personSet.Add(francois)
-
-	personSetB := NewSet()
-	personSetB.Add(ralph)
-	personSetB.Add(charles)
-	personSetB.Add(francois)
-	personSetB.Add(chris)
-	personSetB.Add(peter)
-
-	fmt.Println(personSet)
-	fmt.Println(personSetB)
-
-	fmt.Println(personSet.Difference(personSetB))
-
-	//true comparing struct field-wise
-	fmt.Println(*ralph == *ralphB)
-
-	//false comparing pointers
-	fmt.Println(ralph == ralphB)
-}
-*/
-
-/*
-type Person struct {
-	Name string
-	Age  int
-}
-
-func (p *Person) String() string {
-	return fmt.Sprintf(`{"Name":"%s", "Age":%d}`, p.Name, p.Age)
-}
-*/
