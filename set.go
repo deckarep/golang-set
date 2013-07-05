@@ -32,22 +32,26 @@ package mapset
 import "fmt"
 import "strings"
 
+// The primary type that represents a set
 type Set struct {
 	set map[interface{}]_placeHolder
 }
 
 type _placeHolder struct{}
 
+// Creates and returns a pointer to an empty set.
 func NewSet() *Set {
 	return &Set{make(map[interface{}]_placeHolder)}
 }
 
+// Adds an item to the current set if it doesn't already exist in the set.
 func (set *Set) Add(i interface{}) bool {
 	_, found := set.set[i]
 	set.set[i] = _placeHolder{}
 	return !found //False if it existed already
 }
 
+// Determines if a given item is already in the set.
 func (set *Set) Contains(i interface{}) bool {
 	if _, found := set.set[i]; found {
 		return found //true if it existed already
@@ -55,6 +59,7 @@ func (set *Set) Contains(i interface{}) bool {
 	return false
 }
 
+// Determines if every item in the other set is in this set.
 func (set *Set) IsSubset(other *Set) bool {
 	for key, _ := range set.set {
 		if !other.Contains(key) {
@@ -64,6 +69,7 @@ func (set *Set) IsSubset(other *Set) bool {
 	return true
 }
 
+// Determines if every item of this set is in the other set.
 func (set *Set) IsSuperset(other *Set) bool {
 	for key, _ := range other.set {
 		if !set.Contains(key) {
@@ -73,6 +79,7 @@ func (set *Set) IsSuperset(other *Set) bool {
 	return true
 }
 
+// Returns a new set with all items in both sets.
 func (set *Set) Union(other *Set) *Set {
 	if set != nil && other != nil {
 		unionedSet := NewSet()
@@ -88,6 +95,7 @@ func (set *Set) Union(other *Set) *Set {
 	return nil
 }
 
+// Returns a new set with items that exist only in both sets.
 func (set *Set) Intersect(other *Set) *Set {
 	if set != nil && other != nil {
 		intersectedSet := NewSet()
@@ -113,6 +121,7 @@ func (set *Set) Intersect(other *Set) *Set {
 	return nil
 }
 
+// Returns a new set with items in the current set but not in the other set
 func (set *Set) Difference(other *Set) *Set {
 	if set != nil && other != nil {
 		differencedSet := NewSet()
@@ -128,6 +137,7 @@ func (set *Set) Difference(other *Set) *Set {
 	return nil
 }
 
+// Returns a new set with items in the current set or the other set but not in both.
 func (set *Set) SymmetricDifference(other *Set) *Set {
 	if set != nil && other != nil {
 		aDiff := set.Difference(other)
@@ -140,10 +150,12 @@ func (set *Set) SymmetricDifference(other *Set) *Set {
 	return nil
 }
 
+// Clears the entire set to be the empty set.
 func (set *Set) Clear() {
 	set.set = make(map[interface{}]_placeHolder)
 }
 
+// Allows the removal of a single item in the set.
 func (set *Set) Remove(i interface{}) {
 	delete(set.set, i)
 }
@@ -172,6 +184,7 @@ func (set *Set) Equal(other *Set) bool {
 	return false
 }
 
+// Provides a convenient string representation of the current state of the set.
 func (set *Set) String() string {
 	items := make([]string, 0, len(set.set))
 
