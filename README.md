@@ -11,7 +11,7 @@ and carry-on and to the rest that find this useful please contribute in helping 
 * Helping to make it better for more generic use across types.
 * Helping to increase the performance of it. (So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)
 * Helping to make the unit-tests more robust and kick-ass.
-* Helping to add documentation.
+* Helping to fill in the [documentation.](http://godoc.org/github.com/deckarep/golang-set)
 * Simply offering feedback and suggestions, since I am a Go n00b.  (Positive, constructive feedback is appreciated.)
 
 I have to give some credit for helping seed the idea with this post on [stackoverflow.](http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang)
