@@ -62,5 +62,7 @@ Thanks!
 
 -Ralph
 
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/deckarep/golang-set/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 
 
