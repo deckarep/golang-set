@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Golang-set : A simple set type for the Go language." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Golang-set</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/deckarep/golang-set">View on GitHub</a>
+
+          <h1 id="project_title">Golang-set</h1>
+          <h2 id="project_tagline">A simple set type for the Go language.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/deckarep/golang-set/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/deckarep/golang-set/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="golang-set" class="anchor" href="#golang-set"><span class="octicon octicon-link"></span></a>golang-set</h1>
+
+<p>A simple set type for the Go language.</p>
+
+<p>Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set from Python.
+You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository
+and carry-on and to the rest that find this useful please contribute in helping me make it better by:</p>
+
+<ul>
+<li>Helping to make more idiomatic improvements to the code.</li>
+<li>Helping to make it better for more generic use across types.</li>
+<li>Helping to increase the performance of it. (So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)</li>
+<li>Helping to make the unit-tests more robust and kick-ass.</li>
+<li>Helping to fill in the <a href="http://godoc.org/github.com/deckarep/golang-set">documentation.</a>
+</li>
+<li>Simply offering feedback and suggestions, since I am a Go n00b.  (Positive, constructive feedback is appreciated.)</li>
+</ul><p>I have to give some credit for helping seed the idea with this post on <a href="http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang">stackoverflow.</a></p>
+
+<p>Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically <a href="http://docs.python.org/2/library/sets.html">works.</a>    Please keep in mind 
+however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
+also, this set has not been battle-tested or used in production.  Also, this set is not goroutine safe...you have been warned.</p>
+
+<p>Examples but not exhaustive</p>
+
+<div class="highlight"><pre><span class="nx">requiredClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
+<span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Cooking"</span><span class="p">)</span>
+<span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"English"</span><span class="p">)</span>
+<span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Math"</span><span class="p">)</span>
+<span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Biology"</span><span class="p">)</span>
+
+<span class="nx">scienceClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
+<span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Biology"</span><span class="p">)</span>
+<span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Chemistry"</span><span class="p">)</span>
+
+<span class="nx">electiveClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
+<span class="nx">electiveClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Welding"</span><span class="p">)</span>
+<span class="nx">electiveClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Music"</span><span class="p">)</span>
+<span class="nx">electiveClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Automotive"</span><span class="p">)</span>
+
+<span class="nx">bonusClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
+<span class="nx">bonusClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Go Programming"</span><span class="p">)</span>
+<span class="nx">bonusClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Python Programming"</span><span class="p">)</span>
+
+<span class="c1">//Show me all the available classes I can take</span>
+<span class="nx">allClasses</span> <span class="o">:=</span> <span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Union</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">).</span><span class="nx">Union</span><span class="p">(</span><span class="nx">electiveClasses</span><span class="p">).</span><span class="nx">Union</span><span class="p">(</span><span class="nx">bonusClasses</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">)</span> <span class="c1">//Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}</span>
+
+<span class="c1">//Is cooking considered a science class?</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Contains</span><span class="p">(</span><span class="s">"Cooking"</span><span class="p">))</span> <span class="c1">//false</span>
+
+<span class="c1">//Show me all classes that are not science classes, since I hate science.</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">.</span><span class="nx">Difference</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">))</span> <span class="c1">//Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}</span>
+
+<span class="c1">//Which science classes are also required classes?</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Intersect</span><span class="p">(</span><span class="nx">requiredClasses</span><span class="p">))</span> <span class="c1">//Set{Biology}</span>
+
+<span class="c1">//How many bonus classes do you offer?</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">bonusClasses</span><span class="p">.</span><span class="nx">Size</span><span class="p">())</span> <span class="c1">//2</span>
+</pre></div>
+
+<p>Thanks!</p>
+
+<p>-Ralph</p>
+
+<p><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/deckarep/golang-set/trend.png" alt="Bitdeli Badge"></a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Golang-set maintained by <a href="https://github.com/deckarep">deckarep</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
