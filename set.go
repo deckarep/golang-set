@@ -33,35 +33,33 @@ import "fmt"
 import "strings"
 
 // The primary type that represents a set
-type Set struct {
-	set map[interface{}]_placeHolder
-}
+type Set map[interface{}]_placeHolder
 
 type _placeHolder struct{}
 
 // Creates and returns a pointer to an empty set.
-func NewSet() *Set {
-	return &Set{make(map[interface{}]_placeHolder)}
+func NewSet() Set {
+	return make(map[interface{}]_placeHolder)
 }
 
 // Adds an item to the current set if it doesn't already exist in the set.
-func (set *Set) Add(i interface{}) bool {
-	_, found := set.set[i]
-	set.set[i] = _placeHolder{}
+func (set Set) Add(i interface{}) bool {
+	_, found := set[i]
+	set[i] = _placeHolder{}
 	return !found //False if it existed already
 }
 
 // Determines if a given item is already in the set.
-func (set *Set) Contains(i interface{}) bool {
-	if _, found := set.set[i]; found {
+func (set Set) Contains(i interface{}) bool {
+	if _, found := set[i]; found {
 		return found //true if it existed already
 	}
 	return false
 }
 
 // Determines if every item in the other set is in this set.
-func (set *Set) IsSubset(other *Set) bool {
-	for key, _ := range set.set {
+func (set Set) IsSubset(other Set) bool {
+	for key, _ := range set {
 		if !other.Contains(key) {
 			return false
 		}
@@ -70,8 +68,8 @@ func (set *Set) IsSubset(other *Set) bool {
 }
 
 // Determines if every item of this set is in the other set.
-func (set *Set) IsSuperset(other *Set) bool {
-	for key, _ := range other.set {
+func (set Set) IsSuperset(other Set) bool {
+	for key, _ := range other {
 		if !set.Contains(key) {
 			return false
 		}
@@ -80,14 +78,14 @@ func (set *Set) IsSuperset(other *Set) bool {
 }
 
 // Returns a new set with all items in both sets.
-func (set *Set) Union(other *Set) *Set {
+func (set Set) Union(other Set) Set {
 	if set != nil && other != nil {
 		unionedSet := NewSet()
 
-		for key, _ := range set.set {
+		for key, _ := range set {
 			unionedSet.Add(key)
 		}
-		for key, _ := range other.set {
+		for key, _ := range other {
 			unionedSet.Add(key)
 		}
 		return unionedSet
@@ -96,11 +94,11 @@ func (set *Set) Union(other *Set) *Set {
 }
 
 // Returns a new set with items that exist only in both sets.
-func (set *Set) Intersect(other *Set) *Set {
+func (set Set) Intersect(other Set) Set {
 	if set != nil && other != nil {
 		intersectedSet := NewSet()
-		var smallerSet *Set = nil
-		var largerSet *Set = nil
+		var smallerSet Set = nil
+		var largerSet Set = nil
 
 		//figure out the smaller of the two sets and loop on that one as an optimization.
 		if set.Size() < other.Size() {
@@ -111,7 +109,7 @@ func (set *Set) Intersect(other *Set) *Set {
 			largerSet = set
 		}
 
-		for key, _ := range smallerSet.set {
+		for key, _ := range smallerSet {
 			if largerSet.Contains(key) {
 				intersectedSet.Add(key)
 			}
@@ -122,11 +120,11 @@ func (set *Set) Intersect(other *Set) *Set {
 }
 
 // Returns a new set with items in the current set but not in the other set
-func (set *Set) Difference(other *Set) *Set {
+func (set Set) Difference(other Set) Set {
 	if set != nil && other != nil {
 		differencedSet := NewSet()
 
-		for key, _ := range set.set {
+		for key, _ := range set {
 			if !other.Contains(key) {
 				differencedSet.Add(key)
 			}
@@ -138,7 +136,7 @@ func (set *Set) Difference(other *Set) *Set {
 }
 
 // Returns a new set with items in the current set or the other set but not in both.
-func (set *Set) SymmetricDifference(other *Set) *Set {
+func (set Set) SymmetricDifference(other Set) Set {
 	if set != nil && other != nil {
 		aDiff := set.Difference(other)
 		bDiff := other.Difference(set)
@@ -152,28 +150,28 @@ func (set *Set) SymmetricDifference(other *Set) *Set {
 
 // Clears the entire set to be the empty set.
 func (set *Set) Clear() {
-	set.set = make(map[interface{}]_placeHolder)
+	*set = make(map[interface{}]_placeHolder)
 }
 
 // Allows the removal of a single item in the set.
-func (set *Set) Remove(i interface{}) {
-	delete(set.set, i)
+func (set Set) Remove(i interface{}) {
+	delete(set, i)
 }
 
 // Size returns the how many items are currently in the set.
-func (set *Set) Size() int {
-	return len(set.set)
+func (set Set) Size() int {
+	return len(set)
 }
 
 // Equal determines if two sets are equal to each other.
 // If they both are the same size and have the same items they are considered equal.
 // Order of items is not relevent for sets to be equal.
-func (set *Set) Equal(other *Set) bool {
+func (set Set) Equal(other Set) bool {
 	if set != nil && other != nil {
 		if !(set.Size() == other.Size()) {
 			return false
 		} else {
-			for key, _ := range set.set {
+			for key, _ := range set {
 				if !other.Contains(key) {
 					return false
 				}
@@ -185,10 +183,10 @@ func (set *Set) Equal(other *Set) bool {
 }
 
 // Provides a convenient string representation of the current state of the set.
-func (set *Set) String() string {
-	items := make([]string, 0, len(set.set))
+func (set Set) String() string {
+	items := make([]string, 0, len(set))
 
-	for key := range set.set {
+	for key := range set {
 		items = append(items, fmt.Sprintf("%v", key))
 	}
 	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
