@@ -9,7 +9,7 @@ and carry-on and to the rest that find this useful please contribute in helping 
 
 * Helping to make more idiomatic improvements to the code.
 * Helping to make it better for more generic use across types.
-* Helping to increase the performance of it. (So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)
+* Helping to increase the performance of it. ~~(So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)~~
 * Helping to make the unit-tests more robust and kick-ass.
 * Helping to fill in the [documentation.](http://godoc.org/github.com/deckarep/golang-set)
 * Simply offering feedback and suggestions, since I am a Go n00b.  (Positive, constructive feedback is appreciated.)
