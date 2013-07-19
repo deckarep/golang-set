@@ -113,7 +113,22 @@ func Test_ContainsSet(t *testing.T) {
 	if !(a.Contains(13) && a.Contains(7) && a.Contains(1)) {
 		t.Error("ContainsSet should contain 13, 7, 1")
 	}
+}
 
+func test_ContainsAllSet(t *testing.T) {
+	a := NewSet()
+
+	a.Add(8)
+	a.Add(6)
+	a.Add(7)
+	a.Add(5)
+	a.Add(3)
+	a.Add(0)
+	a.Add(9)
+
+	if !a.ContainsAll(8, 6, 7, 5, 3, 0, 9) {
+		t.Error("ContainsAll doesn't contain Jenny's phone number")
+	}
 }
 
 func Test_ClearSet(t *testing.T) {
