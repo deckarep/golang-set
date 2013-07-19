@@ -37,8 +37,6 @@ import (
 // The primary type that represents a set
 type Set map[interface{}]struct{}
 
-//type _placeHolder struct{}
-
 // Creates and returns a reference to an empty set.
 func NewSet() Set {
 	return make(map[interface{}]struct{})
