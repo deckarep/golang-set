@@ -37,9 +37,18 @@ type Set map[interface{}]_placeHolder
 
 type _placeHolder struct{}
 
-// Creates and returns a pointer to an empty set.
+// Creates and returns a reference to an empty set.
 func NewSet() Set {
 	return make(map[interface{}]_placeHolder)
+}
+
+// Creates and returns a reference to a set from an existing slice
+func NewSetFromSlice(s []interface{}) Set {
+	a := NewSet()
+	for _, item := range s {
+		a.Add(item)
+	}
+	return a
 }
 
 // Adds an item to the current set if it doesn't already exist in the set.
@@ -59,14 +68,14 @@ func (set Set) Contains(i interface{}) bool {
 
 // Determines if the given items are all in the set
 func (set Set) ContainsAll(i ...interface{}) bool {
-	allPresent := false
-	for item := range i {
-		allPresent = set.Contains(item)
-		if !allPresent {
-			break
-		}
+	allSet := NewSetFromSlice(i)
+
+	if allSet.IsSubset(set) {
+		fmt.Println("true")
+		return true
 	}
-	return allPresent
+
+	return false
 }
 
 // Determines if every item in the other set is in this set.

@@ -26,6 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -115,7 +116,7 @@ func Test_ContainsSet(t *testing.T) {
 	}
 }
 
-func test_ContainsAllSet(t *testing.T) {
+func Test_ContainsAllSet(t *testing.T) {
 	a := NewSet()
 
 	a.Add(8)
@@ -127,7 +128,11 @@ func test_ContainsAllSet(t *testing.T) {
 	a.Add(9)
 
 	if !a.ContainsAll(8, 6, 7, 5, 3, 0, 9) {
-		t.Error("ContainsAll doesn't contain Jenny's phone number")
+		t.Error("ContainsAll should contain Jenny's phone number")
+	}
+
+	if a.ContainsAll(8, 6, 11, 5, 3, 0, 9) {
+		t.Error("ContainsAll should not have all of these numbers")
 	}
 }
 
@@ -370,40 +375,41 @@ func Test_SetEqual(t *testing.T) {
 }
 
 func Test_Example(t *testing.T) {
-	/*
-		requiredClasses := NewSet()
-		requiredClasses.Add("Cooking")
-		requiredClasses.Add("English")
-		requiredClasses.Add("Math")
-		requiredClasses.Add("Biology")
 
-		scienceClasses := NewSet()
-		scienceClasses.Add("Biology")
-		scienceClasses.Add("Chemistry")
+	requiredClasses := NewSet()
+	requiredClasses.Add("Cooking")
+	requiredClasses.Add("English")
+	requiredClasses.Add("Math")
+	requiredClasses.Add("Biology")
 
-		electiveClasses := NewSet()
-		electiveClasses.Add("Welding")
-		electiveClasses.Add("Music")
-		electiveClasses.Add("Automotive")
+	scienceSlice := []interface{}{"Biology", "Chemistry"}
+	scienceClasses := NewSetFromSlice(scienceSlice)
 
-		bonusClasses := NewSet()
-		bonusClasses.Add("Go Programming")
-		bonusClasses.Add("Python Programming")
+	electiveClasses := NewSet()
+	electiveClasses.Add("Welding")
+	electiveClasses.Add("Music")
+	electiveClasses.Add("Automotive")
 
-		//Show me all the available classes I can take
-		allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
-		fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
+	bonusClasses := NewSet()
+	bonusClasses.Add("Go Programming")
+	bonusClasses.Add("Python Programming")
 
-		//Is cooking considered a science class?
-		fmt.Println(scienceClasses.Contains("Cooking")) //false
+	//Show me all the available classes I can take
+	allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
+	fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
 
-		//Show me all classes that are not science classes, since I hate science.
-		fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
+	//Is cooking considered a science class?
+	fmt.Println(scienceClasses.Contains("Cooking")) //false
 
-		//Which science classes are also required classes?
-		fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
+	//Show me all classes that are not science classes, since I hate science.
+	fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
 
-		//How many bonus classes do you offer?
-		fmt.Println(bonusClasses.Size()) //2
-	*/
+	//Which science classes are also required classes?
+	fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
+
+	//How many bonus classes do you offer?
+	fmt.Println(bonusClasses.Size()) //2
+
+	//Do you have the following classes? Welding, Automotive and English?
+	fmt.Println(allClasses.ContainsAll("Welding", "Automotive", "English"))
 }
