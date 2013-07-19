@@ -20,7 +20,7 @@ Please see the unit test file for additional usage examples.  The Python set doc
 however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
 also, this set has not been battle-tested or used in production.  Also, this set is not goroutine safe...you have been warned.
 
-Examples but not exhaustive
+Examples but not exhaustive:
 ```go
 requiredClasses := NewSet()
 requiredClasses.Add("Cooking")
@@ -28,9 +28,8 @@ requiredClasses.Add("English")
 requiredClasses.Add("Math")
 requiredClasses.Add("Biology")
 
-scienceClasses := NewSet()
-scienceClasses.Add("Biology")
-scienceClasses.Add("Chemistry")
+scienceSlice := []interface{}{"Biology", "Chemistry"}
+scienceClasses := NewSetFromSlice(scienceSlice)
 
 electiveClasses := NewSet()
 electiveClasses.Add("Welding")
@@ -43,19 +42,23 @@ bonusClasses.Add("Python Programming")
 
 //Show me all the available classes I can take
 allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
-fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
+fmt.Println(allClasses) //Set{Cooking, English, Math, Chemistry, Welding, Biology, Music, Automotive, Go Programming, Python Programming}
+
 
 //Is cooking considered a science class?
 fmt.Println(scienceClasses.Contains("Cooking")) //false
 
 //Show me all classes that are not science classes, since I hate science.
-fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
+fmt.Println(allClasses.Difference(scienceClasses)) //Set{Music, Automotive, Go Programming, Python Programming, Cooking, English, Math, Welding}
 
 //Which science classes are also required classes?
 fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
 
 //How many bonus classes do you offer?
 fmt.Println(bonusClasses.Size()) //2
+
+//Do you have the following classes? Welding, Automotive and English?
+fmt.Println(allClasses.ContainsAll("Welding", "Automotive", "English")) //true
 ```
 
 Thanks!

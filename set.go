@@ -29,8 +29,10 @@ SOFTWARE.
 
 package mapset
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // The primary type that represents a set
 type Set map[interface{}]_placeHolder
@@ -71,7 +73,7 @@ func (set Set) ContainsAll(i ...interface{}) bool {
 	allSet := NewSetFromSlice(i)
 
 	if allSet.IsSubset(set) {
-		fmt.Println("true")
+
 		return true
 	}
 
