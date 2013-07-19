@@ -40,7 +40,8 @@ and carry-on and to the rest that find this useful please contribute in helping 
 <ul>
 <li>Helping to make more idiomatic improvements to the code.</li>
 <li>Helping to make it better for more generic use across types.</li>
-<li>Helping to increase the performance of it. (So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)</li>
+<li>Helping to increase the performance of it. <del>(So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)</del>
+</li>
 <li>Helping to make the unit-tests more robust and kick-ass.</li>
 <li>Helping to fill in the <a href="http://godoc.org/github.com/deckarep/golang-set">documentation.</a>
 </li>
@@ -51,7 +52,7 @@ and carry-on and to the rest that find this useful please contribute in helping 
 however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
 also, this set has not been battle-tested or used in production.  Also, this set is not goroutine safe...you have been warned.</p>
 
-<p>Examples but not exhaustive</p>
+<p>Examples but not exhaustive:</p>
 
 <div class="highlight"><pre><span class="nx">requiredClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
 <span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Cooking"</span><span class="p">)</span>
@@ -59,9 +60,8 @@ also, this set has not been battle-tested or used in production.  Also, this set
 <span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Math"</span><span class="p">)</span>
 <span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Biology"</span><span class="p">)</span>
 
-<span class="nx">scienceClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
-<span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Biology"</span><span class="p">)</span>
-<span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Chemistry"</span><span class="p">)</span>
+<span class="nx">scienceSlice</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">interface</span><span class="p">{}{</span><span class="s">"Biology"</span><span class="p">,</span> <span class="s">"Chemistry"</span><span class="p">}</span>
+<span class="nx">scienceClasses</span> <span class="o">:=</span> <span class="nx">NewSetFromSlice</span><span class="p">(</span><span class="nx">scienceSlice</span><span class="p">)</span>
 
 <span class="nx">electiveClasses</span> <span class="o">:=</span> <span class="nx">NewSet</span><span class="p">()</span>
 <span class="nx">electiveClasses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s">"Welding"</span><span class="p">)</span>
@@ -74,19 +74,23 @@ also, this set has not been battle-tested or used in production.  Also, this set
 
 <span class="c1">//Show me all the available classes I can take</span>
 <span class="nx">allClasses</span> <span class="o">:=</span> <span class="nx">requiredClasses</span><span class="p">.</span><span class="nx">Union</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">).</span><span class="nx">Union</span><span class="p">(</span><span class="nx">electiveClasses</span><span class="p">).</span><span class="nx">Union</span><span class="p">(</span><span class="nx">bonusClasses</span><span class="p">)</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">)</span> <span class="c1">//Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">)</span> <span class="c1">//Set{Cooking, English, Math, Chemistry, Welding, Biology, Music, Automotive, Go Programming, Python Programming}</span>
+
 
 <span class="c1">//Is cooking considered a science class?</span>
 <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Contains</span><span class="p">(</span><span class="s">"Cooking"</span><span class="p">))</span> <span class="c1">//false</span>
 
 <span class="c1">//Show me all classes that are not science classes, since I hate science.</span>
-<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">.</span><span class="nx">Difference</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">))</span> <span class="c1">//Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">.</span><span class="nx">Difference</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">))</span> <span class="c1">//Set{Music, Automotive, Go Programming, Python Programming, Cooking, English, Math, Welding}</span>
 
 <span class="c1">//Which science classes are also required classes?</span>
 <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">scienceClasses</span><span class="p">.</span><span class="nx">Intersect</span><span class="p">(</span><span class="nx">requiredClasses</span><span class="p">))</span> <span class="c1">//Set{Biology}</span>
 
 <span class="c1">//How many bonus classes do you offer?</span>
 <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">bonusClasses</span><span class="p">.</span><span class="nx">Size</span><span class="p">())</span> <span class="c1">//2</span>
+
+<span class="c1">//Do you have the following classes? Welding, Automotive and English?</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">.</span><span class="nx">ContainsAll</span><span class="p">(</span><span class="s">"Welding"</span><span class="p">,</span> <span class="s">"Automotive"</span><span class="p">,</span> <span class="s">"English"</span><span class="p">))</span> <span class="c1">//true</span>
 </pre></div>
 
 <p>Thanks!</p>
@@ -113,6 +117,16 @@ also, this set has not been battle-tested or used in production.  Also, this set
       </div>
     </div>
 
-  
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-42584447-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
