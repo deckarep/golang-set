@@ -78,7 +78,7 @@ func (set Set) ContainsAll(i ...interface{}) bool {
 
 // Determines if every item in the other set is in this set.
 func (set Set) IsSubset(other Set) bool {
-	for key, _ := range set {
+	for key := range set {
 		if !other.Contains(key) {
 			return false
 		}
