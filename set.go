@@ -88,12 +88,7 @@ func (set Set) IsSubset(other Set) bool {
 
 // Determines if every item of this set is in the other set.
 func (set Set) IsSuperset(other Set) bool {
-	for key, _ := range other {
-		if !set.Contains(key) {
-			return false
-		}
-	}
-	return true
+	return other.IsSubset(set)
 }
 
 // Returns a new set with all items in both sets.
