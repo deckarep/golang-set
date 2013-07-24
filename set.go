@@ -141,7 +141,7 @@ func (set Set) SymmetricDifference(other Set) Set {
 
 // Clears the entire set to be the empty set.
 func (set *Set) Clear() {
-	*set = make(map[interface{}]struct{})
+	*set = make(Set)
 }
 
 // Allows the removal of a single item in the set.
