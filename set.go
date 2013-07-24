@@ -60,28 +60,23 @@ func (set Set) Add(i interface{}) bool {
 
 // Determines if a given item is already in the set.
 func (set Set) Contains(i interface{}) bool {
-	if _, found := set[i]; found {
-		return found //true if it existed already
-	}
-	return false
+	_, found := set[i]
+	return found
 }
 
 // Determines if the given items are all in the set
 func (set Set) ContainsAll(i ...interface{}) bool {
 	allSet := NewSetFromSlice(i)
-
 	if allSet.IsSubset(set) {
-
 		return true
 	}
-
 	return false
 }
 
 // Determines if every item in the other set is in this set.
 func (set Set) IsSubset(other Set) bool {
-	for key, _ := range set {
-		if !other.Contains(key) {
+	for elem := range set {
+		if !other.Contains(elem) {
 			return false
 		}
 	}
@@ -90,60 +85,50 @@ func (set Set) IsSubset(other Set) bool {
 
 // Determines if every item of this set is in the other set.
 func (set Set) IsSuperset(other Set) bool {
-	for key, _ := range other {
-		if !set.Contains(key) {
-			return false
-		}
-	}
-	return true
+	return other.IsSubset(set)
 }
 
 // Returns a new set with all items in both sets.
 func (set Set) Union(other Set) Set {
 	unionedSet := NewSet()
 
-	for key, _ := range set {
-		unionedSet.Add(key)
+	for elem := range set {
+		unionedSet.Add(elem)
 	}
-	for key, _ := range other {
-		unionedSet.Add(key)
+	for elem := range other {
+		unionedSet.Add(elem)
 	}
 	return unionedSet
 }
 
 // Returns a new set with items that exist only in both sets.
 func (set Set) Intersect(other Set) Set {
-	intersectedSet := NewSet()
-	var smallerSet Set = nil
-	var largerSet Set = nil
-
-	//figure out the smaller of the two sets and loop on that one as an optimization.
+	intersection := NewSet()
+	// loop over smaller set
 	if set.Size() < other.Size() {
-		smallerSet = set
-		largerSet = other
+		for elem := range set {
+			if other.Contains(elem) {
+				intersection.Add(elem)
+			}
+		}
 	} else {
-		smallerSet = other
-		largerSet = set
-	}
-
-	for key, _ := range smallerSet {
-		if largerSet.Contains(key) {
-			intersectedSet.Add(key)
+		for elem := range other {
+			if set.Contains(elem) {
+				intersection.Add(elem)
+			}
 		}
 	}
-	return intersectedSet
+	return intersection
 }
 
 // Returns a new set with items in the current set but not in the other set
 func (set Set) Difference(other Set) Set {
 	differencedSet := NewSet()
-
-	for key, _ := range set {
-		if !other.Contains(key) {
-			differencedSet.Add(key)
+	for elem := range set {
+		if !other.Contains(elem) {
+			differencedSet.Add(elem)
 		}
 	}
-
 	return differencedSet
 }
 
@@ -151,15 +136,12 @@ func (set Set) Difference(other Set) Set {
 func (set Set) SymmetricDifference(other Set) Set {
 	aDiff := set.Difference(other)
 	bDiff := other.Difference(set)
-
-	symDifferencedSet := aDiff.Union(bDiff)
-
-	return symDifferencedSet
+	return aDiff.Union(bDiff)
 }
 
 // Clears the entire set to be the empty set.
 func (set *Set) Clear() {
-	*set = make(map[interface{}]struct{})
+	*set = make(Set)
 }
 
 // Allows the removal of a single item in the set.
@@ -178,14 +160,13 @@ func (set Set) Size() int {
 func (set Set) Equal(other Set) bool {
 	if set.Size() != other.Size() {
 		return false
-	} else {
-		for elem, _ := range set {
-			if !other.Contains(elem) {
-				return false
-			}
-		}
-		return true
 	}
+	for elem := range set {
+		if !other.Contains(elem) {
+			return false
+		}
+	}
+	return true
 }
 
 // Provides a convenient string representation of the current state of the set.
