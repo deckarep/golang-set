@@ -160,14 +160,13 @@ func (set Set) Size() int {
 func (set Set) Equal(other Set) bool {
 	if set.Size() != other.Size() {
 		return false
-	} else {
-		for elem, _ := range set {
-			if !other.Contains(elem) {
-				return false
-			}
-		}
-		return true
 	}
+	for elem := range set {
+		if !other.Contains(elem) {
+			return false
+		}
+	}
+	return true
 }
 
 // Provides a convenient string representation of the current state of the set.
