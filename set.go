@@ -136,10 +136,7 @@ func (set Set) Difference(other Set) Set {
 func (set Set) SymmetricDifference(other Set) Set {
 	aDiff := set.Difference(other)
 	bDiff := other.Difference(set)
-
-	symDifferencedSet := aDiff.Union(bDiff)
-
-	return symDifferencedSet
+	return aDiff.Union(bDiff)
 }
 
 // Clears the entire set to be the empty set.
