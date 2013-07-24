@@ -60,10 +60,8 @@ func (set Set) Add(i interface{}) bool {
 
 // Determines if a given item is already in the set.
 func (set Set) Contains(i interface{}) bool {
-	if _, found := set[i]; found {
-		return found //true if it existed already
-	}
-	return false
+	_, found := set[i]
+	return found
 }
 
 // Determines if the given items are all in the set
