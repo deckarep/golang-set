@@ -124,13 +124,11 @@ func (set Set) Intersect(other Set) Set {
 // Returns a new set with items in the current set but not in the other set
 func (set Set) Difference(other Set) Set {
 	differencedSet := NewSet()
-
-	for key, _ := range set {
-		if !other.Contains(key) {
-			differencedSet.Add(key)
+	for elem := range set {
+		if !other.Contains(elem) {
+			differencedSet.Add(elem)
 		}
 	}
-
 	return differencedSet
 }
 
