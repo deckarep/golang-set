@@ -67,12 +67,9 @@ func (set Set) Contains(i interface{}) bool {
 // Determines if the given items are all in the set
 func (set Set) ContainsAll(i ...interface{}) bool {
 	allSet := NewSetFromSlice(i)
-
 	if allSet.IsSubset(set) {
-
 		return true
 	}
-
 	return false
 }
 
@@ -95,11 +92,11 @@ func (set Set) IsSuperset(other Set) bool {
 func (set Set) Union(other Set) Set {
 	unionedSet := NewSet()
 
-	for key, _ := range set {
-		unionedSet.Add(key)
+	for elem := range set {
+		unionedSet.Add(elem)
 	}
-	for key, _ := range other {
-		unionedSet.Add(key)
+	for elem := range other {
+		unionedSet.Add(elem)
 	}
 	return unionedSet
 }
