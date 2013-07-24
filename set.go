@@ -103,25 +103,22 @@ func (set Set) Union(other Set) Set {
 
 // Returns a new set with items that exist only in both sets.
 func (set Set) Intersect(other Set) Set {
-	intersectedSet := NewSet()
-	var smallerSet Set = nil
-	var largerSet Set = nil
-
-	//figure out the smaller of the two sets and loop on that one as an optimization.
+	intersection := NewSet()
+	// loop over smaller set
 	if set.Size() < other.Size() {
-		smallerSet = set
-		largerSet = other
+		for elem := range set {
+			if other.Contains(elem) {
+				intersection.Add(elem)
+			}
+		}
 	} else {
-		smallerSet = other
-		largerSet = set
-	}
-
-	for key, _ := range smallerSet {
-		if largerSet.Contains(key) {
-			intersectedSet.Add(key)
+		for elem := range other {
+			if set.Contains(elem) {
+				intersection.Add(elem)
+			}
 		}
 	}
-	return intersectedSet
+	return intersection
 }
 
 // Returns a new set with items in the current set but not in the other set
