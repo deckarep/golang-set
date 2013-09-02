@@ -30,6 +30,14 @@ import (
 	"testing"
 )
 
+func makeSet(ints []int) Set {
+	set := NewSet()
+	for _, i := range ints {
+		set.Add(i)
+	}
+	return set
+}
+
 func Test_NewSet(t *testing.T) {
 	a := NewSet()
 
@@ -39,11 +47,7 @@ func Test_NewSet(t *testing.T) {
 }
 
 func Test_AddSet(t *testing.T) {
-	a := NewSet()
-
-	a.Add(1)
-	a.Add(2)
-	a.Add(3)
+	a := makeSet([]int{1, 2, 3})
 
 	if a.Size() != 3 {
 		t.Error("AddSet does not have a size of 3 even though 3 items were added to a new set")
@@ -51,12 +55,7 @@ func Test_AddSet(t *testing.T) {
 }
 
 func Test_AddSetNoDuplicate(t *testing.T) {
-	a := NewSet()
-
-	a.Add(7)
-	a.Add(5)
-	a.Add(3)
-	a.Add(7)
+	a := makeSet([]int{7, 5, 3, 7})
 
 	if a.Size() != 3 {
 		t.Error("AddSetNoDuplicate set should have 3 elements since 7 is a duplicate")
@@ -68,11 +67,7 @@ func Test_AddSetNoDuplicate(t *testing.T) {
 }
 
 func Test_RemoveSet(t *testing.T) {
-	a := NewSet()
-
-	a.Add(6)
-	a.Add(3)
-	a.Add(1)
+	a := makeSet([]int{6, 3, 1})
 
 	a.Remove(3)
 
@@ -117,15 +112,7 @@ func Test_ContainsSet(t *testing.T) {
 }
 
 func Test_ContainsAllSet(t *testing.T) {
-	a := NewSet()
-
-	a.Add(8)
-	a.Add(6)
-	a.Add(7)
-	a.Add(5)
-	a.Add(3)
-	a.Add(0)
-	a.Add(9)
+	a := makeSet([]int{8, 6, 7, 5, 3, 0, 9})
 
 	if !a.ContainsAll(8, 6, 7, 5, 3, 0, 9) {
 		t.Error("ContainsAll should contain Jenny's phone number")
@@ -137,12 +124,7 @@ func Test_ContainsAllSet(t *testing.T) {
 }
 
 func Test_ClearSet(t *testing.T) {
-	a := NewSet()
-
-	a.Add(2)
-	a.Add(5)
-	a.Add(9)
-	a.Add(10)
+	a := makeSet([]int{2, 5, 9, 10})
 
 	a.Clear()
 
@@ -184,12 +166,7 @@ func Test_SizeSet(t *testing.T) {
 }
 
 func Test_SetIsSubset(t *testing.T) {
-	a := NewSet()
-	a.Add(1)
-	a.Add(2)
-	a.Add(3)
-	a.Add(5)
-	a.Add(7)
+	a := makeSet([]int{1, 2, 3, 5, 7})
 
 	b := NewSet()
 	b.Add(3)
