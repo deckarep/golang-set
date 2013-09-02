@@ -25,7 +25,7 @@ SOFTWARE.
 
 // Package mapset implements a simple and generic set collection.
 // Items stored within it are unordered and unique
-// It supports typical set operations: membership testing, intersection, union, difference and symmetric difference
+// It supports typical set operations: membership testing, intersection, union, difference, symmetric difference and clonning
 
 package mapset
 
@@ -167,6 +167,16 @@ func (set Set) Equal(other Set) bool {
 		}
 	}
 	return true
+}
+
+// Returns a clone of the set.
+// Does NOT clone the underlying elements.
+func (set Set) Clone() Set {
+	clonedSet := NewSet()
+	for elem := range set {
+		clonedSet.Add(elem)
+	}
+	return clonedSet
 }
 
 // Provides a convenient string representation of the current state of the set.
