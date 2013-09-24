@@ -30,7 +30,7 @@ SOFTWARE.
 package mapset
 
 import (
-	"fmt"/
+	"fmt"
 	"strings"
 )
 
