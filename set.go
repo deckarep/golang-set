@@ -149,7 +149,7 @@ func (set Set) Remove(i interface{}) {
 	delete(set, i)
 }
 
-// Cardinality returns the how many items are currently in the set.
+// Cardinality returns how many items are currently in the set.
 func (set Set) Cardinality() int {
 	return len(set)
 }
