@@ -41,7 +41,7 @@ func makeSet(ints []int) Set {
 func Test_NewSet(t *testing.T) {
 	a := NewSet()
 
-	if a.Size() != 0 {
+	if a.Cardinality() != 0 {
 		t.Error("NewSet should start out as an empty set")
 	}
 }
@@ -49,7 +49,7 @@ func Test_NewSet(t *testing.T) {
 func Test_AddSet(t *testing.T) {
 	a := makeSet([]int{1, 2, 3})
 
-	if a.Size() != 3 {
+	if a.Cardinality() != 3 {
 		t.Error("AddSet does not have a size of 3 even though 3 items were added to a new set")
 	}
 }
@@ -57,7 +57,7 @@ func Test_AddSet(t *testing.T) {
 func Test_AddSetNoDuplicate(t *testing.T) {
 	a := makeSet([]int{7, 5, 3, 7})
 
-	if a.Size() != 3 {
+	if a.Cardinality() != 3 {
 		t.Error("AddSetNoDuplicate set should have 3 elements since 7 is a duplicate")
 	}
 
@@ -71,7 +71,7 @@ func Test_RemoveSet(t *testing.T) {
 
 	a.Remove(3)
 
-	if a.Size() != 2 {
+	if a.Cardinality() != 2 {
 		t.Error("RemoveSet should only have 2 items in the set")
 	}
 
@@ -82,7 +82,7 @@ func Test_RemoveSet(t *testing.T) {
 	a.Remove(6)
 	a.Remove(1)
 
-	if a.Size() != 0 {
+	if a.Cardinality() != 0 {
 		t.Error("RemoveSet should be an empty set after removing 6 and 1")
 	}
 }
@@ -128,39 +128,39 @@ func Test_ClearSet(t *testing.T) {
 
 	a.Clear()
 
-	if a.Size() != 0 {
+	if a.Cardinality() != 0 {
 		t.Error("ClearSet should be an empty set")
 	}
 }
 
-func Test_SizeSet(t *testing.T) {
+func Test_CardinalitySet(t *testing.T) {
 	a := NewSet()
 
-	if a.Size() != 0 {
+	if a.Cardinality() != 0 {
 		t.Error("set should be an empty set")
 	}
 
 	a.Add(1)
 
-	if a.Size() != 1 {
+	if a.Cardinality() != 1 {
 		t.Error("set should have a size of 1")
 	}
 
 	a.Remove(1)
 
-	if a.Size() != 0 {
+	if a.Cardinality() != 0 {
 		t.Error("set should be an empty set")
 	}
 
 	a.Add(9)
 
-	if a.Size() != 1 {
+	if a.Cardinality() != 1 {
 		t.Error("set should have a size of 1")
 	}
 
 	a.Clear()
 
-	if a.Size() != 0 {
+	if a.Cardinality() != 0 {
 		t.Error("set should have a size of 1")
 	}
 }
@@ -220,7 +220,7 @@ func Test_SetUnion(t *testing.T) {
 
 	c := a.Union(b)
 
-	if c.Size() != 5 {
+	if c.Cardinality() != 5 {
 		t.Error("set c is unioned with an empty set and therefore should have 5 elements in it")
 	}
 
@@ -230,7 +230,7 @@ func Test_SetUnion(t *testing.T) {
 	d.Add(0)
 
 	e := c.Union(d)
-	if e.Size() != 8 {
+	if e.Cardinality() != 8 {
 		t.Error("set e should should have 8 elements in it after being unioned with set c to d")
 	}
 
@@ -239,7 +239,7 @@ func Test_SetUnion(t *testing.T) {
 	f.Add(3)
 
 	g := f.Union(e)
-	if g.Size() != 8 {
+	if g.Cardinality() != 8 {
 		t.Error("set g should still ahve 8 elements in it after being unioned with set f that has duplicates")
 	}
 }
@@ -257,7 +257,7 @@ func Test_SetIntersect(t *testing.T) {
 
 	c := a.Intersect(b)
 
-	if c.Size() != 0 {
+	if c.Cardinality() != 0 {
 		t.Error("set c should be the empty set because there is no common items to intersect")
 	}
 
@@ -266,7 +266,7 @@ func Test_SetIntersect(t *testing.T) {
 
 	d := a.Intersect(b)
 
-	if !(d.Size() == 1 && d.Contains(10)) {
+	if !(d.Cardinality() == 1 && d.Contains(10)) {
 		t.Error("set d should have a size of 1 and contain the item 10")
 	}
 }
@@ -287,7 +287,7 @@ func Test_SetDifference(t *testing.T) {
 
 	c := a.Difference(b)
 
-	if !(c.Size() == 1 && c.Contains(2)) {
+	if !(c.Cardinality() == 1 && c.Contains(2)) {
 		t.Error("the difference of set a to b is the set of 1 item: 2")
 	}
 }
@@ -309,7 +309,7 @@ func Test_SetSymmetricDifference(t *testing.T) {
 
 	c := a.SymmetricDifference(b)
 
-	if !(c.Size() == 6 && c.Contains(2) && c.Contains(45) && c.Contains(4) && c.Contains(5) && c.Contains(6) && c.Contains(99)) {
+	if !(c.Cardinality() == 6 && c.Contains(2) && c.Contains(45) && c.Contains(4) && c.Contains(5) && c.Contains(6) && c.Contains(99)) {
 		t.Error("the symmetric difference of set a to b is the set of 6 items: 2, 45, 4, 5, 6, 99")
 	}
 }
@@ -409,7 +409,7 @@ func Test_Example(t *testing.T) {
 	fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
 
 	//How many bonus classes do you offer?
-	fmt.Println(bonusClasses.Size()) //2
+	fmt.Println(bonusClasses.Cardinality()) //2
 
 	//Do you have the following classes? Welding, Automotive and English?
 	fmt.Println(allClasses.ContainsAll("Welding", "Automotive", "English"))

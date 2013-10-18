@@ -105,7 +105,7 @@ func (set Set) Union(other Set) Set {
 func (set Set) Intersect(other Set) Set {
 	intersection := NewSet()
 	// loop over smaller set
-	if set.Size() < other.Size() {
+	if set.Cardinality() < other.Cardinality() {
 		for elem := range set {
 			if other.Contains(elem) {
 				intersection.Add(elem)
@@ -149,8 +149,8 @@ func (set Set) Remove(i interface{}) {
 	delete(set, i)
 }
 
-// Size returns the how many items are currently in the set.
-func (set Set) Size() int {
+// Cardinality returns the how many items are currently in the set.
+func (set Set) Cardinality() int {
 	return len(set)
 }
 
@@ -158,7 +158,7 @@ func (set Set) Size() int {
 // If they both are the same size and have the same items they are considered equal.
 // Order of items is not relevent for sets to be equal.
 func (set Set) Equal(other Set) bool {
-	if set.Size() != other.Size() {
+	if set.Cardinality() != other.Cardinality() {
 		return false
 	}
 	for elem := range set {
