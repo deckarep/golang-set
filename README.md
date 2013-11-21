@@ -1,9 +1,10 @@
 [![Build Status](https://travis-ci.org/deckarep/golang-set.png?branch=master)](https://travis-ci.org/deckarep/golang-set)
+[![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.png)](http://godoc.org/github.com/deckarep/golang-set)
 
 golang-set
 ==========
 
-A simple set type for the Go language.
+A simple set type for the Go language.  Until Go has sets built-in like maps, slices, and channels...use this.
 
 Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set from Python.
 You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository
@@ -14,7 +15,7 @@ and carry-on and to the rest that find this useful please contribute in helping 
 * Helping to increase the performance of it. ~~(So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)~~
 * Helping to make the unit-tests more robust and kick-ass.
 * Helping to fill in the [documentation.](http://godoc.org/github.com/deckarep/golang-set)
-* Simply offering feedback and suggestions, since I am a Go n00b.  (Positive, constructive feedback is appreciated.)
+* Simply offering feedback and suggestions.  (Positive, constructive feedback is appreciated.)
 
 I have to give some credit for helping seed the idea with this post on [stackoverflow.](http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang)
 
@@ -23,6 +24,7 @@ however that the Python set is a built-in type and supports additional features 
 also, this set has not been battle-tested or used in production.  Also, this set is not goroutine safe...you have been warned.
 
 Examples but not exhaustive:
+
 ```go
 requiredClasses := NewSet()
 requiredClasses.Add("Cooking")
