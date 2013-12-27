@@ -154,6 +154,18 @@ func (set Set) Cardinality() int {
 	return len(set)
 }
 
+func (set Set) Iter() <-chan interface{} {
+	ch := make(chan interface{})
+	go func() {
+		for elem := range set {
+			ch <- elem
+		}
+		close(ch)
+	}()
+
+	return ch
+}
+
 // Equal determines if two sets are equal to each other.
 // If they both are the same size and have the same items they are considered equal.
 // Order of items is not relevent for sets to be equal.
