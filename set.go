@@ -154,6 +154,7 @@ func (set Set) Cardinality() int {
 	return len(set)
 }
 
+// Iter() returns a channel of type interface{} that you can range over.
 func (set Set) Iter() <-chan interface{} {
 	ch := make(chan interface{})
 	go func() {
