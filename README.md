@@ -71,5 +71,6 @@ Thanks!
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/deckarep/golang-set/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+[![Analytics](https://ga-beacon.appspot.com/UA-42584447-2/deckarep/golang-set)](https://github.com/deckarep/golang-set)
 
 
