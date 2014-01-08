@@ -21,7 +21,7 @@ I have to give some credit for helping seed the idea with this post on [stackove
 
 Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind 
 however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
-also, this set has not been battle-tested or used in production.  Also, this set is not goroutine safe...you have been warned.
+also, ~~this set has not been battle-tested or used in production~~.  Also, this set is not goroutine safe...you have been warned.
 
 Examples but not exhaustive:
 
