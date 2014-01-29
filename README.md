@@ -11,7 +11,6 @@ You can of course argue that there is no need for a set in Go, otherwise the cre
 and carry-on and to the rest that find this useful please contribute in helping me make it better by:
 
 * Helping to make more idiomatic improvements to the code.
-* Helping to make it better for more generic use across types.
 * Helping to increase the performance of it. ~~(So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)~~
 * Helping to make the unit-tests more robust and kick-ass.
 * Helping to fill in the [documentation.](http://godoc.org/github.com/deckarep/golang-set)
@@ -21,8 +20,10 @@ I have to give some credit for helping seed the idea with this post on [stackove
 
 Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind 
 however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
-also, ~~this set has not been battle-tested or used in production~~.  Also, this set is not goroutine safe...you have been warned.
-
+also, ~~this set has not been battle-tested or used in production~~.  Also, this set is not goroutine safe.  The rationale for this is the same reasons that the built-in
+maps and slices are not thread-safe.  Performance is favored over synchronization because this largely depends on your application requirements.  If you need synchronization,
+perhaps use a channels for a high-level solution or use mutex and embedding for a more low-level solution.
+ 
 Examples but not exhaustive:
 
 ```go
