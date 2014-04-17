@@ -24,22 +24,116 @@ SOFTWARE.
 */
 
 // Package mapset implements a simple and generic set collection.
-// Items stored within it are unordered and unique
-// It supports typical set operations: membership testing, intersection, union, difference, symmetric difference and clonning
-
+// Items stored within it are unordered and unique. It supports
+// typical set operations: membership testing, intersection, union,
+// difference, symmetric difference and cloning.
+//
+// Package mapset provides two implementations. The default
+// implementation is safe for concurrent access. There is a non-threadsafe
+// implementation which is slightly more performant.
 package mapset
 
-import (
-	"fmt"
-	"strings"
-)
+type Set interface {
+	// Adds an element to the set. Returns whether
+	// the item was added.
+	Add(i interface{}) bool
 
-// The primary type that represents a set
-type Set map[interface{}]struct{}
+	// Returns the number of elements in the set.
+	Cardinality() int
+
+	// Removes all elements from the set, leaving
+	// the emtpy set.
+	Clear()
+
+	// Returns a clone of the set using the same
+	// implementation, duplicating all keys.
+	Clone() Set
+
+	// Returns whether the given items
+	// are all in the set.
+	Contains(i ...interface{}) bool
+
+	// Returns the difference between this set
+	// and other. The returned set will contain
+	// all elements of this set that are not also
+	// elements of other.
+	//
+	// Note that the argument to Difference
+	// must be of the same type as the receiver
+	// of the method. Otherwise, Difference will
+	// panic.
+	Difference(other Set) Set
+
+	// Determines if two sets are equal to each
+	// other. If they have the same cardinality
+	// and contain the same elements, they are
+	// considered equal. The order in which
+	// the elements were added is irrelevant.
+	//
+	// Note that the argument to Equal must be
+	// of the same type as the receiver of the
+	// method. Otherwise, Equal will panic.
+	Equal(other Set) bool
+
+	// Returns a new set containing only the elements
+	// that exist only in both sets.
+	//
+	// Note that the argument to Intersect
+	// must be of the same type as the receiver
+	// of the method. Otherwise, Intersect will
+	// panic.
+	Intersect(other Set) Set
+
+	// Determines if every element in the other set
+	// is in this set.
+	//
+	// Note that the argument to IsSubset
+	// must be of the same type as the receiver
+	// of the method. Otherwise, IsSubset will
+	// panic.
+	IsSubset(other Set) bool
+
+	// Determines if every element in this set is in
+	// the other set.
+	//
+	// Note that the argument to IsSuperset
+	// must be of the same type as the receiver
+	// of the method. Otherwise, IsSuperset will
+	// panic.
+	IsSuperset(other Set) bool
+
+	// Returns a channel of elements that you can
+	// range over.
+	Iter() <-chan interface{}
+
+	// Remove a single element from the set.
+	Remove(i interface{})
+
+	// Provides a convenient string representation
+	// of the current state of the set.
+	String() string
+
+	// Returns a new set with all elements which are
+	// in either this set or the other set but not in both.
+	//
+	// Note that the argument to SymmetricDifference
+	// must be of the same type as the receiver
+	// of the method. Otherwise, SymmetricDifference
+	// will panic.
+	SymmetricDifference(other Set) Set
+
+	// Returns a new set with all elements in both sets.
+	//
+	// Note that the argument to Union must be of the
+	// same type as the receiver of the method.
+	// Otherwise, IsSuperset will panic.
+	Union(other Set) Set
+}
 
 // Creates and returns a reference to an empty set.
 func NewSet() Set {
-	return make(Set)
+	set := newThreadSafeSet()
+	return &set
 }
 
 // Creates and returns a reference to a set from an existing slice
@@ -51,153 +145,15 @@ func NewSetFromSlice(s []interface{}) Set {
 	return a
 }
 
-// Adds an item to the current set if it doesn't already exist in the set.
-func (set Set) Add(i interface{}) bool {
-	_, found := set[i]
-	set[i] = struct{}{}
-	return !found //False if it existed already
+func NewThreadUnsafeSet() Set {
+	set := newThreadUnsafeSet()
+	return &set
 }
 
-// Determines if a given item is already in the set.
-func (set Set) Contains(i interface{}) bool {
-	_, found := set[i]
-	return found
-}
-
-// Determines if the given items are all in the set
-func (set Set) ContainsAll(i ...interface{}) bool {
-	allSet := NewSetFromSlice(i)
-	if allSet.IsSubset(set) {
-		return true
+func NewThreadUnsafeSetFromSlice(s []interface{}) Set {
+	a := NewThreadUnsafeSet()
+	for _, item := range s {
+		a.Add(item)
 	}
-	return false
-}
-
-// Determines if every item in the other set is in this set.
-func (set Set) IsSubset(other Set) bool {
-	for elem := range set {
-		if !other.Contains(elem) {
-			return false
-		}
-	}
-	return true
-}
-
-// Determines if every item of this set is in the other set.
-func (set Set) IsSuperset(other Set) bool {
-	return other.IsSubset(set)
-}
-
-// Returns a new set with all items in both sets.
-func (set Set) Union(other Set) Set {
-	unionedSet := NewSet()
-
-	for elem := range set {
-		unionedSet.Add(elem)
-	}
-	for elem := range other {
-		unionedSet.Add(elem)
-	}
-	return unionedSet
-}
-
-// Returns a new set with items that exist only in both sets.
-func (set Set) Intersect(other Set) Set {
-	intersection := NewSet()
-	// loop over smaller set
-	if set.Cardinality() < other.Cardinality() {
-		for elem := range set {
-			if other.Contains(elem) {
-				intersection.Add(elem)
-			}
-		}
-	} else {
-		for elem := range other {
-			if set.Contains(elem) {
-				intersection.Add(elem)
-			}
-		}
-	}
-	return intersection
-}
-
-// Returns a new set with items in the current set but not in the other set
-func (set Set) Difference(other Set) Set {
-	differencedSet := NewSet()
-	for elem := range set {
-		if !other.Contains(elem) {
-			differencedSet.Add(elem)
-		}
-	}
-	return differencedSet
-}
-
-// Returns a new set with items in the current set or the other set but not in both.
-func (set Set) SymmetricDifference(other Set) Set {
-	aDiff := set.Difference(other)
-	bDiff := other.Difference(set)
-	return aDiff.Union(bDiff)
-}
-
-// Clears the entire set to be the empty set.
-func (set *Set) Clear() {
-	*set = make(Set)
-}
-
-// Allows the removal of a single item in the set.
-func (set Set) Remove(i interface{}) {
-	delete(set, i)
-}
-
-// Cardinality returns how many items are currently in the set.
-func (set Set) Cardinality() int {
-	return len(set)
-}
-
-// Iter() returns a channel of type interface{} that you can range over.
-func (set Set) Iter() <-chan interface{} {
-	ch := make(chan interface{})
-	go func() {
-		for elem := range set {
-			ch <- elem
-		}
-		close(ch)
-	}()
-
-	return ch
-}
-
-// Equal determines if two sets are equal to each other.
-// If they both are the same size and have the same items they are considered equal.
-// Order of items is not relevent for sets to be equal.
-func (set Set) Equal(other Set) bool {
-	if set.Cardinality() != other.Cardinality() {
-		return false
-	}
-	for elem := range set {
-		if !other.Contains(elem) {
-			return false
-		}
-	}
-	return true
-}
-
-// Returns a clone of the set.
-// Does NOT clone the underlying elements.
-func (set Set) Clone() Set {
-	clonedSet := NewSet()
-	for elem := range set {
-		clonedSet.Add(elem)
-	}
-	return clonedSet
-}
-
-// Provides a convenient string representation of the current state of the set.
-func (set Set) String() string {
-	items := make([]string, 0, len(set))
-
-	for key := range set {
-		items = append(items, fmt.Sprintf("%v", key))
-	}
-	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
+	return a
 }
