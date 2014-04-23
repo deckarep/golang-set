@@ -1,2 +1,10 @@
 language: go
-go: 1.1
+
+go:
+    - 1.2
+    - tip
+
+script:
+    - go test ./...
+    - go test -race ./...
+
