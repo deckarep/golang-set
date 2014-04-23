@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/deckarep/golang-set.png?branch=master)](https://travis-ci.org/deckarep/golang-set)
 [![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.png)](http://godoc.org/github.com/deckarep/golang-set)
 
-golang-set
-==========
+## golang-set
 
-A simple set type for the Go language.  Until Go has sets built-in like maps, slices, and channels...use this.
+
+The missing set collection for the Go language.  Until Go has sets built-in...use this.
 
 Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set from Python.
 You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository
@@ -20,13 +20,22 @@ I have to give some credit for helping seed the idea with this post on [stackove
 
 *Update* - as of 3/9/2014, you can use a compile-time generic version of this package in the [gen](http://clipperhouse.github.io/gen/) framework.  This framework allows you to use the golang-set in a completely generic and type-safe way by allowing you to generate a supporting .go file based on your custom types.
 
-Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind 
-however that the Python set is a built-in type and supports additional features and syntax that make it awesome.  This set for Go is nowhere near as comprehensive as the Python set
-also, ~~this set has not been battle-tested or used in production~~.  Also, this set is not goroutine safe.  The rationale for this is the same reasons that the built-in
-maps and slices are not thread-safe.  Performance is favored over synchronization because this largely depends on your application requirements.  If you need synchronization,
-perhaps use a channels for a high-level solution or use mutex and embedding for a more low-level solution.
- 
-Examples but not exhaustive:
+## Features (as of 4/22/2014)
+
+* One common interface to both implementations
+* Two set implementations to choose from
+  * a thread-safe implementation designed for concurrent use
+  * a non-thread-safe implementation designed for performance
+* 75 benchmarks for both implementations
+* 35 unit tests for both implementations
+* 14 concurrent tests for the thread-safe implementation
+
+
+
+Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind
+however that the Python set is a built-in type and supports additional features and syntax that make it awesome.
+
+## Examples but not exhaustive:
 
 ```go
 requiredClasses := NewSet()
@@ -75,5 +84,3 @@ Thanks!
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/deckarep/golang-set/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 [![Analytics](https://ga-beacon.appspot.com/UA-42584447-2/deckarep/golang-set)](https://github.com/igrigorik/ga-beacon)
-
-
