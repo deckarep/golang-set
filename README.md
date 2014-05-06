@@ -38,21 +38,21 @@ however that the Python set is a built-in type and supports additional features 
 ## Examples but not exhaustive:
 
 ```go
-requiredClasses := NewSet()
+requiredClasses := mapset.NewSet()
 requiredClasses.Add("Cooking")
 requiredClasses.Add("English")
 requiredClasses.Add("Math")
 requiredClasses.Add("Biology")
 
 scienceSlice := []interface{}{"Biology", "Chemistry"}
-scienceClasses := NewSetFromSlice(scienceSlice)
+scienceClasses := mapset.NewSetFromSlice(scienceSlice)
 
-electiveClasses := NewSet()
+electiveClasses := mapset.NewSet()
 electiveClasses.Add("Welding")
 electiveClasses.Add("Music")
 electiveClasses.Add("Automotive")
 
-bonusClasses := NewSet()
+bonusClasses := mapset.NewSet()
 bonusClasses.Add("Go Programming")
 bonusClasses.Add("Python Programming")
 
@@ -71,10 +71,10 @@ fmt.Println(allClasses.Difference(scienceClasses)) //Set{Music, Automotive, Go P
 fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
 
 //How many bonus classes do you offer?
-fmt.Println(bonusClasses.Size()) //2
+fmt.Println(bonusClasses.Cardinality()) //2
 
 //Do you have the following classes? Welding, Automotive and English?
-fmt.Println(allClasses.ContainsAll("Welding", "Automotive", "English")) //true
+fmt.Println(allClasses.IsSuperset(mapset.NewSetFromSlice([]interface{}{"Welding", "Automotive", "English"}))) //true
 ```
 
 Thanks!
