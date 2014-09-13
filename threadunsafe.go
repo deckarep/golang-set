@@ -29,8 +29,6 @@ import (
     "fmt"
     "reflect"
     "strings"
-
-    "github.com/deckarep/golang-set"
 )
 
 type threadUnsafeSet map[interface{}]struct{}
@@ -179,30 +177,29 @@ func (set *threadUnsafeSet) String() string {
 }
 
 func (set *threadUnsafeSet) PowerSet() Set {
-    powset := newThreadUnsafeSet()
+    powset := NewThreadUnsafeSet()
+    nullset := newThreadUnsafeSet()
+    powset.Add(&nullset)
 
-    null := newThreadUnsafeSet()
-    powset.Add(null)
-    i := set.Iter()
-    for es := range i {
+    for es := range *set {
         u := newThreadUnsafeSet()
         j := powset.Iter()
         for er := range j {
             p := newThreadUnsafeSet()
             if reflect.TypeOf(er).Name() == "" {
-                k := er.(mapset.Set).Iter()
-                for ek := range k {
+                k := er.(*threadUnsafeSet)
+                for ek := range *(k) {
                     p.Add(ek)
                 }
             } else {
                 p.Add(er)
             }
             p.Add(es)
-            u.Add(p)
+            u.Add(&p)
         }
 
-        powset.Add(u)
+        powset = powset.Union(&u)
     }
 
-    return &powset
+    return powset
 }
