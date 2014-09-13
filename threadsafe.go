@@ -175,8 +175,7 @@ func (set *threadSafeSet) String() string {
 
 func (set *threadSafeSet) PowerSet() Set {
 	set.RLock()
-	defer set.RUnlock()
-
 	ret := set.s.PowerSet()
+	set.RUnlock()
 	return ret
 }
