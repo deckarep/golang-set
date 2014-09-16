@@ -128,6 +128,9 @@ type Set interface {
 	// same type as the receiver of the method.
 	// Otherwise, IsSuperset will panic.
 	Union(other Set) Set
+
+	// Returns all subsets of a given set (Power Set).
+	PowerSet() Set
 }
 
 // Creates and returns a reference to an empty set.

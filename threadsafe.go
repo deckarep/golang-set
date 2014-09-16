@@ -172,3 +172,10 @@ func (set *threadSafeSet) String() string {
 	set.RUnlock()
 	return ret
 }
+
+func (set *threadSafeSet) PowerSet() Set {
+	set.RLock()
+	ret := set.s.PowerSet()
+	set.RUnlock()
+	return ret
+}
