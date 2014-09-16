@@ -33,8 +33,22 @@ import (
 
 type threadUnsafeSet map[interface{}]struct{}
 
+type orderedPair struct {
+	first  interface{}
+	second interface{}
+}
+
 func newThreadUnsafeSet() threadUnsafeSet {
 	return make(threadUnsafeSet)
+}
+
+func (pair *orderedPair) Equal(other orderedPair) bool {
+	if pair.first == other.first &&
+		pair.second == other.second {
+		return true
+	}
+
+	return false
 }
 
 func (set *threadUnsafeSet) Add(i interface{}) bool {
@@ -176,14 +190,18 @@ func (set *threadUnsafeSet) String() string {
 	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
 }
 
+func (pair orderedPair) String() string {
+	return fmt.Sprintf("(%v, %v)", pair.first, pair.second)
+}
+
 func (set *threadUnsafeSet) PowerSet() Set {
-	powset := NewThreadUnsafeSet()
+	powSet := NewThreadUnsafeSet()
 	nullset := newThreadUnsafeSet()
-	powset.Add(&nullset)
+	powSet.Add(&nullset)
 
 	for es := range *set {
 		u := newThreadUnsafeSet()
-		j := powset.Iter()
+		j := powSet.Iter()
 		for er := range j {
 			p := newThreadUnsafeSet()
 			if reflect.TypeOf(er).Name() == "" {
@@ -198,8 +216,22 @@ func (set *threadUnsafeSet) PowerSet() Set {
 			u.Add(&p)
 		}
 
-		powset = powset.Union(&u)
+		powSet = powSet.Union(&u)
 	}
 
-	return powset
+	return powSet
+}
+
+func (set *threadUnsafeSet) CartesianProduct(other Set) Set {
+	o := other.(*threadUnsafeSet)
+	cartProduct := NewThreadUnsafeSet()
+
+	for i := range *set {
+		for j := range *o {
+			elem := orderedPair{first: i, second: j}
+			cartProduct.Add(elem)
+		}
+	}
+
+	return cartProduct
 }
