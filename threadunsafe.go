@@ -27,6 +27,7 @@ package mapset
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 )
 
@@ -173,4 +174,32 @@ func (set *threadUnsafeSet) String() string {
 		items = append(items, fmt.Sprintf("%v", elem))
 	}
 	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
+}
+
+func (set *threadUnsafeSet) PowerSet() Set {
+	powset := NewThreadUnsafeSet()
+	nullset := newThreadUnsafeSet()
+	powset.Add(&nullset)
+
+	for es := range *set {
+		u := newThreadUnsafeSet()
+		j := powset.Iter()
+		for er := range j {
+			p := newThreadUnsafeSet()
+			if reflect.TypeOf(er).Name() == "" {
+				k := er.(*threadUnsafeSet)
+				for ek := range *(k) {
+					p.Add(ek)
+				}
+			} else {
+				p.Add(er)
+			}
+			p.Add(es)
+			u.Add(&p)
+		}
+
+		powset = powset.Union(&u)
+	}
+
+	return powset
 }

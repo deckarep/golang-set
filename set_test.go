@@ -25,9 +25,7 @@ SOFTWARE.
 
 package mapset
 
-import (
-	"testing"
-)
+import "testing"
 
 func makeSet(ints []int) Set {
 	set := NewSet()
@@ -755,43 +753,57 @@ func Test_UnsafeIterator(t *testing.T) {
 	}
 }
 
+func Test_PowerSet(t *testing.T) {
+	a := NewThreadUnsafeSet()
+
+	a.Add(1)
+	a.Add("delta")
+	a.Add("chi")
+	a.Add(4)
+
+	b := a.PowerSet()
+	if b.Cardinality() != 16 {
+		t.Error("unexcpected PowerSet cardinality")
+	}
+}
+
 func Test_Example(t *testing.T) {
 	/*
-		requiredClasses := NewSet()
-		requiredClasses.Add("Cooking")
-		requiredClasses.Add("English")
-		requiredClasses.Add("Math")
-		requiredClasses.Add("Biology")
+	   requiredClasses := NewSet()
+	   requiredClasses.Add("Cooking")
+	   requiredClasses.Add("English")
+	   requiredClasses.Add("Math")
+	   requiredClasses.Add("Biology")
 
-		scienceSlice := []interface{}{"Biology", "Chemistry"}
-		scienceClasses := NewSetFromSlice(scienceSlice)
+	   scienceSlice := []interface{}{"Biology", "Chemistry"}
+	   scienceClasses := NewSetFromSlice(scienceSlice)
 
-		electiveClasses := NewSet()
-		electiveClasses.Add("Welding")
-		electiveClasses.Add("Music")
-		electiveClasses.Add("Automotive")
+	   electiveClasses := NewSet()
+	   electiveClasses.Add("Welding")
+	   electiveClasses.Add("Music")
+	   electiveClasses.Add("Automotive")
 
-		bonusClasses := NewSet()
-		bonusClasses.Add("Go Programming")
-		bonusClasses.Add("Python Programming")
+	   bonusClasses := NewSet()
+	   bonusClasses.Add("Go Programming")
+	   bonusClasses.Add("Python Programming")
 
-		//Show me all the available classes I can take
-		allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
-		fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
+	   //Show me all the available classes I can take
+	   allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
+	   fmt.Println(allClasses) //Set{English, Chemistry, Automotive, Cooking, Math, Biology, Welding, Music, Go Programming}
 
-		//Is cooking considered a science class?
-		fmt.Println(scienceClasses.Contains("Cooking")) //false
+	   //Is cooking considered a science class?
+	   fmt.Println(scienceClasses.Contains("Cooking")) //false
 
-		//Show me all classes that are not science classes, since I hate science.
-		fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
+	   //Show me all classes that are not science classes, since I hate science.
+	   fmt.Println(allClasses.Difference(scienceClasses)) //Set{English, Automotive, Cooking, Math, Welding, Music, Go Programming}
 
-		//Which science classes are also required classes?
-		fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
+	   //Which science classes are also required classes?
+	   fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
 
-		//How many bonus classes do you offer?
-		fmt.Println(bonusClasses.Cardinality()) //2
+	   //How many bonus classes do you offer?
+	   fmt.Println(bonusClasses.Cardinality()) //2
 
-		//Do you have the following classes? Welding, Automotive and English?
-		fmt.Println(allClasses.ContainsAll("Welding", "Automotive", "English"))
+	   //Do you have the following classes? Welding, Automotive and English?
+	   fmt.Println(allClasses.ContainsAll("Welding", "Automotive", "English"))
 	*/
 }
