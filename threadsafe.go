@@ -179,3 +179,16 @@ func (set *threadSafeSet) PowerSet() Set {
 	set.RUnlock()
 	return ret
 }
+
+func (set *threadSafeSet) CartesianProduct(other Set) Set {
+	o := other.(*threadSafeSet)
+
+	set.RLock()
+	o.RLock()
+
+	unsafeCartProduct := set.s.CartesianProduct(&o.s).(*threadUnsafeSet)
+	ret := &threadSafeSet{s: *unsafeCartProduct}
+	set.RUnlock()
+	o.RUnlock()
+	return ret
+}

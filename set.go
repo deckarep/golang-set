@@ -131,6 +131,9 @@ type Set interface {
 
 	// Returns all subsets of a given set (Power Set).
 	PowerSet() Set
+
+	// Returns the Cartesian Product of two sets.
+	CartesianProduct(other Set) Set
 }
 
 // Creates and returns a reference to an empty set.

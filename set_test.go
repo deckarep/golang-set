@@ -763,7 +763,94 @@ func Test_PowerSet(t *testing.T) {
 
 	b := a.PowerSet()
 	if b.Cardinality() != 16 {
-		t.Error("unexcpected PowerSet cardinality")
+		t.Error("unexpected PowerSet cardinality")
+	}
+}
+
+func Test_EmptySetProperties(t *testing.T) {
+	empty := NewSet()
+
+	a := NewSet()
+	a.Add(1)
+	a.Add("foo")
+	a.Add("bar")
+
+	b := NewSet()
+	b.Add("one")
+	b.Add("two")
+	b.Add(3)
+	b.Add(4)
+
+	c := NewSet()
+
+	if !empty.IsSubset(a) || !empty.IsSubset(b) {
+		t.Error("The empty set is supposed to be a subset of all sets")
+	}
+
+	if !a.IsSuperset(empty) || !b.IsSuperset(empty) {
+		t.Error("All sets are supposed to be a superset of the empty set")
+	}
+
+	if !empty.IsSubset(empty) || !empty.IsSuperset(empty) {
+		t.Error("The empty set is supposed to be a subset and a superset of itself")
+	}
+
+	c = a.Union(empty)
+	if !c.Equal(a) {
+		t.Error("The union of any set with the empty set is supposed to be equal to itself")
+	}
+
+	c = a.Intersect(empty)
+	if !c.Equal(empty) {
+		t.Error("The intesection of any set with the empty set is supposed to be the empty set")
+	}
+
+	c = a.CartesianProduct(empty)
+	if c.Cardinality() != 0 {
+		t.Error("Cartesian product of any set and the empty set must be the empty set")
+	}
+
+	if empty.Cardinality() != 0 {
+		t.Error("Cardinality of the empty set is supposed to be zero")
+	}
+
+	c = empty.PowerSet()
+	if c.Cardinality() != 1 {
+		t.Error("Cardinality of the power set of the empty set is supposed to be one { {} }")
+	}
+}
+
+func Test_CartesianProduct(t *testing.T) {
+	a := NewThreadUnsafeSet()
+	b := NewThreadUnsafeSet()
+	empty := NewThreadUnsafeSet()
+
+	a.Add(1)
+	a.Add(2)
+	a.Add(3)
+
+	b.Add("one")
+	b.Add("two")
+	b.Add("three")
+	b.Add("alpha")
+	b.Add("gamma")
+
+	c := a.CartesianProduct(b)
+	d := b.CartesianProduct(a)
+
+	if c.Cardinality() != d.Cardinality() {
+		t.Error("Cardinality of AxB must be equal to BxA")
+	}
+
+	if c.Cardinality() != (a.Cardinality() * b.Cardinality()) {
+		t.Error("Unexpected cardinality for cartesian product set")
+	}
+
+	c = a.CartesianProduct(empty)
+	d = empty.CartesianProduct(b)
+
+	if c.Cardinality() != 0 || d.Cardinality() != 0 {
+		t.Error("Cartesian product of any set and the emtpy set Ax0 || 0xA must be the empty set")
 	}
 }
 
