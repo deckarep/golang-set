@@ -20,6 +20,10 @@ I have to give some credit for helping seed the idea with this post on [stackove
 
 *Update* - as of 3/9/2014, you can use a compile-time generic version of this package in the [gen](http://clipperhouse.github.io/gen/) framework.  This framework allows you to use the golang-set in a completely generic and type-safe way by allowing you to generate a supporting .go file based on your custom types.
 
+## Features (as of 9/22/2014)
+
+* a CartesionProduct() method has been added with unit-tests: [Read more about the cartesion product](http://en.wikipedia.org/wiki/Cartesian_product)
+
 ## Features (as of 9/15/2014)
 
 * a PowerSet() method has been added with unit-tests: [Read more about the Power set](http://en.wikipedia.org/wiki/Power_set)
