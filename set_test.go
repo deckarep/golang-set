@@ -854,6 +854,20 @@ func Test_CartesianProduct(t *testing.T) {
 	}
 }
 
+func Test_ToSliceUnthreadsafe(t *testing.T) {
+	s := makeUnsafeSet([]int{1, 2, 3})
+	setAsSlice := s.ToSlice()
+	if len(setAsSlice) != s.Cardinality() {
+		t.Errorf("Set length is incorrect: %v", len(setAsSlice))
+	}
+
+	for _, i := range setAsSlice {
+		if !s.Contains(i) {
+			t.Errorf("Set is missing element: %v", i)
+		}
+	}
+}
+
 func Test_Example(t *testing.T) {
 	/*
 	   requiredClasses := NewSet()

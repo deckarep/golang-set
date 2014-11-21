@@ -235,3 +235,12 @@ func (set *threadUnsafeSet) CartesianProduct(other Set) Set {
 
 	return cartProduct
 }
+
+func (set *threadUnsafeSet) ToSlice() []interface{} {
+	keys := make([]interface{}, 0, set.Cardinality())
+	for elem := range *set {
+		keys = append(keys, elem)
+	}
+
+	return keys
+}
