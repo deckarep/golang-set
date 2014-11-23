@@ -134,6 +134,9 @@ type Set interface {
 
 	// Returns the Cartesian Product of two sets.
 	CartesianProduct(other Set) Set
+
+	// Returns the members of the set as a slice.
+	ToSlice() []interface{}
 }
 
 // Creates and returns a reference to an empty set.

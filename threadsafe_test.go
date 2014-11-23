@@ -346,3 +346,31 @@ func Test_SymmetricDifferenceConcurrent(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+func Test_ToSlice(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s := NewSet()
+	ints := rand.Perm(N)
+
+	var wg sync.WaitGroup
+	wg.Add(len(ints))
+	for i := 0; i < len(ints); i++ {
+		go func(i int) {
+			s.Add(i)
+			wg.Done()
+		}(i)
+	}
+
+	wg.Wait()
+	setAsSlice := s.ToSlice()
+	if len(setAsSlice) != s.Cardinality() {
+		t.Errorf("Set length is incorrect: %v", len(setAsSlice))
+	}
+
+	for _, i := range setAsSlice {
+		if !s.Contains(i) {
+			t.Errorf("Set is missing element: %v", i)
+		}
+	}
+}

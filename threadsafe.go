@@ -192,3 +192,13 @@ func (set *threadSafeSet) CartesianProduct(other Set) Set {
 	o.RUnlock()
 	return ret
 }
+
+func (set *threadSafeSet) ToSlice() []interface{} {
+	set.RLock()
+	keys := make([]interface{}, 0, set.Cardinality())
+	for elem := range set.s {
+		keys = append(keys, elem)
+	}
+	set.RUnlock()
+	return keys
+}

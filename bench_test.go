@@ -501,3 +501,23 @@ func BenchmarkString100Safe(b *testing.B) {
 func BenchmarkString100Unsafe(b *testing.B) {
 	benchString(b, 100, NewThreadUnsafeSet())
 }
+
+func benchToSlice(b *testing.B, s Set) {
+	nums := nrand(b.N)
+	for _, v := range nums {
+		s.Add(v)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.ToSlice()
+	}
+}
+
+func BenchmarkToSliceSafe(b *testing.B) {
+	benchToSlice(b, NewSet())
+}
+
+func BenchmarkToSliceUnsafe(b *testing.B) {
+	benchToSlice(b, NewThreadUnsafeSet())
+}
