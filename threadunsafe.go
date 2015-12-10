@@ -26,6 +26,8 @@ SOFTWARE.
 package mapset
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -261,4 +263,44 @@ func (set *threadUnsafeSet) ToSlice() []interface{} {
 	}
 
 	return keys
+}
+
+// MarshalJSON creates a JSON array from the set, it marshals all elements
+func (set *threadUnsafeSet) MarshalJSON() ([]byte, error) {
+	items := make([]string, 0, set.Cardinality())
+
+	for elem := range *set {
+		b, err := json.Marshal(elem)
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, string(b))
+	}
+
+	return []byte(fmt.Sprintf("[%s]", strings.Join(items, ","))), nil
+}
+
+// UnmarshalJSON recreates a set from a JSON array, it only decodes
+// primitive types. Numbers are decoded as json.Number.
+func (set *threadUnsafeSet) UnmarshalJSON(b []byte) error {
+	var i []interface{}
+
+	d := json.NewDecoder(bytes.NewReader(b))
+	d.UseNumber()
+	err := d.Decode(&i)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range i {
+		switch t := v.(type) {
+		case []interface{}, map[string]interface{}:
+			continue
+		default:
+			set.Add(t)
+		}
+	}
+
+	return nil
 }

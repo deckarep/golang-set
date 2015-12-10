@@ -222,3 +222,19 @@ func (set *threadSafeSet) ToSlice() []interface{} {
 	set.RUnlock()
 	return keys
 }
+
+func (set *threadSafeSet) MarshalJSON() ([]byte, error) {
+	set.RLock()
+	b, err := set.s.MarshalJSON()
+	set.RUnlock()
+
+	return b, err
+}
+
+func (set *threadSafeSet) UnmarshalJSON(p []byte) error {
+	set.RLock()
+	err := set.s.UnmarshalJSON(p)
+	set.RUnlock()
+
+	return err
+}
