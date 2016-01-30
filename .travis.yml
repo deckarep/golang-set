@@ -2,8 +2,10 @@ language: go
 
 go:
     - 1.2
+    - 1.3
+    - tip
 
 script:
-    - go test ./...
-    #- go test -race ./...
+    - go test -race ./...
+    - go test -bench=.
 
