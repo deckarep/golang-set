@@ -43,12 +43,23 @@ func makeUnsafeSet(ints []int) Set {
 	return set
 }
 
+func assertEqual(a, b Set, t *testing.T) {
+	if !a.Equal(b) {
+		t.Errorf("%v != %v\n", a, b)
+	}
+}
+
 func Test_NewSet(t *testing.T) {
 	a := NewSet()
-
 	if a.Cardinality() != 0 {
 		t.Error("NewSet should start out as an empty set")
 	}
+
+	assertEqual(NewSetFromSlice([]interface{}{}), NewSet(), t)
+	assertEqual(NewSetFromSlice([]interface{}{1}), NewSet(1), t)
+	assertEqual(NewSetFromSlice([]interface{}{1, 2}), NewSet(1, 2), t)
+	assertEqual(NewSetFromSlice([]interface{}{"a"}), NewSet("a"), t)
+	assertEqual(NewSetFromSlice([]interface{}{"a", "b"}), NewSet("a", "b"), t)
 }
 
 func Test_NewUnsafeSet(t *testing.T) {
