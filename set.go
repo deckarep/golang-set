@@ -106,6 +106,10 @@ type Set interface {
 	// range over.
 	Iter() <-chan interface{}
 
+	// Returns an Iterator object that you can
+	// use to range over the set.
+	Iterator() *Iterator
+
 	// Remove a single element from the set.
 	Remove(i interface{})
 

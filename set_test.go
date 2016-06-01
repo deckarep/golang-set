@@ -728,7 +728,7 @@ func Test_UnsafeSetClone(t *testing.T) {
 	}
 }
 
-func Test_Iterator(t *testing.T) {
+func Test_Iter(t *testing.T) {
 	a := NewSet()
 
 	a.Add("Z")
@@ -742,11 +742,11 @@ func Test_Iterator(t *testing.T) {
 	}
 
 	if !a.Equal(b) {
-		t.Error("The sets are not equal after iterating through the first set")
+		t.Error("The sets are not equal after iterating (Iter) through the first set")
 	}
 }
 
-func Test_UnsafeIterator(t *testing.T) {
+func Test_UnsafeIter(t *testing.T) {
 	a := NewThreadUnsafeSet()
 
 	a.Add("Z")
@@ -760,7 +760,43 @@ func Test_UnsafeIterator(t *testing.T) {
 	}
 
 	if !a.Equal(b) {
-		t.Error("The sets are not equal after iterating through the first set")
+		t.Error("The sets are not equal after iterating (Iter) through the first set")
+	}
+}
+
+func Test_Iterator(t *testing.T) {
+	a := NewSet()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	b := NewSet()
+	for val := range a.Iterator().C {
+		b.Add(val)
+	}
+
+	if !a.Equal(b) {
+		t.Error("The sets are not equal after iterating (Iterator) through the first set")
+	}
+}
+
+func Test_UnsafeIterator(t *testing.T) {
+	a := NewThreadUnsafeSet()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	b := NewThreadUnsafeSet()
+	for val := range a.Iterator().C {
+		b.Add(val)
+	}
+
+	if !a.Equal(b) {
+		t.Error("The sets are not equal after iterating (Iterator) through the first set")
 	}
 }
 

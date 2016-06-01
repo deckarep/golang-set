@@ -466,6 +466,45 @@ func BenchmarkIter100Unsafe(b *testing.B) {
 	benchIter(b, 100, NewThreadUnsafeSet())
 }
 
+func benchIterator(b *testing.B, n int, s Set) {
+	nums := nrand(n)
+	for _, v := range nums {
+		s.Add(v)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		c := s.Iterator().C
+		for _ = range c {
+
+		}
+	}
+}
+
+func BenchmarkIterator1Safe(b *testing.B) {
+	benchIterator(b, 1, NewSet())
+}
+
+func BenchmarkIterator1Unsafe(b *testing.B) {
+	benchIterator(b, 1, NewThreadUnsafeSet())
+}
+
+func BenchmarkIterator10Safe(b *testing.B) {
+	benchIterator(b, 10, NewSet())
+}
+
+func BenchmarkIterator10Unsafe(b *testing.B) {
+	benchIterator(b, 10, NewThreadUnsafeSet())
+}
+
+func BenchmarkIterator100Safe(b *testing.B) {
+	benchIterator(b, 100, NewSet())
+}
+
+func BenchmarkIterator100Unsafe(b *testing.B) {
+	benchIterator(b, 100, NewThreadUnsafeSet())
+}
+
 func benchString(b *testing.B, n int, s Set) {
 	nums := nrand(n)
 	for _, v := range nums {

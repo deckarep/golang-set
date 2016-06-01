@@ -145,6 +145,26 @@ func (set *threadSafeSet) Iter() <-chan interface{} {
 	return ch
 }
 
+func (set *threadSafeSet) Iterator() *Iterator {
+	iterator, ch, stopCh := newIterator()
+
+	go func() {
+		set.RLock()
+	L:
+		for elem := range set.s {
+			select {
+			case <-stopCh:
+				break L
+			case ch <- elem:
+			}
+		}
+		close(ch)
+		set.RUnlock()
+	}()
+
+	return iterator
+}
+
 func (set *threadSafeSet) Equal(other Set) bool {
 	o := other.(*threadSafeSet)
 
