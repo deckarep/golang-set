@@ -32,9 +32,7 @@ type Iterator struct {
 	stop chan struct{}
 }
 
-// Stop stops the Iterator, C will be closed.
-// Please note, that further values may be sent on C. Those have to be exhausted for the goroutine
-// can be garbage collected. Use as in the example, however, is safe.
+// Stop stops the Iterator, no further elements will be received on C, C will be closed.
 func (i *Iterator) Stop() {
 	// Allows for Stop() to be called multiple times
 	// (close() panics when called on already closed channel)
@@ -43,6 +41,10 @@ func (i *Iterator) Stop() {
 	}()
 
 	close(i.stop)
+
+	// Exhaust any remaining elements.
+	for _ = range i.C {
+	}
 }
 
 // newIterator returns a new Iterator instance together with its item and stop channels.
