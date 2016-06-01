@@ -800,6 +800,21 @@ func Test_UnsafeIterator(t *testing.T) {
 	}
 }
 
+func Test_IteratorStop(t *testing.T) {
+	a := NewSet()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	it := a.Iterator()
+	it.Stop()
+	for _ = range it.C {
+		t.Error("The iterating (Iterator) did not stop after Stop() has been called")
+	}
+}
+
 func Test_PowerSet(t *testing.T) {
 	a := NewThreadUnsafeSet()
 
