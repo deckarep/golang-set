@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/deckarep/golang-set.png?branch=master)](https://travis-ci.org/deckarep/golang-set)
-[![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.png)](http://godoc.org/github.com/deckarep/golang-set)
+[![Build Status](https://travis-ci.org/deckarep/golang-set.svg?branch=master)](https://travis-ci.org/deckarep/golang-set)
+[![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.svg)](http://godoc.org/github.com/deckarep/golang-set)
 
 ## golang-set
 
