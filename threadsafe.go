@@ -108,8 +108,14 @@ func (set *threadSafeSet) Difference(other Set) Set {
 func (set *threadSafeSet) SymmetricDifference(other Set) Set {
 	o := other.(*threadSafeSet)
 
+	set.RLock()
+	o.RLock()
+
 	unsafeDifference := set.s.SymmetricDifference(&o.s).(*threadUnsafeSet)
-	return &threadSafeSet{s: *unsafeDifference}
+	ret := &threadSafeSet{s: *unsafeDifference}
+	set.RUnlock()
+	o.RUnlock()
+	return ret
 }
 
 func (set *threadSafeSet) Clear() {
