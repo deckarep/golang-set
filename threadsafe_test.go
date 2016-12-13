@@ -376,6 +376,27 @@ func Test_ToSlice(t *testing.T) {
 	}
 }
 
+// Test_ToSliceDeadlock - fixes issue: https://github.com/deckarep/golang-set/issues/36
+// This code reveals the deadlock however it doesn't happen consistently.
+func Test_ToSliceDeadlock(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	var wg sync.WaitGroup
+	set := NewSet()
+	workers := 10
+	wg.Add(workers)
+	for i := 1; i <= workers; i++ {
+		go func() {
+			for j := 0; j < 1000; j++ {
+				set.Add(1)
+				set.ToSlice()
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
 func Test_UnmarshalJSON(t *testing.T) {
 	s := []byte(`["test", 1, 2, 3, ["4,5,6"]]`)
 	expected := NewSetFromSlice(

@@ -214,8 +214,8 @@ func (set *threadSafeSet) CartesianProduct(other Set) Set {
 }
 
 func (set *threadSafeSet) ToSlice() []interface{} {
-	set.RLock()
 	keys := make([]interface{}, 0, set.Cardinality())
+	set.RLock()
 	for elem := range set.s {
 		keys = append(keys, elem)
 	}
