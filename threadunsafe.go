@@ -35,18 +35,18 @@ import (
 
 type threadUnsafeSet map[interface{}]struct{}
 
-type orderedPair struct {
-	first  interface{}
-	second interface{}
+type OrderedPair struct {
+	First  interface{}
+	Second interface{}
 }
 
 func newThreadUnsafeSet() threadUnsafeSet {
 	return make(threadUnsafeSet)
 }
 
-func (pair *orderedPair) Equal(other orderedPair) bool {
-	if pair.first == other.first &&
-		pair.second == other.second {
+func (pair *OrderedPair) Equal(other OrderedPair) bool {
+	if pair.First == other.First &&
+		pair.Second == other.Second {
 		return true
 	}
 
@@ -210,8 +210,8 @@ func (set *threadUnsafeSet) String() string {
 	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
 }
 
-func (pair orderedPair) String() string {
-	return fmt.Sprintf("(%v, %v)", pair.first, pair.second)
+func (pair OrderedPair) String() string {
+	return fmt.Sprintf("(%v, %v)", pair.First, pair.Second)
 }
 
 func (set *threadUnsafeSet) PowerSet() Set {
@@ -248,7 +248,7 @@ func (set *threadUnsafeSet) CartesianProduct(other Set) Set {
 
 	for i := range *set {
 		for j := range *o {
-			elem := orderedPair{first: i, second: j}
+			elem := OrderedPair{First: i, Second: j}
 			cartProduct.Add(elem)
 		}
 	}
