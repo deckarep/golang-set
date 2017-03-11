@@ -810,7 +810,7 @@ func Test_IteratorStop(t *testing.T) {
 
 	it := a.Iterator()
 	it.Stop()
-	for _ = range it.C {
+	for range it.C {
 		t.Error("The iterating (Iterator) did not stop after Stop() has been called")
 	}
 }

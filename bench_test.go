@@ -436,7 +436,7 @@ func benchIter(b *testing.B, n int, s Set) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		c := s.Iter()
-		for _ = range c {
+		for range c {
 
 		}
 	}
@@ -475,7 +475,7 @@ func benchIterator(b *testing.B, n int, s Set) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		c := s.Iterator().C
-		for _ = range c {
+		for range c {
 
 		}
 	}

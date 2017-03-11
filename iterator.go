@@ -43,7 +43,7 @@ func (i *Iterator) Stop() {
 	close(i.stop)
 
 	// Exhaust any remaining elements.
-	for _ = range i.C {
+	for range i.C {
 	}
 }
 
