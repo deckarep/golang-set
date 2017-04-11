@@ -810,7 +810,7 @@ func Test_IteratorStop(t *testing.T) {
 
 	it := a.Iterator()
 	it.Stop()
-	for _ = range it.C {
+	for range it.C {
 		t.Error("The iterating (Iterator) did not stop after Stop() has been called")
 	}
 }
@@ -843,8 +843,6 @@ func Test_EmptySetProperties(t *testing.T) {
 	b.Add(3)
 	b.Add(4)
 
-	c := NewSet()
-
 	if !empty.IsSubset(a) || !empty.IsSubset(b) {
 		t.Error("The empty set is supposed to be a subset of all sets")
 	}
@@ -857,7 +855,7 @@ func Test_EmptySetProperties(t *testing.T) {
 		t.Error("The empty set is supposed to be a subset and a superset of itself")
 	}
 
-	c = a.Union(empty)
+	c := a.Union(empty)
 	if !c.Equal(a) {
 		t.Error("The union of any set with the empty set is supposed to be equal to itself")
 	}
