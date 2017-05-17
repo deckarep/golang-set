@@ -286,6 +286,80 @@ func BenchmarkIsSuperset100Unsafe(b *testing.B) {
 	benchIsSuperset(b, 100, NewThreadUnsafeSet(), NewThreadUnsafeSet())
 }
 
+func benchIsProperSubset(b *testing.B, n int, s, t Set) {
+	nums := nrand(n)
+	for _, v := range nums {
+		s.Add(v)
+		t.Add(v)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.IsProperSubset(t)
+	}
+}
+
+func BenchmarkIsProperSubset1Safe(b *testing.B) {
+	benchIsProperSubset(b, 1, NewSet(), NewSet())
+}
+
+func BenchmarkIsProperSubset1Unsafe(b *testing.B) {
+	benchIsProperSubset(b, 1, NewThreadUnsafeSet(), NewThreadUnsafeSet())
+}
+
+func BenchmarkIsProperSubset10Safe(b *testing.B) {
+	benchIsProperSubset(b, 10, NewSet(), NewSet())
+}
+
+func BenchmarkIsProperSubset10Unsafe(b *testing.B) {
+	benchIsProperSubset(b, 10, NewThreadUnsafeSet(), NewThreadUnsafeSet())
+}
+
+func BenchmarkIsProperSubset100Safe(b *testing.B) {
+	benchIsProperSubset(b, 100, NewSet(), NewSet())
+}
+
+func BenchmarkIsProperSubset100Unsafe(b *testing.B) {
+	benchIsProperSubset(b, 100, NewThreadUnsafeSet(), NewThreadUnsafeSet())
+}
+
+func benchIsProperSuperset(b *testing.B, n int, s, t Set) {
+	nums := nrand(n)
+	for _, v := range nums {
+		s.Add(v)
+		t.Add(v)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.IsProperSuperset(t)
+	}
+}
+
+func BenchmarkIsProperSuperset1Safe(b *testing.B) {
+	benchIsProperSuperset(b, 1, NewSet(), NewSet())
+}
+
+func BenchmarkIsProperSuperset1Unsafe(b *testing.B) {
+	benchIsProperSuperset(b, 1, NewThreadUnsafeSet(), NewThreadUnsafeSet())
+}
+
+func BenchmarkIsProperSuperset10Safe(b *testing.B) {
+	benchIsProperSuperset(b, 10, NewSet(), NewSet())
+}
+
+func BenchmarkIsProperSuperset10Unsafe(b *testing.B) {
+	benchIsProperSuperset(b, 10, NewThreadUnsafeSet(), NewThreadUnsafeSet())
+}
+
+func BenchmarkIsProperSuperset100Safe(b *testing.B) {
+	benchIsProperSuperset(b, 100, NewSet(), NewSet())
+}
+
+func BenchmarkIsProperSuperset100Unsafe(b *testing.B) {
+	benchIsProperSuperset(b, 100, NewThreadUnsafeSet(), NewThreadUnsafeSet())
+}
+
 func BenchmarkDifference1Safe(b *testing.B) {
 	benchDifference(b, 1, NewSet(), NewSet())
 }

@@ -85,6 +85,25 @@ type Set interface {
 	Intersect(other Set) Set
 
 	// Determines if every element in this set is in
+	// the other set but the two sets are not equal.
+	//
+	// Note that the argument to IsProperSubset
+	// must be of the same type as the receiver
+	// of the method. Otherwise, IsProperSubset
+	// will panic.
+	IsProperSubset(other Set) bool
+
+	// Determines if every element in the other set
+	// is in this set but the two sets are not
+	// equal.
+	//
+	// Note that the argument to IsSuperset
+	// must be of the same type as the receiver
+	// of the method. Otherwise, IsSuperset will
+	// panic.
+	IsProperSuperset(other Set) bool
+
+	// Determines if every element in this set is in
 	// the other set.
 	//
 	// Note that the argument to IsSubset

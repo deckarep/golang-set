@@ -231,6 +231,27 @@ func Test_IsSubsetConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
+func Test_IsProperSubsetConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s, ss := NewSet(), NewSet()
+	ints := rand.Perm(N)
+	for _, v := range ints {
+		s.Add(v)
+		ss.Add(v)
+	}
+
+	var wg sync.WaitGroup
+	for range ints {
+		wg.Add(1)
+		go func() {
+			s.IsProperSubset(ss)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
 func Test_IsSupersetConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
@@ -246,6 +267,27 @@ func Test_IsSupersetConcurrent(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			s.IsSuperset(ss)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+func Test_IsProperSupersetConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s, ss := NewSet(), NewSet()
+	ints := rand.Perm(N)
+	for _, v := range ints {
+		s.Add(v)
+		ss.Add(v)
+	}
+
+	var wg sync.WaitGroup
+	for range ints {
+		wg.Add(1)
+		go func() {
+			s.IsProperSuperset(ss)
 			wg.Done()
 		}()
 	}
