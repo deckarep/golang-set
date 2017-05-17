@@ -138,8 +138,10 @@ func Test_ContainsConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.Contains(interfaces...)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
@@ -157,8 +159,10 @@ func Test_DifferenceConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.Difference(ss)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
@@ -176,8 +180,10 @@ func Test_EqualConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.Equal(ss)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
@@ -195,8 +201,10 @@ func Test_IntersectConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.Intersect(ss)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
@@ -214,8 +222,10 @@ func Test_IsSubsetConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.IsSubset(ss)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
@@ -233,8 +243,10 @@ func Test_IsSupersetConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.IsSuperset(ss)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
@@ -329,8 +341,10 @@ func Test_SymmetricDifferenceConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
+		wg.Add(1)
 		go func() {
 			s.SymmetricDifference(ss)
+			wg.Done()
 		}()
 	}
 	wg.Wait()
