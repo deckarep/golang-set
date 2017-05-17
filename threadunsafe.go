@@ -78,8 +78,16 @@ func (set *threadUnsafeSet) IsSubset(other Set) bool {
 	return true
 }
 
+func (set *threadUnsafeSet) IsProperSubset(other Set) bool {
+	return set.IsSubset(other) && !set.Equal(other)
+}
+
 func (set *threadUnsafeSet) IsSuperset(other Set) bool {
 	return other.IsSubset(set)
+}
+
+func (set *threadUnsafeSet) IsProperSuperset(other Set) bool {
+	return set.IsSuperset(other) && !set.Equal(other)
 }
 
 func (set *threadUnsafeSet) Union(other Set) Set {
