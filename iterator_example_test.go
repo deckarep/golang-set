@@ -16,7 +16,7 @@ func ExampleIterator() {
 		&YourType{Name: "Nick"},
 	})
 
-	var found *YourType = nil
+	var found *YourType
 	it := set.Iterator()
 
 	for elem := range it.C {
