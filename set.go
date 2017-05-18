@@ -42,7 +42,7 @@ type Set interface {
 	Cardinality() int
 
 	// Removes all elements from the set, leaving
-	// the emtpy set.
+	// the empty set.
 	Clear()
 
 	// Returns a clone of the set using the same
