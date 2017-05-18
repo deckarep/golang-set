@@ -587,7 +587,7 @@ func benchString(b *testing.B, n int, s Set) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		s.String()
+		_ = s.String()
 	}
 }
 
