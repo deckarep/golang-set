@@ -364,7 +364,7 @@ func Test_StringConcurrent(t *testing.T) {
 	wg.Add(len(ints))
 	for range ints {
 		go func() {
-			s.String()
+			_ = s.String()
 			wg.Done()
 		}()
 	}

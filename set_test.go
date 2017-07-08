@@ -1031,7 +1031,7 @@ func Test_CartesianProduct(t *testing.T) {
 	d = empty.CartesianProduct(b)
 
 	if c.Cardinality() != 0 || d.Cardinality() != 0 {
-		t.Error("Cartesian product of any set and the emtpy set Ax0 || 0xA must be the empty set")
+		t.Error("Cartesian product of any set and the empty set Ax0 || 0xA must be the empty set")
 	}
 }
 

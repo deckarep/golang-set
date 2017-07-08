@@ -35,6 +35,7 @@ import (
 
 type threadUnsafeSet map[interface{}]struct{}
 
+// An OrderedPair represents a 2-tuple of values.
 type OrderedPair struct {
 	First  interface{}
 	Second interface{}
@@ -44,6 +45,7 @@ func newThreadUnsafeSet() threadUnsafeSet {
 	return make(threadUnsafeSet)
 }
 
+// Equal says whether two 2-tuples contain the same values in the same order.
 func (pair *OrderedPair) Equal(other OrderedPair) bool {
 	if pair.First == other.First &&
 		pair.Second == other.Second {
@@ -218,6 +220,7 @@ func (set *threadUnsafeSet) String() string {
 	return fmt.Sprintf("Set{%s}", strings.Join(items, ", "))
 }
 
+// String outputs a 2-tuple in the form "(A, B)".
 func (pair OrderedPair) String() string {
 	return fmt.Sprintf("(%v, %v)", pair.First, pair.Second)
 }
