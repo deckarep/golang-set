@@ -74,11 +74,25 @@ func (set *threadSafeSet) IsProperSubset(other Set) bool {
 }
 
 func (set *threadSafeSet) IsSuperset(other Set) bool {
-	return other.IsSubset(set)
+	o := other.(*threadSafeSet)
+
+	set.RLock()
+	defer set.RUnlock()
+	o.RLock()
+	defer o.RUnlock()
+
+	return o.IsSubset(set)
 }
 
 func (set *threadSafeSet) IsProperSuperset(other Set) bool {
-	return other.IsProperSubset(set)
+	o := other.(*threadSafeSet)
+
+	set.RLock()
+	defer set.RUnlock()
+	o.RLock()
+	defer o.RUnlock()
+
+	return o.IsProperSubset(set)
 }
 
 func (set *threadSafeSet) Union(other Set) Set {
