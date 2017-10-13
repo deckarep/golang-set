@@ -159,6 +159,14 @@ func (set *threadUnsafeSet) Cardinality() int {
 	return len(*set)
 }
 
+func (set *threadUnsafeSet) Each(cb func(interface{}) bool) {
+	for elem := range *set {
+		if cb(elem) {
+			break
+		}
+	}
+}
+
 func (set *threadUnsafeSet) Iter() <-chan interface{} {
 	ch := make(chan interface{})
 	go func() {

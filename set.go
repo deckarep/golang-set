@@ -126,6 +126,10 @@ type Set interface {
 	// panic.
 	IsSuperset(other Set) bool
 
+	// Iterates over elements and executes the passed func against each element.
+	// If passed func returns true, stop iteration at the time.
+	Each(func(interface{}) bool)
+
 	// Returns a channel of elements that you can
 	// range over.
 	Iter() <-chan interface{}

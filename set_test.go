@@ -849,6 +849,37 @@ func Test_UnsafeSetClone(t *testing.T) {
 	}
 }
 
+func Test_Each(t *testing.T) {
+	a := NewSet()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	b := NewSet()
+	a.Each(func(elem interface{}) bool {
+		b.Add(elem)
+		return false
+	})
+
+	if !a.Equal(b) {
+		t.Error("The sets are not equal after iterating (Each) through the first set")
+	}
+
+	var count int
+	a.Each(func(elem interface{}) bool {
+		if count == 2 {
+			return true
+		}
+		count++
+		return false
+	})
+	if count != 2 {
+		t.Error("Iteration should stop on the way")
+	}
+}
+
 func Test_Iter(t *testing.T) {
 	a := NewSet()
 

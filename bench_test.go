@@ -501,6 +501,44 @@ func BenchmarkUnion100Unsafe(b *testing.B) {
 	benchUnion(b, 100, NewThreadUnsafeSet(), NewThreadUnsafeSet())
 }
 
+func benchEach(b *testing.B, n int, s Set) {
+	nums := nrand(n)
+	for _, v := range nums {
+		s.Add(v)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.Each(func(elem interface{}) bool {
+			return false
+		})
+	}
+}
+
+func BenchmarkEach1Safe(b *testing.B) {
+	benchEach(b, 1, NewSet())
+}
+
+func BenchmarkEach1Unsafe(b *testing.B) {
+	benchEach(b, 1, NewThreadUnsafeSet())
+}
+
+func BenchmarkEach10Safe(b *testing.B) {
+	benchEach(b, 10, NewSet())
+}
+
+func BenchmarkEach10Unsafe(b *testing.B) {
+	benchEach(b, 10, NewThreadUnsafeSet())
+}
+
+func BenchmarkEach100Safe(b *testing.B) {
+	benchEach(b, 100, NewSet())
+}
+
+func BenchmarkEach100Unsafe(b *testing.B) {
+	benchEach(b, 100, NewThreadUnsafeSet())
+}
+
 func benchIter(b *testing.B, n int, s Set) {
 	nums := nrand(n)
 	for _, v := range nums {
