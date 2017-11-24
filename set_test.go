@@ -27,7 +27,7 @@ package mapset
 
 import "testing"
 
-func makeSet(ints []int) Set {
+func makeSet(ints ...int) Set {
 	set := NewSet()
 	for _, i := range ints {
 		set.Add(i)
@@ -35,7 +35,7 @@ func makeSet(ints []int) Set {
 	return set
 }
 
-func makeUnsafeSet(ints []int) Set {
+func makeUnsafeSet(ints ...int) Set {
 	set := NewThreadUnsafeSet()
 	for _, i := range ints {
 		set.Add(i)
@@ -71,7 +71,7 @@ func Test_NewUnsafeSet(t *testing.T) {
 }
 
 func Test_AddSet(t *testing.T) {
-	a := makeSet([]int{1, 2, 3})
+	a := makeSet(1, 2, 3)
 
 	if a.Cardinality() != 3 {
 		t.Error("AddSet does not have a size of 3 even though 3 items were added to a new set")
@@ -79,7 +79,7 @@ func Test_AddSet(t *testing.T) {
 }
 
 func Test_AddUnsafeSet(t *testing.T) {
-	a := makeUnsafeSet([]int{1, 2, 3})
+	a := makeUnsafeSet(1, 2, 3)
 
 	if a.Cardinality() != 3 {
 		t.Error("AddSet does not have a size of 3 even though 3 items were added to a new set")
@@ -87,7 +87,7 @@ func Test_AddUnsafeSet(t *testing.T) {
 }
 
 func Test_AddSetNoDuplicate(t *testing.T) {
-	a := makeSet([]int{7, 5, 3, 7})
+	a := makeSet(7, 5, 3, 7)
 
 	if a.Cardinality() != 3 {
 		t.Error("AddSetNoDuplicate set should have 3 elements since 7 is a duplicate")
@@ -99,7 +99,7 @@ func Test_AddSetNoDuplicate(t *testing.T) {
 }
 
 func Test_AddUnsafeSetNoDuplicate(t *testing.T) {
-	a := makeUnsafeSet([]int{7, 5, 3, 7})
+	a := makeUnsafeSet(7, 5, 3, 7)
 
 	if a.Cardinality() != 3 {
 		t.Error("AddSetNoDuplicate set should have 3 elements since 7 is a duplicate")
@@ -111,7 +111,7 @@ func Test_AddUnsafeSetNoDuplicate(t *testing.T) {
 }
 
 func Test_RemoveSet(t *testing.T) {
-	a := makeSet([]int{6, 3, 1})
+	a := makeSet(6, 3, 1)
 
 	a.Remove(3)
 
@@ -132,7 +132,7 @@ func Test_RemoveSet(t *testing.T) {
 }
 
 func Test_RemoveUnsafeSet(t *testing.T) {
-	a := makeUnsafeSet([]int{6, 3, 1})
+	a := makeUnsafeSet(6, 3, 1)
 
 	a.Remove(3)
 
@@ -201,7 +201,7 @@ func Test_ContainsUnsafeSet(t *testing.T) {
 }
 
 func Test_ContainsMultipleSet(t *testing.T) {
-	a := makeSet([]int{8, 6, 7, 5, 3, 0, 9})
+	a := makeSet(8, 6, 7, 5, 3, 0, 9)
 
 	if !a.Contains(8, 6, 7, 5, 3, 0, 9) {
 		t.Error("ContainsAll should contain Jenny's phone number")
@@ -213,7 +213,7 @@ func Test_ContainsMultipleSet(t *testing.T) {
 }
 
 func Test_ContainsMultipleUnsafeSet(t *testing.T) {
-	a := makeUnsafeSet([]int{8, 6, 7, 5, 3, 0, 9})
+	a := makeUnsafeSet(8, 6, 7, 5, 3, 0, 9)
 
 	if !a.Contains(8, 6, 7, 5, 3, 0, 9) {
 		t.Error("ContainsAll should contain Jenny's phone number")
@@ -225,7 +225,7 @@ func Test_ContainsMultipleUnsafeSet(t *testing.T) {
 }
 
 func Test_ClearSet(t *testing.T) {
-	a := makeSet([]int{2, 5, 9, 10})
+	a := makeSet(2, 5, 9, 10)
 
 	a.Clear()
 
@@ -235,7 +235,7 @@ func Test_ClearSet(t *testing.T) {
 }
 
 func Test_ClearUnsafeSet(t *testing.T) {
-	a := makeUnsafeSet([]int{2, 5, 9, 10})
+	a := makeUnsafeSet(2, 5, 9, 10)
 
 	a.Clear()
 
@@ -309,7 +309,7 @@ func Test_CardinalityUnsafeSet(t *testing.T) {
 }
 
 func Test_SetIsSubset(t *testing.T) {
-	a := makeSet([]int{1, 2, 3, 5, 7})
+	a := makeSet(1, 2, 3, 5, 7)
 
 	b := NewSet()
 	b.Add(3)
@@ -328,8 +328,8 @@ func Test_SetIsSubset(t *testing.T) {
 }
 
 func Test_SetIsProperSubset(t *testing.T) {
-	a := makeSet([]int{1, 2, 3, 5, 7})
-	b := makeSet([]int{7, 5, 3, 2, 1})
+	a := makeSet(1, 2, 3, 5, 7)
+	b := makeSet(7, 5, 3, 2, 1)
 
 	if !a.IsSubset(b) {
 		t.Error("set a should be a subset of set b")
@@ -349,7 +349,7 @@ func Test_SetIsProperSubset(t *testing.T) {
 }
 
 func Test_UnsafeSetIsSubset(t *testing.T) {
-	a := makeUnsafeSet([]int{1, 2, 3, 5, 7})
+	a := makeUnsafeSet(1, 2, 3, 5, 7)
 
 	b := NewThreadUnsafeSet()
 	b.Add(3)
@@ -368,7 +368,7 @@ func Test_UnsafeSetIsSubset(t *testing.T) {
 }
 
 func Test_UnsafeSetIsProperSubset(t *testing.T) {
-	a := makeUnsafeSet([]int{1, 2, 3, 5, 7})
+	a := makeUnsafeSet(1, 2, 3, 5, 7)
 	b := NewThreadUnsafeSet()
 	b.Add(7)
 	b.Add(1)
@@ -1067,7 +1067,7 @@ func Test_CartesianProduct(t *testing.T) {
 }
 
 func Test_ToSliceUnthreadsafe(t *testing.T) {
-	s := makeUnsafeSet([]int{1, 2, 3})
+	s := makeUnsafeSet(1, 2, 3)
 	setAsSlice := s.ToSlice()
 	if len(setAsSlice) != s.Cardinality() {
 		t.Errorf("Set length is incorrect: %v", len(setAsSlice))
@@ -1077,6 +1077,32 @@ func Test_ToSliceUnthreadsafe(t *testing.T) {
 		if !s.Contains(i) {
 			t.Errorf("Set is missing element: %v", i)
 		}
+	}
+}
+
+
+func Test_Size(t *testing.T) {
+	s := makeUnsafeSet(1, 2, 3)
+	if s.Size() != 3 {
+		t.Errorf("Set Size is incorrect: %v", s.Size())
+	}
+
+	s.Add(4)
+	if s.Size() != 4 {
+		t.Errorf("Set Size is incorrect: %v", s.Size())
+	}
+
+	// Re-add 1,2,3,4, still size 4.
+	s.Add(1)
+	s.Add(2)
+	s.Add(3)
+	s.Add(4)
+	if s.Size() != 4 {
+		t.Errorf("Set Size is incorrect: %v", s.Size())
+	}
+
+	if NewSet().Size() != 0 {
+		t.Errorf("New / empty set size is incorrect: %v", 0)
 	}
 }
 

@@ -284,6 +284,10 @@ func (set *threadUnsafeSet) ToSlice() []interface{} {
 	return keys
 }
 
+func (set *threadUnsafeSet) Size() int {
+	return len(*set)
+}
+
 // MarshalJSON creates a JSON array from the set, it marshals all elements
 func (set *threadUnsafeSet) MarshalJSON() ([]byte, error) {
 	items := make([]string, 0, set.Cardinality())

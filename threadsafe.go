@@ -254,6 +254,13 @@ func (set *threadSafeSet) ToSlice() []interface{} {
 	return keys
 }
 
+func (set *threadSafeSet) Size() int {
+	set.RLock()
+	ret := set.s.Size()
+	set.RUnlock()
+	return ret
+}
+
 func (set *threadSafeSet) MarshalJSON() ([]byte, error) {
 	set.RLock()
 	b, err := set.s.MarshalJSON()
