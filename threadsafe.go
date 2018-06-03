@@ -234,7 +234,7 @@ func (set *threadSafeSet) PowerSet() Set {
 func (set *threadSafeSet) Pop() interface{} {
 	set.Lock()
 	defer set.Unlock()
-	return set.Pop()
+	return set.s.Pop()
 }
 
 func (set *threadSafeSet) CartesianProduct(other Set) Set {
