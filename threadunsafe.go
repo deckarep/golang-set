@@ -237,6 +237,14 @@ func (pair OrderedPair) String() string {
 	return fmt.Sprintf("(%v, %v)", pair.First, pair.Second)
 }
 
+func (set *threadUnsafeSet) Pop() interface{} {
+	for item := range *set {
+		delete(*set, item)
+		return item
+	}
+	return nil
+}
+
 func (set *threadUnsafeSet) PowerSet() Set {
 	powSet := NewThreadUnsafeSet()
 	nullset := newThreadUnsafeSet()
