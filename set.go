@@ -162,6 +162,9 @@ type Set interface {
 	// Otherwise, IsSuperset will panic.
 	Union(other Set) Set
 
+	// Pop removes and returns an arbitrary item from the set.
+	Pop() interface{}
+
 	// Returns all subsets of a given set (Power Set).
 	PowerSet() Set
 

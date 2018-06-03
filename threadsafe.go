@@ -231,6 +231,12 @@ func (set *threadSafeSet) PowerSet() Set {
 	return ret
 }
 
+func (set *threadSafeSet) Pop() interface{} {
+	set.Lock()
+	defer set.Unlock()
+	return set.Pop()
+}
+
 func (set *threadSafeSet) CartesianProduct(other Set) Set {
 	o := other.(*threadSafeSet)
 
