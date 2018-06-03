@@ -967,6 +967,70 @@ func Test_IteratorStop(t *testing.T) {
 	}
 }
 
+func Test_PopSafe(t *testing.T) {
+	a := NewSet()
+
+	a.Add("a")
+	a.Add("b")
+	a.Add("c")
+	a.Add("d")
+
+	captureSet := NewSet()
+	captureSet.Add(a.Pop())
+	captureSet.Add(a.Pop())
+	captureSet.Add(a.Pop())
+	captureSet.Add(a.Pop())
+	finalNil := a.Pop()
+
+	if captureSet.Cardinality() != 4 {
+		t.Error("unexpected captureSet cardinality; should be 4")
+	}
+
+	if a.Cardinality() != 0 {
+		t.Error("unepxected a cardinality; should be zero")
+	}
+
+	if !captureSet.Contains("c", "a", "d", "b") {
+		t.Error("unexpected result set; should be a,b,c,d (any order is fine")
+	}
+
+	if finalNil != nil {
+		t.Error("when original set is empty, further pops should result in nil")
+	}
+}
+
+func Test_PopUnsafe(t *testing.T) {
+	a := NewThreadUnsafeSet()
+
+	a.Add("a")
+	a.Add("b")
+	a.Add("c")
+	a.Add("d")
+
+	captureSet := NewThreadUnsafeSet()
+	captureSet.Add(a.Pop())
+	captureSet.Add(a.Pop())
+	captureSet.Add(a.Pop())
+	captureSet.Add(a.Pop())
+	finalNil := a.Pop()
+
+	if captureSet.Cardinality() != 4 {
+		t.Error("unexpected captureSet cardinality; should be 4")
+	}
+
+	if a.Cardinality() != 0 {
+		t.Error("unepxected a cardinality; should be zero")
+	}
+
+	if !captureSet.Contains("c", "a", "d", "b") {
+		t.Error("unexpected result set; should be a,b,c,d (any order is fine")
+	}
+
+	if finalNil != nil {
+		t.Error("when original set is empty, further pops should result in nil")
+	}
+}
+
 func Test_PowerSet(t *testing.T) {
 	a := NewThreadUnsafeSet()
 
