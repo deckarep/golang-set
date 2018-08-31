@@ -1045,6 +1045,20 @@ func Test_PowerSet(t *testing.T) {
 	}
 }
 
+func Test_PowerSetThreadSafe(t *testing.T) {
+	set := NewSet().PowerSet()
+	_, setIsThreadSafe := set.(*threadSafeSet)
+	if !setIsThreadSafe {
+		t.Error("result of PowerSet should be thread safe")
+	}
+
+	subset := set.Pop()
+	_, subsetIsThreadSafe := subset.(*threadSafeSet)
+	if !subsetIsThreadSafe {
+		t.Error("subsets in PowerSet result should be thread safe")
+	}
+}
+
 func Test_EmptySetProperties(t *testing.T) {
 	empty := NewSet()
 
