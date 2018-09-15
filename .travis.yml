@@ -7,5 +7,5 @@ go:
 
 script:
     - go test -race ./...
-    - go test -bench=.
+    - go test -bench=. -benchmem
 
