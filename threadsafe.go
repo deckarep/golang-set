@@ -36,6 +36,10 @@ func newThreadSafeSet() threadSafeSet {
 	return threadSafeSet{s: newThreadUnsafeSet()}
 }
 
+func newThreadSafeSetWithSize(cardinality int) threadSafeSet {
+	return threadSafeSet{s: newThreadUnsafeSetWithSize(cardinality)}
+}
+
 func (set *threadSafeSet) Add(i interface{}) bool {
 	set.Lock()
 	ret := set.s.Add(i)
