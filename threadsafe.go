@@ -149,6 +149,12 @@ func (set *threadSafeSet) Remove(i interface{}) {
 	set.Unlock()
 }
 
+func (set *threadSafeSet) RemoveAll(i ...interface{}) {
+	set.Lock()
+	set.s.RemoveAll(i...)
+	set.Unlock()
+}
+
 func (set *threadSafeSet) Cardinality() int {
 	set.RLock()
 	defer set.RUnlock()

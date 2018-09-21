@@ -141,6 +141,9 @@ type Set interface {
 	// Remove a single element from the set.
 	Remove(i interface{})
 
+	// RemoveAll removes multiple elements from the set.
+	RemoveAll(i ...interface{})
+
 	// Provides a convenient string representation
 	// of the current state of the set.
 	String() string

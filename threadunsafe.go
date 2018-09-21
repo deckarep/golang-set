@@ -163,6 +163,12 @@ func (set *threadUnsafeSet) Remove(i interface{}) {
 	delete(*set, i)
 }
 
+func (set *threadUnsafeSet) RemoveAll(i ...interface{}) {
+	for _, elem := range i {
+		delete(*set, elem)
+	}
+}
+
 func (set *threadUnsafeSet) Cardinality() int {
 	return len(*set)
 }
