@@ -45,6 +45,10 @@ func newThreadUnsafeSet() threadUnsafeSet {
 	return make(threadUnsafeSet)
 }
 
+func newThreadUnsafeSetWithSize(cardinality int) threadUnsafeSet {
+	return make(threadUnsafeSet, cardinality)
+}
+
 // Equal says whether two 2-tuples contain the same values in the same order.
 func (pair *OrderedPair) Equal(other OrderedPair) bool {
 	if pair.First == other.First &&
@@ -162,6 +166,12 @@ func (set *threadUnsafeSet) Remove(i interface{}) {
 	delete(*set, i)
 }
 
+func (set *threadUnsafeSet) RemoveAll(i ...interface{}) {
+	for _, elem := range i {
+		delete(*set, elem)
+	}
+}
+
 func (set *threadUnsafeSet) Cardinality() int {
 	return len(*set)
 }
@@ -219,7 +229,8 @@ func (set *threadUnsafeSet) Equal(other Set) bool {
 }
 
 func (set *threadUnsafeSet) Clone() Set {
-	clonedSet := newThreadUnsafeSet()
+	oldCardinality := set.Cardinality()
+	clonedSet := newThreadUnsafeSetWithSize(oldCardinality)
 	for elem := range *set {
 		clonedSet.Add(elem)
 	}
