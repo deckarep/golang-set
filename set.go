@@ -173,6 +173,9 @@ type Set interface {
 
 	// Returns the members of the set as a slice.
 	ToSlice() []interface{}
+
+	// Returns the number of all set members.
+	Len() int
 }
 
 // NewSet creates and returns a reference to an empty set.  Operations

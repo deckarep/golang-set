@@ -281,3 +281,11 @@ func (set *threadSafeSet) UnmarshalJSON(p []byte) error {
 
 	return err
 }
+
+func (set *threadSafeSet) Len() int {
+	i := 0
+	for range set.Iter() {
+		i++
+	}
+	return i
+}

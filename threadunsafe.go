@@ -338,3 +338,11 @@ func (set *threadUnsafeSet) UnmarshalJSON(b []byte) error {
 
 	return nil
 }
+
+func (set *threadUnsafeSet) Len() int {
+	i := 0
+	for range set.Iter() {
+		i++
+	}
+	return i
+}
