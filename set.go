@@ -168,6 +168,12 @@ type Set interface {
 	// Returns all subsets of a given set (Power Set).
 	PowerSet() Set
 
+	// Subsets will return all subsets of size k
+	Subsets(k int) Set
+
+	// SubsetsCount will return the number of subsets of size k without generating the subsets
+	SubsetsCount(k int) int64
+
 	// Returns the Cartesian Product of two sets.
 	CartesianProduct(other Set) Set
 
