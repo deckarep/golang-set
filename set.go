@@ -35,6 +35,10 @@ SOFTWARE.
 // that can enforce mutual exclusion through other means.
 package mapset
 
+import (
+	"reflect"
+)
+
 // Set is the primary interface provided by the mapset package.  It
 // represents an unordered set of data and a large number of
 // operations that can be applied to that set.
@@ -188,14 +192,22 @@ func NewSet(s ...interface{}) Set {
 // NewSetWith creates and returns a new set with the given elements.
 // Operations on the resulting set are thread-safe.
 func NewSetWith(elts ...interface{}) Set {
-	return NewSetFromSlice(elts)
+	return NewSet(elts...)
 }
 
 // NewSetFromSlice creates and returns a reference to a set from an
 // existing slice.  Operations on the resulting set are thread-safe.
-func NewSetFromSlice(s []interface{}) Set {
-	a := NewSet(s...)
-	return a
+func NewSetFromSlice(s interface{}) Set {
+	set := NewSet()
+	switch v := reflect.ValueOf(s); v.Kind() {
+	case reflect.Slice:
+		for i := 0; i < v.Len(); i++ {
+			set.Add(v.Index(i).Interface())
+		}
+	default:
+		panic("Expected parameter to NewSetFromSlice() to be slice")
+	}
+	return set
 }
 
 // NewThreadUnsafeSet creates and returns a reference to an empty set.
@@ -208,10 +220,15 @@ func NewThreadUnsafeSet() Set {
 // NewThreadUnsafeSetFromSlice creates and returns a reference to a
 // set from an existing slice.  Operations on the resulting set are
 // not thread-safe.
-func NewThreadUnsafeSetFromSlice(s []interface{}) Set {
+func NewThreadUnsafeSetFromSlice(s interface{}) Set {
 	a := NewThreadUnsafeSet()
-	for _, item := range s {
-		a.Add(item)
+	switch v := reflect.ValueOf(s); v.Kind() {
+	case reflect.Slice:
+		for i := 0; i < v.Len(); i++ {
+			a.Add(v.Index(i).Interface())
+		}
+	default:
+		panic("Expected parameter to NewThreadUnsafeSetFromSlice() to be slice")
 	}
 	return a
 }
