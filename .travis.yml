@@ -1,8 +1,12 @@
 language: go
 
+arch:
+    - AMD64
+    - ppc64le
+
 go:
-    - 1.8
-    - 1.9
+    - 1.14
+    - 1.15
     - tip
 
 script:
