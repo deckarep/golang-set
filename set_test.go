@@ -60,6 +60,8 @@ func Test_NewSet(t *testing.T) {
 	assertEqual(NewSetFromSlice([]interface{}{1, 2}), NewSet(1, 2), t)
 	assertEqual(NewSetFromSlice([]interface{}{"a"}), NewSet("a"), t)
 	assertEqual(NewSetFromSlice([]interface{}{"a", "b"}), NewSet("a", "b"), t)
+	assertEqual(NewSetFromSlice([]string{"a", "b"}), NewSet("a", "b"), t)
+	assertEqual(NewSetFromSlice([]int{1, 2}), NewSet(1, 2), t)
 }
 
 func Test_NewUnsafeSet(t *testing.T) {
