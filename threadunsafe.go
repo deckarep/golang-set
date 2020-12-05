@@ -162,6 +162,14 @@ func (set *threadUnsafeSet) Remove(i interface{}) {
 	delete(*set, i)
 }
 
+func (set *threadUnsafeSet) RemoveIfContains(i interface{}) bool {
+	if set.Contains(i) {
+		delete(*set, i)
+		return true
+	}
+	return false
+}
+
 func (set *threadUnsafeSet) Cardinality() int {
 	return len(*set)
 }

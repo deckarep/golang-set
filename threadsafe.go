@@ -145,6 +145,12 @@ func (set *threadSafeSet) Remove(i interface{}) {
 	set.Unlock()
 }
 
+func (set *threadSafeSet) RemoveIfContains(i interface{}) bool {
+	set.Lock()
+	defer set.Unlock()
+	return set.s.RemoveIfContains(i)
+}
+
 func (set *threadSafeSet) Cardinality() int {
 	set.RLock()
 	defer set.RUnlock()

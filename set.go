@@ -141,6 +141,10 @@ type Set interface {
 	// Remove a single element from the set.
 	Remove(i interface{})
 
+	// Removes a single element from the set if it is present in the set.
+	// Returns whether the element was present in the set.
+	RemoveIfContains(i interface{}) bool
+
 	// Provides a convenient string representation
 	// of the current state of the set.
 	String() string
