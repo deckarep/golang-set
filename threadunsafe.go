@@ -29,6 +29,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"reflect"
 	"strings"
 )
@@ -276,6 +277,19 @@ func (set *threadUnsafeSet) PowerSet() Set {
 	return powSet
 }
 
+func (set *threadUnsafeSet) Subsets(k int) Set {
+	subsets := NewThreadUnsafeSet()
+	s := slice{
+		list: set.ToSlice(),
+	}
+	s.subsets(subsets, set.Cardinality(), k)
+	return subsets
+}
+
+func (set *threadUnsafeSet) SubsetsCount(k int) int64 {
+	return (&big.Int{}).Binomial(int64(set.Cardinality()), int64(k)).Int64()
+}
+
 func (set *threadUnsafeSet) CartesianProduct(other Set) Set {
 	o := other.(*threadUnsafeSet)
 	cartProduct := NewThreadUnsafeSet()
@@ -337,4 +351,33 @@ func (set *threadUnsafeSet) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
+}
+
+type slice struct {
+	list []interface{}
+}
+
+func (s slice) subsets(newSet Set, n, k int) {
+	holder := make([]interface{}, k, k)
+	s.recurse(newSet, n, k, 0, 0, holder)
+}
+
+func (s slice) recurse(newSet Set, n, k, idx int, i int, holder []interface{}) {
+	if idx == k {
+		subset := NewThreadUnsafeSet()
+		for _, obj := range holder {
+			subset.Add(obj)
+		}
+		newSet.Add(subset)
+		return
+	}
+
+	if i >= n {
+		return
+	}
+
+	holder[idx] = s.list[i]
+
+	s.recurse(newSet, n, k, idx+1, i+1, holder)
+	s.recurse(newSet, n, k, idx, i+1, holder)
 }

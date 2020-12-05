@@ -25,7 +25,10 @@ SOFTWARE.
 
 package mapset
 
-import "sync"
+import (
+	"math/big"
+	"sync"
+)
 
 type threadSafeSet struct {
 	s threadUnsafeSet
@@ -235,6 +238,23 @@ func (set *threadSafeSet) PowerSet() Set {
 		ret.Add(&threadSafeSet{s: *unsafeSubset})
 	}
 	return ret
+}
+
+func (set *threadSafeSet) Subsets(k int) Set {
+	set.Lock()
+	defer set.Unlock()
+	subsets := NewThreadUnsafeSet()
+	s := slice{
+		list: set.ToSlice(),
+	}
+	s.subsets(subsets, set.Cardinality(), k)
+	return subsets
+}
+
+func (set *threadSafeSet) SubsetsCount(k int) int64 {
+	set.Lock()
+	defer set.Unlock()
+	return (&big.Int{}).Binomial(int64(set.Cardinality()), int64(k)).Int64()
 }
 
 func (set *threadSafeSet) Pop() interface{} {
