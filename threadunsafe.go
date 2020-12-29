@@ -56,13 +56,10 @@ func (pair *OrderedPair) Equal(other OrderedPair) bool {
 }
 
 func (set *threadUnsafeSet) Add(i interface{}) bool {
-	_, found := (*set)[i]
-	if found {
-		return false //False if it existed already
-	}
-
+	prevLen := len(*set)
 	(*set)[i] = struct{}{}
-	return true
+	nextLen := len(*set)
+	return prevLen != nextLen
 }
 
 func (set *threadUnsafeSet) Contains(i ...interface{}) bool {
