@@ -21,20 +21,25 @@ func toInterfaces(i []int) []interface{} {
 	return ifs
 }
 
-func benchAdd(b *testing.B, s Set) {
-	nums := nrand(b.N)
+func benchAdd(b *testing.B, n int, newSet func() Set) {
+	nums := nrand(n)
 	b.ResetTimer()
-	for _, v := range nums {
-		s.Add(v)
+	for i := 0; i < b.N; i++ {
+		s := newSet()
+		for _, v := range nums {
+			s.Add(v)
+		}
 	}
 }
 
 func BenchmarkAddSafe(b *testing.B) {
-	benchAdd(b, NewSet())
+	benchAdd(b, 1000, func() Set {
+		return NewSet()
+	})
 }
 
 func BenchmarkAddUnsafe(b *testing.B) {
-	benchAdd(b, NewThreadUnsafeSet())
+	benchAdd(b, 1000, NewThreadUnsafeSet)
 }
 
 func benchRemove(b *testing.B, s Set) {
