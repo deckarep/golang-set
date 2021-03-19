@@ -205,6 +205,13 @@ func NewThreadUnsafeSet() Set {
 	return &set
 }
 
+// NewThreadUnsafeSetWith creates and returns a reference to a set
+// with the given elements. Operations on the resulting set are not
+// thread-safe.
+func NewThreadUnsafeSetWith(elts ...interface{}) Set {
+	return NewThreadUnsafeSetFromSlice(elts)
+}
+
 // NewThreadUnsafeSetFromSlice creates and returns a reference to a
 // set from an existing slice.  Operations on the resulting set are
 // not thread-safe.
