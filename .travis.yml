@@ -5,7 +5,6 @@ arch:
     - ppc64le
 
 go:
-    - 1.16
     - 1.17
     - tip
 
