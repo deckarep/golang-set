@@ -4,6 +4,9 @@
 
 ## golang-set
 
+## Features (as of 12/17/2021)
+*New and improved* built with **Generics**!
+This is in *ALPHA* quality state, and pending some feedback from the community.
 
 The missing set collection for the Go language.  Until Go has sets built-in...use this.
 
