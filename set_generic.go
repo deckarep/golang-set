@@ -178,6 +178,13 @@ type SetGeneric[T comparable] interface {
 
 	// Returns the members of the set as a slice.
 	ToSlice() []T
+
+	// MarshalJSON will marshal the set into a JSON-based representation.
+	MarshalJSON() ([]byte, error) 
+
+	// UnmarshalJSON will unmarshal a JSON-based byte slice into a full Set datastructure.
+	// For this to work, set subtypes must implemented the Marshal/Unmarshal interface.	
+	UnmarshalJSON(b []byte) error
 }
 
 // NewSet creates and returns a reference to an empty set.  Operations

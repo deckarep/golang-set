@@ -29,6 +29,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"encoding/json"
+	"bytes"
 )
 
 // An OrderedPairGeneric represents a 2-tuple of values.
@@ -314,4 +316,45 @@ func (s *threadUnsafeSetGeneric[T]) Union(other SetGeneric[T]) SetGeneric[T] {
 		unionedSet.Add(elem)
 	}
 	return &unionedSet
+}
+
+// MarshalJSON creates a JSON array from the set, it marshals all elements
+func (s *threadUnsafeSetGeneric[T]) MarshalJSON() ([]byte, error) {
+	items := make([]string, 0, s.Cardinality())
+
+	for elem := range *s {
+		b, err := json.Marshal(elem)
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, string(b))
+	}
+
+	return []byte(fmt.Sprintf("[%s]", strings.Join(items, ","))), nil
+}
+
+// UnmarshalJSON recreates a set from a JSON array, it only decodes
+// primitive types. Numbers are decoded as json.Number.
+func (s *threadUnsafeSetGeneric[T]) UnmarshalJSON(b []byte) error {
+	var i []any
+
+	d := json.NewDecoder(bytes.NewReader(b))
+	d.UseNumber()
+	err := d.Decode(&i)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range i {
+		switch t := v.(type) {
+		case T:
+			s.Add(t)
+		default:
+			// anything else must be skipped.
+			continue
+		}
+	}
+
+	return nil
 }
