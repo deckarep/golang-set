@@ -40,13 +40,6 @@ package mapset
 // 	return a == b
 // }
 
-// NewThreadUnsafeSetGeneric creates and returns a reference to an empty set.
-// Operations on the resulting set are not thread-safe.
-func NewThreadUnsafeSetGeneric[T comparable]() SetGeneric[T] {
-	set := newThreadUnsafeSetGeneric[T]()
-	return &set
-}
-
 // Set is the primary interface provided by the mapset package.  It
 // represents an unordered set of data and a large number of
 // operations that can be applied to that set.
@@ -185,6 +178,13 @@ type SetGeneric[T comparable] interface {
 
 	// // Returns the members of the set as a slice.
 	ToSlice() []T
+}
+
+// NewThreadUnsafeSetGeneric creates and returns a reference to an empty set.
+// Operations on the resulting set are not thread-safe.
+func NewThreadUnsafeSetGeneric[T comparable]() SetGeneric[T] {
+	set := newThreadUnsafeSetGeneric[T]()
+	return &set
 }
 
 // NewSet creates and returns a reference to an empty set.  Operations
