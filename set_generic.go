@@ -180,51 +180,45 @@ type SetGeneric[T comparable] interface {
 	ToSlice() []T
 }
 
-// NewThreadUnsafeSetGeneric creates and returns a reference to an empty set.
-// Operations on the resulting set are not thread-safe.
-func NewThreadUnsafeSetGeneric[T comparable]() SetGeneric[T] {
-	set := newThreadUnsafeSetGeneric[T]()
-	return &set
-}
+
 
 // NewSet creates and returns a reference to an empty set.  Operations
 // on the resulting set are thread-safe.
-// func NewSet(s ...interface{}) Set {
-// 	// set := newThreadSafeSet()
-// 	// for _, item := range s {
-// 	// 	set.Add(item)
-// 	// }
-// 	// return &set
-// 	return nil
-// }
+func NewSetGeneric[T comparable](vals ...T) SetGeneric[T] {
+	s := newThreadSafeSetGeneric[T]()
+	for _, item := range vals {
+		s.Add(item)
+	}
+	return &s
+}
 
-// // NewSetWith creates and returns a new set with the given elements.
-// // Operations on the resulting set are thread-safe.
-// func NewSetWith(elts ...interface{}) Set {
-// 	return NewSetFromSlice(elts)
-// }
+// NewSetWith creates and returns a new set with the given elements.
+// Operations on the resulting set are thread-safe.
+func NewSetWithGeneric[T comparable](vals ...T) SetGeneric[T] {
+	return NewSetFromSliceGeneric[T](vals)
+}
 
-// // NewSetFromSlice creates and returns a reference to a set from an
-// // existing slice.  Operations on the resulting set are thread-safe.
-// func NewSetFromSlice(s []interface{}) Set {
-// 	a := NewSet(s...)
-// 	return a
-// }
+// NewSetFromSlice creates and returns a reference to a set from an
+// existing slice.  Operations on the resulting set are thread-safe.
+func NewSetFromSliceGeneric[T comparable](v []T) SetGeneric[T] {
+	s := NewSetGeneric(v...)
+	return s
+}
 
-// // NewThreadUnsafeSet creates and returns a reference to an empty set.
-// // Operations on the resulting set are not thread-safe.
-// func NewThreadUnsafeSet() Set {
-// 	set := newThreadUnsafeSet()
-// 	return &set
-// }
+// NewThreadUnsafeSetGeneric creates and returns a reference to an empty set.
+// Operations on the resulting set are not thread-safe.
+func NewThreadUnsafeSetGeneric[T comparable]() SetGeneric[T] {
+	s := newThreadUnsafeSetGeneric[T]()
+	return &s
+}
 
-// // NewThreadUnsafeSetFromSlice creates and returns a reference to a
-// // set from an existing slice.  Operations on the resulting set are
-// // not thread-safe.
-// func NewThreadUnsafeSetFromSlice(s []interface{}) Set {
-// 	a := NewThreadUnsafeSet()
-// 	for _, item := range s {
-// 		a.Add(item)
-// 	}
-// 	return a
-// }
+// NewThreadUnsafeSetFromSlice creates and returns a reference to a
+// set from an existing slice.  Operations on the resulting set are
+// not thread-safe.
+func NewThreadUnsafeSetFromSliceGeneric[T comparable](v []T) SetGeneric[T] {
+	s := NewThreadUnsafeSetGeneric[T]()
+	for _, item := range v {
+		s.Add(item)
+	}
+	return s
+}
