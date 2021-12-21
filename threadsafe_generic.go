@@ -269,3 +269,19 @@ func (s *threadSafeSetGeneric[T]) ToSlice() []T {
 	s.RUnlock()
 	return keys
 }
+
+func (s *threadSafeSetGeneric[T]) MarshalJSON() ([]byte, error) {
+	s.RLock()
+	b, err := s.uss.MarshalJSON()
+	s.RUnlock()
+
+	return b, err
+}
+
+func (s *threadSafeSetGeneric[T]) UnmarshalJSON(p []byte) error {
+	s.RLock()
+	err := s.uss.UnmarshalJSON(p)
+	s.RUnlock()
+
+	return err
+}

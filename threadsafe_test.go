@@ -26,7 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"math/rand"
 	"runtime"
 	"sync"
@@ -471,54 +471,54 @@ func Test_ToSliceDeadlock(t *testing.T) {
 	wg.Wait()
 }
 
-// func Test_UnmarshalJSON(t *testing.T) {
-// 	s := []byte(`["test", 1, 2, 3, ["4,5,6"]]`)
-// 	expected := NewSetFromSlice(
-// 		[]interface{}{
-// 			json.Number("1"),
-// 			json.Number("2"),
-// 			json.Number("3"),
-// 			"test",
-// 		},
-// 	)
-// 	actual := NewSet()
-// 	err := json.Unmarshal(s, actual)
-// 	if err != nil {
-// 		t.Errorf("Error should be nil: %v", err)
-// 	}
+func Test_UnmarshalJSON(t *testing.T) {
+	s := []byte(`["test", 1, 2, 3]`) //,["4,5,6"]]`)
+	expected := NewSetFromSliceGeneric[any](
+		[]any{
+			json.Number("1"),
+			json.Number("2"),
+			json.Number("3"),
+			"test",
+		},
+	)
+	actual := NewSetGeneric[any]()
+	err := json.Unmarshal(s, actual)
+	if err != nil {
+		t.Errorf("Error should be nil: %v", err)
+	}
 
-// 	if !expected.Equal(actual) {
-// 		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
-// 	}
-// }
+	if !expected.Equal(actual) {
+		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
+	}
+}
 
-// func Test_MarshalJSON(t *testing.T) {
-// 	expected := NewSetFromSlice(
-// 		[]interface{}{
-// 			json.Number("1"),
-// 			"test",
-// 		},
-// 	)
+func Test_MarshalJSON(t *testing.T) {
+	expected := NewSetFromSliceGeneric[any](
+		[]any{
+			json.Number("1"),
+			"test",
+		},
+	)
 
-// 	b, err := json.Marshal(
-// 		NewSetFromSlice(
-// 			[]interface{}{
-// 				1,
-// 				"test",
-// 			},
-// 		),
-// 	)
-// 	if err != nil {
-// 		t.Errorf("Error should be nil: %v", err)
-// 	}
+	b, err := json.Marshal(
+		NewSetFromSliceGeneric[any](
+			[]any{
+				1,
+				"test",
+			},
+		),
+	)
+	if err != nil {
+		t.Errorf("Error should be nil: %v", err)
+	}
 
-// 	actual := NewSet()
-// 	err = json.Unmarshal(b, actual)
-// 	if err != nil {
-// 		t.Errorf("Error should be nil: %v", err)
-// 	}
+	actual := NewSetGeneric[any]()
+	err = json.Unmarshal(b, actual)
+	if err != nil {
+		t.Errorf("Error should be nil: %v", err)
+	}
 
-// 	if !expected.Equal(actual) {
-// 		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
-// 	}
-// }
+	if !expected.Equal(actual) {
+		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
+	}
+}
