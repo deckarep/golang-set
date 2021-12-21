@@ -2,7 +2,7 @@
 Open Source Initiative OSI - The MIT License (MIT):Licensing
 
 The MIT License (MIT)
-Copyright (c) 2021 Ralph Caraveo (deckarep@gmail.com)
+Copyright (c) 2013 - 2022 Ralph Caraveo (deckarep@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -59,4 +59,14 @@ func Test_Generic_String(t *testing.T) {
 	a.Add(4)
 
 	fmt.Println(a.String())
+}
+
+func Test_Powerset(t *testing.T) {
+	a := newThreadUnsafeSetGeneric[string]()
+	a.Add("x")
+	a.Add("y")
+	a.Add("z")
+
+	ps := a.PowerSet()
+	fmt.Println(ps)
 }
