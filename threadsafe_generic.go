@@ -180,23 +180,23 @@ func (s *threadSafeSetGeneric[T]) Iter() <-chan T {
 }
 
 func (s *threadSafeSetGeneric[T]) Iterator() *IteratorGeneric[T] {
- 	iterator, ch, stopCh := newIteratorGeneric[T]()
+	iterator, ch, stopCh := newIteratorGeneric[T]()
 
- 	go func() {
- 		s.RLock()
+	go func() {
+		s.RLock()
 	L:
- 		for elem := range s.uss {
- 			select {
- 			case <-stopCh:
- 				break L
- 			case ch <- elem:
- 			}
- 		}
- 		close(ch)
- 		s.RUnlock()
- 	}()
+		for elem := range s.uss {
+			select {
+			case <-stopCh:
+				break L
+			case ch <- elem:
+			}
+		}
+		close(ch)
+		s.RUnlock()
+	}()
 
- 	return iterator
+	return iterator
 }
 
 func (s *threadSafeSetGeneric[T]) Equal(other SetGeneric[T]) bool {
@@ -228,17 +228,17 @@ func (s *threadSafeSetGeneric[T]) String() string {
 }
 
 func (s *threadSafeSetGeneric[T]) PowerSet() SetGeneric[any] {
- 	s.RLock()
- 	unsafePowerSet := s.uss.PowerSet().(*threadUnsafeSetGeneric[any])
- 	s.RUnlock()
+	s.RLock()
+	unsafePowerSet := s.uss.PowerSet().(*threadUnsafeSetGeneric[any])
+	s.RUnlock()
 
- 	ret := &threadSafeSetGeneric[any]{uss: newThreadUnsafeSetGeneric[any]()}
- 	 for subset := range unsafePowerSet.Iter() {
- 	 	unsafeSubset := subset.(*threadUnsafeSetGeneric[any])
- 	 	ret.Add(&threadSafeSetGeneric[any]{uss: *unsafeSubset})
- 	 }
- 	return ret
- }
+	ret := &threadSafeSetGeneric[any]{uss: newThreadUnsafeSetGeneric[any]()}
+	for subset := range unsafePowerSet.Iter() {
+		unsafeSubset := subset.(*threadUnsafeSetGeneric[any])
+		ret.Add(&threadSafeSetGeneric[any]{uss: *unsafeSubset})
+	}
+	return ret
+}
 
 func (s *threadSafeSetGeneric[T]) Pop() any {
 	s.Lock()
@@ -254,7 +254,7 @@ func (s *threadSafeSetGeneric[T]) CartesianProduct(other SetGeneric[T]) SetGener
 
 	unsafeCartProduct := s.uss.CartesianProduct(&o.uss).(*threadUnsafeSetGeneric[any])
 	ret := &threadSafeSetGeneric[any]{uss: *unsafeCartProduct}
-	
+
 	s.RUnlock()
 	o.RUnlock()
 	return ret
