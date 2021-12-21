@@ -2,7 +2,7 @@
 Open Source Initiative OSI - The MIT License (MIT):Licensing
 
 The MIT License (MIT)
-Copyright (c) 2021 Ralph Caraveo (deckarep@gmail.com)
+Copyright (c) 2013 - 2022 Ralph Caraveo (deckarep@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -178,10 +178,10 @@ type SetGeneric[T comparable] interface {
 	Pop() any
 
 	// Returns all subsets of a given set (Power Set).
-	//PowerSet() SetGeneric[T]
+	PowerSet() SetGeneric[any]
 
 	// // Returns the Cartesian Product of two sets.
-	 CartesianProduct(other SetGeneric[T]) SetGeneric[any]
+	CartesianProduct(other SetGeneric[T]) SetGeneric[any]
 
 	// // Returns the members of the set as a slice.
 	ToSlice() []T

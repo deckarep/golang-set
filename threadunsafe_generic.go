@@ -1,7 +1,33 @@
+/*
+Open Source Initiative OSI - The MIT License (MIT):Licensing
+
+The MIT License (MIT)
+Copyright (c) 2013 - 2022 Ralph Caraveo (deckarep@gmail.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package mapset
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 )
 
@@ -57,21 +83,21 @@ func (s *threadUnsafeSetGeneric[T]) Cardinality() int {
 
 func (s *threadUnsafeSetGeneric[T]) CartesianProduct(other SetGeneric[T]) SetGeneric[any] {
 	o := other.(*threadUnsafeSetGeneric[T])
-	
+
 	// NOTE: limitation with Go generics or of my knowledge of Go generics?
-	
+
 	// I can't seem to declare this without an instantiation cycle.
 	//cartProduct := NewThreadUnsafeSetGeneric[OrderedPairGeneric[T]]()
-	
+
 	// So here is my crime against humanity.
 	cartProduct := NewThreadUnsafeSetGeneric[any]()
 
-	 for i := range *s {
-	 	for j := range *o {
+	for i := range *s {
+		for j := range *o {
 			elem := OrderedPairGeneric[T]{First: i, Second: j}
 			cartProduct.Add(elem)
-	 	}
-	 }
+		}
+	}
 
 	return cartProduct
 }
@@ -216,33 +242,35 @@ func (s *threadUnsafeSetGeneric[T]) Pop() any {
 	return nil
 }
 
-// func (s *threadUnsafeSetGeneric[T]) PowerSet() SetGeneric[T] {
-// 	powSet := NewThreadUnsafeSet()
-// 	nullset := newThreadUnsafeSet()
-// 	powSet.Add(&nullset)
+func (s *threadUnsafeSetGeneric[T]) PowerSet() SetGeneric[any] {
+	// The type must be any comparable so we have to dumb down to any.
+	powSet := NewThreadUnsafeSetGeneric[any]()
 
-// 	for es := range *set {
-// 		u := newThreadUnsafeSet()
-// 		j := powSet.Iter()
-// 		for er := range j {
-// 			p := newThreadUnsafeSet()
-// 			if reflect.TypeOf(er).Name() == "" {
-// 				k := er.(*threadUnsafeSet)
-// 				for ek := range *(k) {
-// 					p.Add(ek)
-// 				}
-// 			} else {
-// 				p.Add(er)
-// 			}
-// 			p.Add(es)
-// 			u.Add(&p)
-// 		}
+	nullset := newThreadUnsafeSetGeneric[T]()
+	powSet.Add(&nullset)
 
-// 		powSet = powSet.Union(&u)
-// 	}
+	for es := range *s {
+		u := newThreadUnsafeSetGeneric[any]()
+		j := powSet.Iter()
+		for er := range j {
+			p := newThreadUnsafeSetGeneric[T]()
+			if reflect.TypeOf(er).Name() == "" {
+				k := er.(*threadUnsafeSetGeneric[T])
+				for ek := range *(k) {
+					p.Add(ek)
+				}
+			} else {
+				p.Add(er.(T))
+			}
+			p.Add(es)
+			u.Add(&p)
+		}
 
-// 	return powSet
-// }
+		powSet = powSet.Union(&u)
+	}
+
+	return powSet
+}
 
 func (s *threadUnsafeSetGeneric[T]) Remove(v T) {
 	delete(*s, v)
