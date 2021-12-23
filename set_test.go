@@ -27,65 +27,43 @@ package mapset
 
 import "testing"
 
-func makeSet(ints []int) Set {
-	set := NewSet()
-	for _, i := range ints {
-		set.Add(i)
-	}
-	return set
-}
-
-func makeSetInt(ints []int) SetGeneric[int] {
-	s := NewSetGeneric[int]()
+func makeSetInt(ints []int) Set[int] {
+	s := NewSet[int]()
 	for _, i := range ints {
 		s.Add(i)
 	}
 	return s
 }
 
-func makeUnsafeSet(ints []int) Set {
-	set := NewThreadUnsafeSet()
-	for _, i := range ints {
-		set.Add(i)
-	}
-	return set
-}
-
-func makeUnsafeSetInt(ints []int) SetGeneric[int] {
-	s := NewThreadUnsafeSetGeneric[int]()
+func makeUnsafeSetInt(ints []int) Set[int] {
+	s := NewThreadUnsafeSet[int]()
 	for _, i := range ints {
 		s.Add(i)
 	}
 	return s
 }
 
-func assertEqual(a, b Set, t *testing.T) {
-	if !a.Equal(b) {
-		t.Errorf("%v != %v\n", a, b)
-	}
-}
-
-func assertEqualGeneric[T comparable](a, b SetGeneric[T], t *testing.T) {
+func assertEqual[T comparable](a, b Set[T], t *testing.T) {
 	if !a.Equal(b) {
 		t.Errorf("%v != %v\n", a, b)
 	}
 }
 
 func Test_NewSet(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	if a.Cardinality() != 0 {
 		t.Error("NewSet should start out as an empty set")
 	}
 
-	assertEqualGeneric(NewSetFromSliceGeneric[int]([]int{}), NewSetGeneric[int](), t)
-	assertEqualGeneric(NewSetFromSliceGeneric[int]([]int{1}), NewSetGeneric[int](1), t)
-	assertEqualGeneric(NewSetFromSliceGeneric[int]([]int{1, 2}), NewSetGeneric[int](1, 2), t)
-	assertEqualGeneric(NewSetFromSliceGeneric[string]([]string{"a"}), NewSetGeneric[string]("a"), t)
-	assertEqualGeneric(NewSetFromSliceGeneric[string]([]string{"a", "b"}), NewSetGeneric[string]("a", "b"), t)
+	assertEqual(NewSetFromSlice[int]([]int{}), NewSet[int](), t)
+	assertEqual(NewSetFromSlice[int]([]int{1}), NewSet[int](1), t)
+	assertEqual(NewSetFromSlice[int]([]int{1, 2}), NewSet[int](1, 2), t)
+	assertEqual(NewSetFromSlice[string]([]string{"a"}), NewSet[string]("a"), t)
+	assertEqual(NewSetFromSlice[string]([]string{"a", "b"}), NewSet[string]("a", "b"), t)
 }
 
 func Test_NewUnsafeSet(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 
 	if a.Cardinality() != 0 {
 		t.Error("NewSet should start out as an empty set")
@@ -175,7 +153,7 @@ func Test_RemoveUnsafeSet(t *testing.T) {
 }
 
 func Test_ContainsSet(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 
 	a.Add(71)
 
@@ -199,7 +177,7 @@ func Test_ContainsSet(t *testing.T) {
 }
 
 func Test_ContainsUnsafeSet(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 
 	a.Add(71)
 
@@ -267,7 +245,7 @@ func Test_ClearUnsafeSet(t *testing.T) {
 }
 
 func Test_CardinalitySet(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 
 	if a.Cardinality() != 0 {
 		t.Error("set should be an empty set")
@@ -299,7 +277,7 @@ func Test_CardinalitySet(t *testing.T) {
 }
 
 func Test_CardinalityUnsafeSet(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 
 	if a.Cardinality() != 0 {
 		t.Error("set should be an empty set")
@@ -333,7 +311,7 @@ func Test_CardinalityUnsafeSet(t *testing.T) {
 func Test_SetIsSubset(t *testing.T) {
 	a := makeSetInt([]int{1, 2, 3, 5, 7})
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	b.Add(3)
 	b.Add(5)
 	b.Add(7)
@@ -373,7 +351,7 @@ func Test_SetIsProperSubset(t *testing.T) {
 func Test_UnsafeSetIsSubset(t *testing.T) {
 	a := makeUnsafeSetInt([]int{1, 2, 3, 5, 7})
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(3)
 	b.Add(5)
 	b.Add(7)
@@ -391,7 +369,7 @@ func Test_UnsafeSetIsSubset(t *testing.T) {
 
 func Test_UnsafeSetIsProperSubset(t *testing.T) {
 	a := makeUnsafeSetInt([]int{1, 2, 3, 5, 7})
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(7)
 	b.Add(1)
 	b.Add(5)
@@ -416,14 +394,14 @@ func Test_UnsafeSetIsProperSubset(t *testing.T) {
 }
 
 func Test_SetIsSuperset(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	a.Add(9)
 	a.Add(5)
 	a.Add(2)
 	a.Add(1)
 	a.Add(11)
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	b.Add(5)
 	b.Add(2)
 	b.Add(11)
@@ -440,12 +418,12 @@ func Test_SetIsSuperset(t *testing.T) {
 }
 
 func Test_SetIsProperSuperset(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	a.Add(5)
 	a.Add(2)
 	a.Add(11)
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	b.Add(2)
 	b.Add(5)
 	b.Add(11)
@@ -477,14 +455,14 @@ func Test_SetIsProperSuperset(t *testing.T) {
 }
 
 func Test_UnsafeSetIsSuperset(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 	a.Add(9)
 	a.Add(5)
 	a.Add(2)
 	a.Add(1)
 	a.Add(11)
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(5)
 	b.Add(2)
 	b.Add(11)
@@ -501,12 +479,12 @@ func Test_UnsafeSetIsSuperset(t *testing.T) {
 }
 
 func Test_UnsafeSetIsProperSuperset(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 	a.Add(5)
 	a.Add(2)
 	a.Add(11)
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(2)
 	b.Add(5)
 	b.Add(11)
@@ -538,9 +516,9 @@ func Test_UnsafeSetIsProperSuperset(t *testing.T) {
 }
 
 func Test_SetUnion(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	b.Add(1)
 	b.Add(2)
 	b.Add(3)
@@ -553,7 +531,7 @@ func Test_SetUnion(t *testing.T) {
 		t.Error("set c is unioned with an empty set and therefore should have 5 elements in it")
 	}
 
-	d := NewSetGeneric[int]()
+	d := NewSet[int]()
 	d.Add(10)
 	d.Add(14)
 	d.Add(0)
@@ -563,7 +541,7 @@ func Test_SetUnion(t *testing.T) {
 		t.Error("set e should should have 8 elements in it after being unioned with set c to d")
 	}
 
-	f := NewSetGeneric[int]()
+	f := NewSet[int]()
 	f.Add(14)
 	f.Add(3)
 
@@ -574,9 +552,9 @@ func Test_SetUnion(t *testing.T) {
 }
 
 func Test_UnsafeSetUnion(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(1)
 	b.Add(2)
 	b.Add(3)
@@ -589,7 +567,7 @@ func Test_UnsafeSetUnion(t *testing.T) {
 		t.Error("set c is unioned with an empty set and therefore should have 5 elements in it")
 	}
 
-	d := NewThreadUnsafeSetGeneric[int]()
+	d := NewThreadUnsafeSet[int]()
 	d.Add(10)
 	d.Add(14)
 	d.Add(0)
@@ -599,7 +577,7 @@ func Test_UnsafeSetUnion(t *testing.T) {
 		t.Error("set e should should have 8 elements in it after being unioned with set c to d")
 	}
 
-	f := NewThreadUnsafeSetGeneric[int]()
+	f := NewThreadUnsafeSet[int]()
 	f.Add(14)
 	f.Add(3)
 
@@ -610,12 +588,12 @@ func Test_UnsafeSetUnion(t *testing.T) {
 }
 
 func Test_SetIntersect(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	a.Add(1)
 	a.Add(3)
 	a.Add(5)
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	a.Add(2)
 	a.Add(4)
 	a.Add(6)
@@ -637,12 +615,12 @@ func Test_SetIntersect(t *testing.T) {
 }
 
 func Test_UnsafeSetIntersect(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 	a.Add(1)
 	a.Add(3)
 	a.Add(5)
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	a.Add(2)
 	a.Add(4)
 	a.Add(6)
@@ -664,12 +642,12 @@ func Test_UnsafeSetIntersect(t *testing.T) {
 }
 
 func Test_SetDifference(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	a.Add(1)
 	a.Add(2)
 	a.Add(3)
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	b.Add(1)
 	b.Add(3)
 	b.Add(4)
@@ -685,12 +663,12 @@ func Test_SetDifference(t *testing.T) {
 }
 
 func Test_UnsafeSetDifference(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 	a.Add(1)
 	a.Add(2)
 	a.Add(3)
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(1)
 	b.Add(3)
 	b.Add(4)
@@ -706,13 +684,13 @@ func Test_UnsafeSetDifference(t *testing.T) {
 }
 
 func Test_SetSymmetricDifference(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	a.Add(1)
 	a.Add(2)
 	a.Add(3)
 	a.Add(45)
 
-	b := NewSetGeneric[int]()
+	b := NewSet[int]()
 	b.Add(1)
 	b.Add(3)
 	b.Add(4)
@@ -728,13 +706,13 @@ func Test_SetSymmetricDifference(t *testing.T) {
 }
 
 func Test_UnsafeSetSymmetricDifference(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 	a.Add(1)
 	a.Add(2)
 	a.Add(3)
 	a.Add(45)
 
-	b := NewThreadUnsafeSetGeneric[int]()
+	b := NewThreadUnsafeSet[int]()
 	b.Add(1)
 	b.Add(3)
 	b.Add(4)
@@ -750,8 +728,8 @@ func Test_UnsafeSetSymmetricDifference(t *testing.T) {
 }
 
 func Test_SetEqual(t *testing.T) {
-	a := NewSetGeneric[int]()
-	b := NewSetGeneric[int]()
+	a := NewSet[int]()
+	b := NewSet[int]()
 
 	if !a.Equal(b) {
 		t.Error("Both a and b are empty sets, and should be equal")
@@ -787,8 +765,8 @@ func Test_SetEqual(t *testing.T) {
 }
 
 func Test_UnsafeSetEqual(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
-	b := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
+	b := NewThreadUnsafeSet[int]()
 
 	if !a.Equal(b) {
 		t.Error("Both a and b are empty sets, and should be equal")
@@ -824,7 +802,7 @@ func Test_UnsafeSetEqual(t *testing.T) {
 }
 
 func Test_SetClone(t *testing.T) {
-	a := NewSetGeneric[int]()
+	a := NewSet[int]()
 	a.Add(1)
 	a.Add(2)
 
@@ -848,7 +826,7 @@ func Test_SetClone(t *testing.T) {
 }
 
 func Test_UnsafeSetClone(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[int]()
+	a := NewThreadUnsafeSet[int]()
 	a.Add(1)
 	a.Add(2)
 
@@ -872,14 +850,14 @@ func Test_UnsafeSetClone(t *testing.T) {
 }
 
 func Test_Each(t *testing.T) {
-	a := NewSetGeneric[string]()
+	a := NewSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
 	a.Add("X")
 	a.Add("W")
 
-	b := NewSetGeneric[string]()
+	b := NewSet[string]()
 	a.Each(func(elem string) bool {
 		b.Add(elem)
 		return false
@@ -903,14 +881,14 @@ func Test_Each(t *testing.T) {
 }
 
 func Test_Iter(t *testing.T) {
-	a := NewSetGeneric[string]()
+	a := NewSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
 	a.Add("X")
 	a.Add("W")
 
-	b := NewSetGeneric[string]()
+	b := NewSet[string]()
 	for val := range a.Iter() {
 		b.Add(val)
 	}
@@ -921,14 +899,14 @@ func Test_Iter(t *testing.T) {
 }
 
 func Test_UnsafeIter(t *testing.T) {
-	a := NewThreadUnsafeSet()
+	a := NewThreadUnsafeSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
 	a.Add("X")
 	a.Add("W")
 
-	b := NewThreadUnsafeSet()
+	b := NewThreadUnsafeSet[string]()
 	for val := range a.Iter() {
 		b.Add(val)
 	}
@@ -939,14 +917,14 @@ func Test_UnsafeIter(t *testing.T) {
 }
 
 func Test_Iterator(t *testing.T) {
-	a := NewSetGeneric[string]()
+	a := NewSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
 	a.Add("X")
 	a.Add("W")
 
-	b := NewSetGeneric[string]()
+	b := NewSet[string]()
 	for val := range a.Iterator().C {
 		b.Add(val)
 	}
@@ -957,14 +935,14 @@ func Test_Iterator(t *testing.T) {
 }
 
 func Test_UnsafeIterator(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[string]()
+	a := NewThreadUnsafeSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
 	a.Add("X")
 	a.Add("W")
 
-	b := NewThreadUnsafeSetGeneric[string]()
+	b := NewThreadUnsafeSet[string]()
 	for val := range a.Iterator().C {
 		b.Add(val)
 	}
@@ -975,7 +953,7 @@ func Test_UnsafeIterator(t *testing.T) {
 }
 
 func Test_IteratorStop(t *testing.T) {
-	a := NewSetGeneric[string]()
+	a := NewSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
@@ -990,14 +968,14 @@ func Test_IteratorStop(t *testing.T) {
 }
 
 func Test_PopSafe(t *testing.T) {
-	a := NewSetGeneric[string]()
+	a := NewSet[string]()
 
 	a.Add("a")
 	a.Add("b")
 	a.Add("c")
 	a.Add("d")
 
-	captureSet := NewSetGeneric[any]()
+	captureSet := NewSet[any]()
 	captureSet.Add(a.Pop())
 	captureSet.Add(a.Pop())
 	captureSet.Add(a.Pop())
@@ -1022,14 +1000,14 @@ func Test_PopSafe(t *testing.T) {
 }
 
 func Test_PopUnsafe(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[string]()
+	a := NewThreadUnsafeSet[string]()
 
 	a.Add("a")
 	a.Add("b")
 	a.Add("c")
 	a.Add("d")
 
-	captureSet := NewThreadUnsafeSetGeneric[any]()
+	captureSet := NewThreadUnsafeSet[any]()
 	captureSet.Add(a.Pop())
 	captureSet.Add(a.Pop())
 	captureSet.Add(a.Pop())
@@ -1054,7 +1032,7 @@ func Test_PopUnsafe(t *testing.T) {
 }
 
 func Test_PowerSet(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[string]()
+	a := NewThreadUnsafeSet[string]()
 
 	a.Add("1")
 	a.Add("delta")
@@ -1082,14 +1060,14 @@ func Test_PowerSetThreadSafe(t *testing.T) {
 }
 
 func Test_EmptySetProperties(t *testing.T) {
-	empty := NewSetGeneric[string]()
+	empty := NewSet[string]()
 
-	a := NewSetGeneric[string]()
+	a := NewSet[string]()
 	a.Add("1")
 	a.Add("foo")
 	a.Add("bar")
 
-	b := NewSetGeneric[string]()
+	b := NewSet[string]()
 	b.Add("one")
 	b.Add("two")
 	b.Add("3")
@@ -1133,9 +1111,9 @@ func Test_EmptySetProperties(t *testing.T) {
 }
 
 func Test_CartesianProduct(t *testing.T) {
-	a := NewThreadUnsafeSetGeneric[any]()
-	b := NewThreadUnsafeSetGeneric[any]()
-	empty := NewThreadUnsafeSetGeneric[any]()
+	a := NewThreadUnsafeSet[any]()
+	b := NewThreadUnsafeSet[any]()
+	empty := NewThreadUnsafeSet[any]()
 
 	a.Add(1)
 	a.Add(2)

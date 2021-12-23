@@ -35,7 +35,7 @@ type yourType struct {
 
 func Test_ExampleIterator(t *testing.T) {
 
-	s := NewSetFromSliceGeneric[*yourType]([]*yourType{
+	s := NewSetFromSlice[*yourType]([]*yourType{
 		&yourType{name: "Alise"},
 		&yourType{name: "Bob"},
 		&yourType{name: "John"},
