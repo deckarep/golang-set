@@ -26,32 +26,33 @@ SOFTWARE.
 package mapset
 
 import (
-	"fmt"
+	"testing"
 )
 
-type YourType struct {
-	Name string
+type yourType struct {
+	name string
 }
 
-func ExampleIterator() {
-	set := NewSetFromSlice([]interface{}{
-		&YourType{Name: "Alise"},
-		&YourType{Name: "Bob"},
-		&YourType{Name: "John"},
-		&YourType{Name: "Nick"},
+func Test_ExampleIterator(t *testing.T) {
+
+	s := NewSetFromSliceGeneric[*yourType]([]*yourType{
+		&yourType{name: "Alise"},
+		&yourType{name: "Bob"},
+		&yourType{name: "John"},
+		&yourType{name: "Nick"},
 	})
 
-	var found *YourType
-	it := set.Iterator()
+	var found *yourType
+	it := s.Iterator()
 
 	for elem := range it.C {
-		if elem.(*YourType).Name == "John" {
-			found = elem.(*YourType)
+		if elem.name == "John" {
+			found = elem
 			it.Stop()
 		}
 	}
 
-	fmt.Printf("Found %+v\n", found)
-
-	// Output: Found &{Name:John}
+	if found == nil || found.name != "John" {
+		t.Fatalf("expected iterator to have found `John` record but got nil or something else")
+	}
 }
