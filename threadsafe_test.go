@@ -39,7 +39,7 @@ const N = 1000
 func Test_AddConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 
 	var wg sync.WaitGroup
@@ -62,7 +62,7 @@ func Test_AddConcurrent(t *testing.T) {
 func Test_CardinalityConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -86,7 +86,7 @@ func Test_CardinalityConcurrent(t *testing.T) {
 func Test_ClearConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 
 	var wg sync.WaitGroup
@@ -107,7 +107,7 @@ func Test_ClearConcurrent(t *testing.T) {
 func Test_CloneConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 
 	for _, v := range ints {
@@ -129,7 +129,7 @@ func Test_CloneConcurrent(t *testing.T) {
 func Test_ContainsConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 	integers := make([]int, 0)
 	for _, v := range ints {
@@ -151,7 +151,7 @@ func Test_ContainsConcurrent(t *testing.T) {
 func Test_DifferenceConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -172,7 +172,7 @@ func Test_DifferenceConcurrent(t *testing.T) {
 func Test_EqualConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -193,7 +193,7 @@ func Test_EqualConcurrent(t *testing.T) {
 func Test_IntersectConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -214,7 +214,7 @@ func Test_IntersectConcurrent(t *testing.T) {
 func Test_IsSubsetConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -235,7 +235,7 @@ func Test_IsSubsetConcurrent(t *testing.T) {
 func Test_IsProperSubsetConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -256,7 +256,7 @@ func Test_IsProperSubsetConcurrent(t *testing.T) {
 func Test_IsSupersetConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -277,7 +277,7 @@ func Test_IsSupersetConcurrent(t *testing.T) {
 func Test_IsProperSupersetConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -299,7 +299,7 @@ func Test_EachConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 	concurrent := 10
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -327,7 +327,7 @@ func Test_EachConcurrent(t *testing.T) {
 func Test_IterConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -360,7 +360,7 @@ func Test_IterConcurrent(t *testing.T) {
 func Test_RemoveConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -384,7 +384,7 @@ func Test_RemoveConcurrent(t *testing.T) {
 func Test_StringConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -404,7 +404,7 @@ func Test_StringConcurrent(t *testing.T) {
 func Test_SymmetricDifferenceConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s, ss := NewSetGeneric[int](), NewSetGeneric[int]()
+	s, ss := NewSet[int](), NewSet[int]()
 	ints := rand.Perm(N)
 	for _, v := range ints {
 		s.Add(v)
@@ -425,7 +425,7 @@ func Test_SymmetricDifferenceConcurrent(t *testing.T) {
 func Test_ToSlice(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
-	s := NewSetGeneric[int]()
+	s := NewSet[int]()
 	ints := rand.Perm(N)
 
 	var wg sync.WaitGroup
@@ -456,7 +456,7 @@ func Test_ToSliceDeadlock(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
 	var wg sync.WaitGroup
-	set := NewSetGeneric[int]()
+	set := NewSet[int]()
 	workers := 10
 	wg.Add(workers)
 	for i := 1; i <= workers; i++ {
@@ -473,7 +473,7 @@ func Test_ToSliceDeadlock(t *testing.T) {
 
 func Test_UnmarshalJSON(t *testing.T) {
 	s := []byte(`["test", 1, 2, 3]`) //,["4,5,6"]]`)
-	expected := NewSetFromSliceGeneric[any](
+	expected := NewSetFromSlice[any](
 		[]any{
 			json.Number("1"),
 			json.Number("2"),
@@ -481,7 +481,7 @@ func Test_UnmarshalJSON(t *testing.T) {
 			"test",
 		},
 	)
-	actual := NewSetGeneric[any]()
+	actual := NewSet[any]()
 	err := json.Unmarshal(s, actual)
 	if err != nil {
 		t.Errorf("Error should be nil: %v", err)
@@ -493,7 +493,7 @@ func Test_UnmarshalJSON(t *testing.T) {
 }
 
 func Test_MarshalJSON(t *testing.T) {
-	expected := NewSetFromSliceGeneric[any](
+	expected := NewSetFromSlice[any](
 		[]any{
 			json.Number("1"),
 			"test",
@@ -501,7 +501,7 @@ func Test_MarshalJSON(t *testing.T) {
 	)
 
 	b, err := json.Marshal(
-		NewSetFromSliceGeneric[any](
+		NewSetFromSlice[any](
 			[]any{
 				1,
 				"test",
@@ -512,7 +512,7 @@ func Test_MarshalJSON(t *testing.T) {
 		t.Errorf("Error should be nil: %v", err)
 	}
 
-	actual := NewSetGeneric[any]()
+	actual := NewSet[any]()
 	err = json.Unmarshal(b, actual)
 	if err != nil {
 		t.Errorf("Error should be nil: %v", err)
