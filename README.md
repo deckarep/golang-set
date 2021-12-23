@@ -40,7 +40,7 @@ What is considered comparable in Go?
 * `Booleans`, `integers`, `strings`, `floats` or basically primitive types.
 * `Pointers`
 * `Arrays`
-* `Struct's` if *all* of their fields are also comparable
+* `Structs` if *all of their fields* are also comparable independently
 
 Using this library is as simple as creating either a threadsafe or non-threadsafe set and providing a `comparable` type for instantiation of the collection.
 
