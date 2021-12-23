@@ -22,15 +22,11 @@ You can of course argue that there is no need for a set in Go, otherwise the cre
 
 This package is trusted by many companies and thousands of open-source packages. Here are just a few sample users of this package.
 
-* Open source projects
+* Notable projects/companies using this package
   * Ethereum
   * Docker
   * 1Password
-  * etc
-* Companies
-  * X
-  * Y
-  * Z
+  * Hashicorp
 
 ## Usage
 
