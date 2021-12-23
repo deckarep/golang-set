@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/deckarep/golang-set.svg?branch=master)](https://travis-ci.org/deckarep/golang-set)
+![example workflow](https://github.com/deckarep/golang-set/actions/workflows/ci.yml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/deckarep/golang-set)](https://goreportcard.com/report/github.com/deckarep/golang-set)
 [![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.svg)](http://godoc.org/github.com/deckarep/golang-set)
 
