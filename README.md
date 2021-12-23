@@ -2,97 +2,163 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/deckarep/golang-set)](https://goreportcard.com/report/github.com/deckarep/golang-set)
 [![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.svg)](http://godoc.org/github.com/deckarep/golang-set)
 
-## golang-set
-
-## Features (as of 12/17/2021)
-*New and improved* built with **Generics**!
-This is in *ALPHA* quality state, and pending some feedback from the community.
+# golang-set
 
 The missing set collection for the Go language.  Until Go has sets built-in...use this.
 
-Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set from Python.
-You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository
-and carry-on and to the rest that find this useful please contribute in helping me make it better by:
+Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set collection from Python.
+You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository and carry-on and to the rest that find this useful please contribute in helping me make it better by contributing with suggestions or PRs.
 
-* Helping to make more idiomatic improvements to the code.
-* Helping to increase the performance of it. ~~(So far, no attempt has been made, but since it uses a map internally, I expect it to be mostly performant.)~~
-* Helping to make the unit-tests more robust and kick-ass.
-* Helping to fill in the [documentation.](http://godoc.org/github.com/deckarep/golang-set)
-* Simply offering feedback and suggestions.  (Positive, constructive feedback is appreciated.)
+## Features
 
-I have to give some credit for helping seed the idea with this post on [stackoverflow.](http://programmers.stackexchange.com/questions/177428/sets-data-structure-in-golang)
-
-*Update* - as of 3/9/2014, you can use a compile-time generic version of this package in the [gen](http://clipperhouse.github.io/gen/) framework.  This framework allows you to use the golang-set in a completely generic and type-safe way by allowing you to generate a supporting .go file based on your custom types.
-
-## Features (as of 9/22/2014)
-
-* a CartesianProduct() method has been added with unit-tests: [Read more about the cartesian product](http://en.wikipedia.org/wiki/Cartesian_product)
-
-## Features (as of 9/15/2014)
-
-* a PowerSet() method has been added with unit-tests: [Read more about the Power set](http://en.wikipedia.org/wiki/Power_set)
-
-## Features (as of 4/22/2014)
-
+* *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (requires [Go 1.18beta1](https://go.dev/blog/go1.18beta1) or higher)
 * One common interface to both implementations
-* Two set implementations to choose from
-  * a thread-safe implementation designed for concurrent use
-  * a non-thread-safe implementation designed for performance
-* 75 benchmarks for both implementations
-* 35 unit tests for both implementations
-* 14 concurrent tests for the thread-safe implementation
+  * a non threadsafe implementation designed for performance
+  * a threadsafe implementation designed for concurrent use
+* Feature complete set implementation modeled after [Python's set implementation](https://docs.python.org/3/library/stdtypes.html#set).
+* Exhaustive unit-test and benchmark suite
 
+## Trusted by
 
+This package is trusted by many companies and thousands of open-source packages. Here are just a few sample users of this package.
 
-Please see the unit test file for additional usage examples.  The Python set documentation will also do a better job than I can of explaining how a set typically [works.](http://docs.python.org/2/library/sets.html)    Please keep in mind
-however that the Python set is a built-in type and supports additional features and syntax that make it awesome.
+* Open source projects
+  * Ethereum
+  * Docker
+  * 1Password
+  * etc
+* Companies
+  * X
+  * Y
+  * Z
 
-## Examples but not exhaustive:
+## Usage
+
+The code below demonstrates how a Set collection can better manage data and actually minimize boilerplate and needless loops in code. This package now fully supports *generic* syntax so you are now able to instantiate a collection for any [comparable](https://flaviocopes.com/golang-comparing-values/) type object.
+
+What is considered comparable in Go? 
+* `Booleans`, `integers`, `strings`, `floats` or basically primitive types.
+* `Pointers`
+* `Arrays`
+* `Struct's` if *all* of their fields are also comparable
+
+Using this library is as simple as creating either a threadsafe or non-threadsafe set and providing a `comparable` type for instantiation of the collection.
 
 ```go
-requiredClasses := mapset.NewSet()
-requiredClasses.Add("Cooking")
-requiredClasses.Add("English")
-requiredClasses.Add("Math")
-requiredClasses.Add("Biology")
+// Syntax example, doesn't compile.
+mySet := mapset.NewSet[T]() // where T is some concrete comparable type.
 
-scienceSlice := []interface{}{"Biology", "Chemistry"}
-scienceClasses := mapset.NewSetFromSlice(scienceSlice)
+// Therefore this code creates an int set
+mySet := mapset.NewSet[int]()
 
-electiveClasses := mapset.NewSet()
-electiveClasses.Add("Welding")
-electiveClasses.Add("Music")
-electiveClasses.Add("Automotive")
+// Or perhaps you want a string set
+mySet := mapset.NewSet[string]()
 
-bonusClasses := mapset.NewSet()
-bonusClasses.Add("Go Programming")
-bonusClasses.Add("Python Programming")
+type myStruct {
+  name string
+  age uint8
+}
 
-//Show me all the available classes I can take
-allClasses := requiredClasses.Union(scienceClasses).Union(electiveClasses).Union(bonusClasses)
-fmt.Println(allClasses) //Set{Cooking, English, Math, Chemistry, Welding, Biology, Music, Automotive, Go Programming, Python Programming}
+// Alternatively a set of structs
+mySet := mapset.NewSet[myStruct]()
 
-
-//Is cooking considered a science class?
-fmt.Println(scienceClasses.Contains("Cooking")) //false
-
-//Show me all classes that are not science classes, since I hate science.
-fmt.Println(allClasses.Difference(scienceClasses)) //Set{Music, Automotive, Go Programming, Python Programming, Cooking, English, Math, Welding}
-
-//Which science classes are also required classes?
-fmt.Println(scienceClasses.Intersect(requiredClasses)) //Set{Biology}
-
-//How many bonus classes do you offer?
-fmt.Println(bonusClasses.Cardinality()) //2
-
-//Do you have the following classes? Welding, Automotive and English?
-fmt.Println(allClasses.IsSuperset(mapset.NewSetFromSlice([]interface{}{"Welding", "Automotive", "English"}))) //true
+// Lastly a set that can hold anything using the any or empty interface keyword: interface{}. This is effectively removes type safety.
+mySet := mapset.NewSet[any]()
 ```
 
-Thanks!
+## Comprehensive Example
 
--Ralph
+```go
+package main
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/deckarep/golang-set/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+import (
+  "fmt"
+  mapset "github.com/deckarep/golang-set"
+)
 
-[![Analytics](https://ga-beacon.appspot.com/UA-42584447-2/deckarep/golang-set)](https://github.com/igrigorik/ga-beacon)
+func main() {
+  // Create a string-based set of required classes.
+  required := mapset.NewSet[string]()
+  required.Add("cooking")
+  required.Add("english")
+  required.Add("math")
+  required.Add("biology")
+
+  // Create a string-based set of science classes.
+  sciences := mapset.NewSet[string]()
+  sciences.Add("biology")
+  sciences.Add("chemistry")
+  
+  // Create a string-based set of electives.
+  electives := mapset.NewSet[string]()
+  electives.Add("welding")
+  electives.Add("music")
+  electives.Add("automotive")
+
+  // Create a string-based set of bonus programming classes.
+  bonus := mapset.NewSet[string]()
+  bonus.Add("beginner go")
+  bonus.Add("python for dummies")
+}
+```
+
+Create a set of all unique classes.
+Sets will *automatically* deduplicate the same data.
+
+```go
+  all := required
+    .Union(sciences)
+    .Union(electives)
+    .Union(bonus)
+  
+  fmt.Println(all)
+```
+
+Output:
+```sh
+Set{cooking, english, math, chemistry, welding, biology, music, automotive, beginner go, python for dummies}
+```
+
+Is cooking considered a science class?
+```go
+result := sciences.Contains("cooking")
+fmt.Println(result)
+```
+
+Output:
+```false
+false
+```
+
+Show me all classes that are not science classes, since I don't enjoy science.
+```go
+notScience := all.Difference(sciences)
+fmt.Println(notScience)
+```
+
+```sh
+Set{ music, automotive, beginner go, python for dummies, cooking, english, math, welding }
+```
+
+Which science classes are also required classes?
+```go
+reqScience := sciences.Intersect(required)
+```
+
+Output:
+```sh
+Set{biology}
+```
+
+How many bonus classes do you offer?
+```go
+fmt.Println(bonus.Cardinality())
+```
+Output:
+```sh
+2
+```
+
+Thanks for visiting!
+
+-deckarep
