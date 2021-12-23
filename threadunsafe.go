@@ -26,11 +26,11 @@ SOFTWARE.
 package mapset
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
-	"encoding/json"
-	"bytes"
 )
 
 // An OrderedPair represents a 2-tuple of values.
