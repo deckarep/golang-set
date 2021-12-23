@@ -56,12 +56,6 @@ func (pair OrderedPair[T]) String() string {
 
 type threadUnsafeSet[T comparable] map[T]struct{}
 
-// // An OrderedPair represents a 2-tuple of values.
-// type OrderedPair struct {
-// 	First  interface{}
-// 	Second interface{}
-// }
-
 // Assert concrete type:threadUnsafeSet adheres to Set interface.
 var _ Set[string] = (*threadUnsafeSet[string])(nil)
 
