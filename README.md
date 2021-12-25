@@ -4,7 +4,14 @@
 
 # golang-set
 
-The missing set collection for the Go language.  Until Go has sets built-in...use this.
+The missing `generic` set collection for the Go language.  Until Go has sets built-in...use this.
+
+## Update 12/25/2021
+* `alpha` release on this `generics` branch
+* supports `new generic` syntax
+* Go `1.18beta1` or higher
+
+![With Generics](new_improved.jpeg)
 
 Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set collection from Python.
 You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository and carry-on and to the rest that find this useful please contribute in helping me make it better by contributing with suggestions or PRs.
@@ -12,9 +19,9 @@ You can of course argue that there is no need for a set in Go, otherwise the cre
 ## Features
 
 * *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (requires [Go 1.18beta1](https://go.dev/blog/go1.18beta1) or higher)
-* One common interface to both implementations
-  * a non threadsafe implementation designed for performance
-  * a threadsafe implementation designed for concurrent use
+* One common *interface* to both implementations
+  * a **non threadsafe** implementation favoring *performance*
+  * a **threadsafe** implementation favoring *concurrent* use
 * Feature complete set implementation modeled after [Python's set implementation](https://docs.python.org/3/library/stdtypes.html#set).
 * Exhaustive unit-test and benchmark suite
 
