@@ -20,7 +20,3 @@ jobs:
         go test -v -race ./...
         # go vet ./...
         # go test -bench=.
-    - name: Force update to pkg.go.dev
-      run: |
-        # Refresh latest tag.
-        curl https://sum.golang.org/lookup/github.com/deckarep/golang-set@$(git describe --tags `git rev-list --tags --max-count=1`)
