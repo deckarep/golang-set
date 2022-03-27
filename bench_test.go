@@ -38,14 +38,6 @@ func nrand(n int) []int {
 	return i
 }
 
-func toInterfaces(i []int) []interface{} {
-	ifs := make([]interface{}, len(i))
-	for ind, v := range i {
-		ifs[ind] = v
-	}
-	return ifs
-}
-
 func benchAdd(b *testing.B, s Set[int]) {
 	nums := nrand(b.N)
 	b.ResetTimer()
