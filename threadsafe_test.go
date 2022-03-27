@@ -473,13 +473,13 @@ func Test_ToSliceDeadlock(t *testing.T) {
 
 func Test_UnmarshalJSON(t *testing.T) {
 	s := []byte(`["test", "1", "2", "3"]`) //,["4,5,6"]]`)
-	expected := NewSetFromSlice(
+	expected := NewSet(
 		[]string{
 			string(json.Number("1")),
 			string(json.Number("2")),
 			string(json.Number("3")),
 			"test",
-		},
+		}...,
 	)
 
 	actual := NewSet[string]()
@@ -494,19 +494,19 @@ func Test_UnmarshalJSON(t *testing.T) {
 }
 
 func Test_MarshalJSON(t *testing.T) {
-	expected := NewSetFromSlice(
+	expected := NewSet(
 		[]string{
 			string(json.Number("1")),
 			"test",
-		},
+		}...,
 	)
 
 	b, err := json.Marshal(
-		NewSetFromSlice(
+		NewSet(
 			[]string{
 				"1",
 				"test",
-			},
+			}...,
 		),
 	)
 	if err != nil {

@@ -55,11 +55,11 @@ func Test_NewSet(t *testing.T) {
 		t.Error("NewSet should start out as an empty set")
 	}
 
-	assertEqual(NewSetFromSlice[int]([]int{}), NewSet[int](), t)
-	assertEqual(NewSetFromSlice[int]([]int{1}), NewSet[int](1), t)
-	assertEqual(NewSetFromSlice[int]([]int{1, 2}), NewSet[int](1, 2), t)
-	assertEqual(NewSetFromSlice[string]([]string{"a"}), NewSet[string]("a"), t)
-	assertEqual(NewSetFromSlice[string]([]string{"a", "b"}), NewSet[string]("a", "b"), t)
+	assertEqual(NewSet([]int{}...), NewSet[int](), t)
+	assertEqual(NewSet([]int{1}...), NewSet(1), t)
+	assertEqual(NewSet([]int{1, 2}...), NewSet(1, 2), t)
+	assertEqual(NewSet([]string{"a"}...), NewSet("a"), t)
+	assertEqual(NewSet([]string{"a", "b"}...), NewSet("a", "b"), t)
 }
 
 func Test_NewUnsafeSet(t *testing.T) {
@@ -1105,7 +1105,7 @@ func Test_Example(t *testing.T) {
 	   requiredClasses.Add("Biology")
 
 	   scienceSlice := []interface{}{"Biology", "Chemistry"}
-	   scienceClasses := NewSetFromSlice(scienceSlice)
+	   scienceClasses := NewSet(scienceSlice)
 
 	   electiveClasses := NewSet()
 	   electiveClasses.Add("Welding")
