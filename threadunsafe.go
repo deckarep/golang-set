@@ -29,30 +29,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strings"
 )
-
-// An OrderedPair represents a 2-tuple of values.
-type OrderedPair[T comparable] struct {
-	First  T
-	Second T
-}
-
-// Equal says whether two 2-tuples contain the same values in the same order.
-func (pair *OrderedPair[T]) Equal(other OrderedPair[T]) bool {
-	if pair.First == other.First &&
-		pair.Second == other.Second {
-		return true
-	}
-
-	return false
-}
-
-// String outputs a 2-tuple in the form "(A, B)".
-func (pair OrderedPair[T]) String() string {
-	return fmt.Sprintf("(%v, %v)", pair.First, pair.Second)
-}
 
 type threadUnsafeSet[T comparable] map[T]struct{}
 
@@ -75,27 +53,6 @@ func (s *threadUnsafeSet[T]) Add(v T) bool {
 
 func (s *threadUnsafeSet[T]) Cardinality() int {
 	return len(*s)
-}
-
-func (s *threadUnsafeSet[T]) CartesianProduct(other Set[T]) Set[any] {
-	o := other.(*threadUnsafeSet[T])
-
-	// NOTE: limitation with Go s or of my knowledge of Go s?
-
-	// I can't seem to declare this without an instantiation cycle.
-	//cartProduct := NewThreadUnsafeSet[OrderedPair[T]]()
-
-	// So here is my crime against humanity.
-	cartProduct := NewThreadUnsafeSet[any]()
-
-	for i := range *s {
-		for j := range *o {
-			elem := OrderedPair[T]{First: i, Second: j}
-			cartProduct.Add(elem)
-		}
-	}
-
-	return cartProduct
 }
 
 func (s *threadUnsafeSet[T]) Clear() {
@@ -230,42 +187,12 @@ func (s *threadUnsafeSet[T]) Iterator() *Iterator[T] {
 }
 
 // TODO: how can we make this properly , return T but can't return nil.
-func (s *threadUnsafeSet[T]) Pop() any {
+func (s *threadUnsafeSet[T]) Pop() (v T, ok bool) {
 	for item := range *s {
 		delete(*s, item)
-		return item
+		return item, true
 	}
-	return nil
-}
-
-func (s *threadUnsafeSet[T]) PowerSet() Set[any] {
-	// The type must be any comparable so we have to dumb down to any.
-	powSet := NewThreadUnsafeSet[any]()
-
-	nullset := newThreadUnsafeSet[T]()
-	powSet.Add(&nullset)
-
-	for es := range *s {
-		u := newThreadUnsafeSet[any]()
-		j := powSet.Iter()
-		for er := range j {
-			p := newThreadUnsafeSet[T]()
-			if reflect.TypeOf(er).Name() == "" {
-				k := er.(*threadUnsafeSet[T])
-				for ek := range *(k) {
-					p.Add(ek)
-				}
-			} else {
-				p.Add(er.(T))
-			}
-			p.Add(es)
-			u.Add(&p)
-		}
-
-		powSet = powSet.Union(&u)
-	}
-
-	return powSet
+	return
 }
 
 func (s *threadUnsafeSet[T]) Remove(v T) {

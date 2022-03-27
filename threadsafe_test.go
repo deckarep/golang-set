@@ -472,16 +472,17 @@ func Test_ToSliceDeadlock(t *testing.T) {
 }
 
 func Test_UnmarshalJSON(t *testing.T) {
-	s := []byte(`["test", 1, 2, 3]`) //,["4,5,6"]]`)
-	expected := NewSetFromSlice[any](
-		[]any{
-			json.Number("1"),
-			json.Number("2"),
-			json.Number("3"),
+	s := []byte(`["test", "1", "2", "3"]`) //,["4,5,6"]]`)
+	expected := NewSetFromSlice(
+		[]string{
+			string(json.Number("1")),
+			string(json.Number("2")),
+			string(json.Number("3")),
 			"test",
 		},
 	)
-	actual := NewSet[any]()
+
+	actual := NewSet[string]()
 	err := json.Unmarshal(s, actual)
 	if err != nil {
 		t.Errorf("Error should be nil: %v", err)
@@ -493,17 +494,17 @@ func Test_UnmarshalJSON(t *testing.T) {
 }
 
 func Test_MarshalJSON(t *testing.T) {
-	expected := NewSetFromSlice[any](
-		[]any{
-			json.Number("1"),
+	expected := NewSetFromSlice(
+		[]string{
+			string(json.Number("1")),
 			"test",
 		},
 	)
 
 	b, err := json.Marshal(
-		NewSetFromSlice[any](
-			[]any{
-				1,
+		NewSetFromSlice(
+			[]string{
+				"1",
 				"test",
 			},
 		),
@@ -512,7 +513,7 @@ func Test_MarshalJSON(t *testing.T) {
 		t.Errorf("Error should be nil: %v", err)
 	}
 
-	actual := NewSet[any]()
+	actual := NewSet[string]()
 	err = json.Unmarshal(b, actual)
 	if err != nil {
 		t.Errorf("Error should be nil: %v", err)

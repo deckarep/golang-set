@@ -162,14 +162,7 @@ type Set[T comparable] interface {
 	Union(other Set[T]) Set[T]
 
 	// Pop removes and returns an arbitrary item from the set.
-	Pop() any
-
-	// Returns all subsets of a given set (Power Set).
-	// PowerSet({x, y, z}) -> {{}, {x}, {y}, {z}, {x, y}, {x, z}, {y, z}, {x, y, z}}
-	PowerSet() Set[any]
-
-	// Returns the Cartesian Product of two sets.
-	CartesianProduct(other Set[T]) Set[any]
+	Pop() (T, bool)
 
 	// Returns the members of the set as a slice.
 	ToSlice() []T
@@ -195,7 +188,7 @@ func NewSet[T comparable](vals ...T) Set[T] {
 // NewSetWith creates and returns a new set with the given elements.
 // Operations on the resulting set are thread-safe.
 func NewSetWith[T comparable](vals ...T) Set[T] {
-	return NewSetFromSlice[T](vals)
+	return NewSetFromSlice(vals)
 }
 
 // NewSetFromSlice creates and returns a reference to a set from an
