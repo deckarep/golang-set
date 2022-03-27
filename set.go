@@ -175,8 +175,8 @@ type Set[T comparable] interface {
 	UnmarshalJSON(b []byte) error
 }
 
-// NewSet creates and returns a reference to an empty set.  Operations
-// on the resulting set are thread-safe.
+// NewSet creates and returns a new set with the given elements.
+// Operations on the resulting set are thread-safe.
 func NewSet[T comparable](vals ...T) Set[T] {
 	s := newThreadSafeSet[T]()
 	for _, item := range vals {
@@ -198,10 +198,13 @@ func NewSetFromSlice[T comparable](v []T) Set[T] {
 	return s
 }
 
-// NewThreadUnsafeSet creates and returns a reference to an empty set.
+// NewThreadUnsafeSet creates and returns a new set with the given elements.
 // Operations on the resulting set are not thread-safe.
-func NewThreadUnsafeSet[T comparable]() Set[T] {
+func NewThreadUnsafeSet[T comparable](vals ...T) Set[T] {
 	s := newThreadUnsafeSet[T]()
+	for _, item := range vals {
+		s.Add(item)
+	}
 	return &s
 }
 
