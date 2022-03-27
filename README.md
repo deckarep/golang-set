@@ -6,10 +6,10 @@
 
 The missing `generic` set collection for the Go language.  Until Go has sets built-in...use this.
 
-## Update 12/25/2021
-* `alpha` release on this `generics` branch
+## Update 3/26/2022
+* Packaged version: `2.0.0` release for generics support with breaking changes.
 * supports `new generic` syntax
-* Go `1.18beta1` or higher
+* Go `1.18.0` or higher
 
 ![With Generics](new_improved.jpeg)
 
@@ -18,7 +18,7 @@ You can of course argue that there is no need for a set in Go, otherwise the cre
 
 ## Features
 
-* *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (requires [Go 1.18beta1](https://go.dev/blog/go1.18beta1) or higher)
+* *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (requires [Go 1.18](https://go.dev/blog/go1.18beta1) or higher)
 * One common *interface* to both implementations
   * a **non threadsafe** implementation favoring *performance*
   * a **threadsafe** implementation favoring *concurrent* use
