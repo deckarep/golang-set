@@ -975,12 +975,17 @@ func Test_PopSafe(t *testing.T) {
 	a.Add("c")
 	a.Add("d")
 
-	captureSet := NewSet[any]()
-	captureSet.Add(a.Pop())
-	captureSet.Add(a.Pop())
-	captureSet.Add(a.Pop())
-	captureSet.Add(a.Pop())
-	finalNil := a.Pop()
+	aPop := func() (v string) {
+		v, _ = a.Pop()
+		return
+	}
+
+	captureSet := NewSet[string]()
+	captureSet.Add(aPop())
+	captureSet.Add(aPop())
+	captureSet.Add(aPop())
+	captureSet.Add(aPop())
+	finalNil := aPop()
 
 	if captureSet.Cardinality() != 4 {
 		t.Error("unexpected captureSet cardinality; should be 4")
@@ -994,7 +999,7 @@ func Test_PopSafe(t *testing.T) {
 		t.Error("unexpected result set; should be a,b,c,d (any order is fine")
 	}
 
-	if finalNil != nil {
+	if finalNil != "" {
 		t.Error("when original set is empty, further pops should result in nil")
 	}
 }
@@ -1007,12 +1012,17 @@ func Test_PopUnsafe(t *testing.T) {
 	a.Add("c")
 	a.Add("d")
 
-	captureSet := NewThreadUnsafeSet[any]()
-	captureSet.Add(a.Pop())
-	captureSet.Add(a.Pop())
-	captureSet.Add(a.Pop())
-	captureSet.Add(a.Pop())
-	finalNil := a.Pop()
+	aPop := func() (v string) {
+		v, _ = a.Pop()
+		return
+	}
+
+	captureSet := NewThreadUnsafeSet[string]()
+	captureSet.Add(aPop())
+	captureSet.Add(aPop())
+	captureSet.Add(aPop())
+	captureSet.Add(aPop())
+	finalNil := aPop()
 
 	if captureSet.Cardinality() != 4 {
 		t.Error("unexpected captureSet cardinality; should be 4")
@@ -1026,37 +1036,9 @@ func Test_PopUnsafe(t *testing.T) {
 		t.Error("unexpected result set; should be a,b,c,d (any order is fine")
 	}
 
-	if finalNil != nil {
+	if finalNil != "" {
 		t.Error("when original set is empty, further pops should result in nil")
 	}
-}
-
-func Test_PowerSet(t *testing.T) {
-	a := NewThreadUnsafeSet[string]()
-
-	a.Add("1")
-	a.Add("delta")
-	a.Add("chi")
-	a.Add("4")
-
-	b := a.PowerSet()
-	if b.Cardinality() != 16 {
-		t.Error("unexpected PowerSet cardinality")
-	}
-}
-
-func Test_PowerSetThreadSafe(t *testing.T) {
-	// set := NewSet().PowerSet()
-	// _, setIsThreadSafe := set.(*threadSafeSet)
-	// if !setIsThreadSafe {
-	// 	t.Error("result of PowerSet should be thread safe")
-	// }
-
-	// subset := set.Pop()
-	// _, subsetIsThreadSafe := subset.(*threadSafeSet)
-	// if !subsetIsThreadSafe {
-	// 	t.Error("subsets in PowerSet result should be thread safe")
-	// }
 }
 
 func Test_EmptySetProperties(t *testing.T) {
@@ -1095,52 +1077,8 @@ func Test_EmptySetProperties(t *testing.T) {
 		t.Error("The intesection of any set with the empty set is supposed to be the empty set")
 	}
 
-	d := a.CartesianProduct(empty)
-	if d.Cardinality() != 0 {
-		t.Error("Cartesian product of any set and the empty set must be the empty set")
-	}
-
 	if empty.Cardinality() != 0 {
 		t.Error("Cardinality of the empty set is supposed to be zero")
-	}
-
-	// e := empty.PowerSet()
-	// if e.Cardinality() != 1 {
-	// 	t.Error("Cardinality of the power set of the empty set is supposed to be one { {} }")
-	// }
-}
-
-func Test_CartesianProduct(t *testing.T) {
-	a := NewThreadUnsafeSet[any]()
-	b := NewThreadUnsafeSet[any]()
-	empty := NewThreadUnsafeSet[any]()
-
-	a.Add(1)
-	a.Add(2)
-	a.Add(3)
-
-	b.Add("one")
-	b.Add("two")
-	b.Add("three")
-	b.Add("alpha")
-	b.Add("gamma")
-
-	c := a.CartesianProduct(b)
-	d := b.CartesianProduct(a)
-
-	if c.Cardinality() != d.Cardinality() {
-		t.Error("Cardinality of AxB must be equal to BxA")
-	}
-
-	if c.Cardinality() != (a.Cardinality() * b.Cardinality()) {
-		t.Error("Unexpected cardinality for cartesian product set")
-	}
-
-	c = a.CartesianProduct(empty)
-	d = empty.CartesianProduct(b)
-
-	if c.Cardinality() != 0 || d.Cardinality() != 0 {
-		t.Error("Cartesian product of any set and the empty set Ax0 || 0xA must be the empty set")
 	}
 }
 

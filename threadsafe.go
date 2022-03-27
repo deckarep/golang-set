@@ -227,37 +227,10 @@ func (s *threadSafeSet[T]) String() string {
 	return ret
 }
 
-func (s *threadSafeSet[T]) PowerSet() Set[any] {
-	s.RLock()
-	unsafePowerSet := s.uss.PowerSet().(*threadUnsafeSet[any])
-	s.RUnlock()
-
-	ret := &threadSafeSet[any]{uss: newThreadUnsafeSet[any]()}
-	for subset := range unsafePowerSet.Iter() {
-		unsafeSubset := subset.(*threadUnsafeSet[any])
-		ret.Add(&threadSafeSet[any]{uss: *unsafeSubset})
-	}
-	return ret
-}
-
-func (s *threadSafeSet[T]) Pop() any {
+func (s *threadSafeSet[T]) Pop() (T, bool) {
 	s.Lock()
 	defer s.Unlock()
 	return s.uss.Pop()
-}
-
-func (s *threadSafeSet[T]) CartesianProduct(other Set[T]) Set[any] {
-	o := other.(*threadSafeSet[T])
-
-	s.RLock()
-	o.RLock()
-
-	unsafeCartProduct := s.uss.CartesianProduct(&o.uss).(*threadUnsafeSet[any])
-	ret := &threadSafeSet[any]{uss: *unsafeCartProduct}
-
-	s.RUnlock()
-	o.RUnlock()
-	return ret
 }
 
 func (s *threadSafeSet[T]) ToSlice() []T {
