@@ -142,10 +142,10 @@ func (s *threadSafeSet[T]) Clear() {
 	s.Unlock()
 }
 
-func (s *threadSafeSet[T]) Remove(v T) {
+func (s *threadSafeSet[T]) Remove(v T) bool {
 	s.Lock()
-	delete(s.uss, v)
-	s.Unlock()
+	defer s.Unlock()
+	return s.uss.Remove(v)
 }
 
 func (s *threadSafeSet[T]) Cardinality() int {

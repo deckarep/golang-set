@@ -138,8 +138,9 @@ type Set[T comparable] interface {
 	// use to range over the set.
 	Iterator() *Iterator[T]
 
-	// Remove a single element from the set.
-	Remove(i T)
+	// Remove a single element from the set if it is present in the set.
+	// Returns whether the element was present in the set.
+	Remove(i T) bool
 
 	// Provides a convenient string representation
 	// of the current state of the set.

@@ -195,8 +195,12 @@ func (s *threadUnsafeSet[T]) Pop() (v T, ok bool) {
 	return
 }
 
-func (s *threadUnsafeSet[T]) Remove(v T) {
-	delete(*s, v)
+func (s *threadUnsafeSet[T]) Remove(v T) bool {
+	if s.Contains(v) {
+		delete(*s, v)
+		return true
+	}
+	return false
 }
 
 func (s *threadUnsafeSet[T]) String() string {
