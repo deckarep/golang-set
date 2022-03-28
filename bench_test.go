@@ -38,20 +38,23 @@ func nrand(n int) []int {
 	return i
 }
 
-func benchAdd(b *testing.B, s Set[int]) {
-	nums := nrand(b.N)
+func benchAdd(b *testing.B, n int, newSet func(...int) Set[int]) {
+	nums := nrand(n)
 	b.ResetTimer()
-	for _, v := range nums {
-		s.Add(v)
+	for i := 0; i < b.N; i++ {
+		s := newSet()
+		for _, v := range nums {
+			s.Add(v)
+		}
 	}
 }
 
 func BenchmarkAddSafe(b *testing.B) {
-	benchAdd(b, NewSet[int]())
+	benchAdd(b, 1000, NewSet[int])
 }
 
 func BenchmarkAddUnsafe(b *testing.B) {
-	benchAdd(b, NewThreadUnsafeSet[int]())
+	benchAdd(b, 1000, NewThreadUnsafeSet[int])
 }
 
 func benchRemove(b *testing.B, s Set[int]) {
