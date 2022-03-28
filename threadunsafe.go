@@ -42,13 +42,9 @@ func newThreadUnsafeSet[T comparable]() threadUnsafeSet[T] {
 }
 
 func (s *threadUnsafeSet[T]) Add(v T) bool {
-	_, found := (*s)[v]
-	if found {
-		return false //False if it existed already
-	}
-
+	prevLen := len(*s)
 	(*s)[v] = struct{}{}
-	return true
+	return prevLen != len(*s)
 }
 
 func (s *threadUnsafeSet[T]) Cardinality() int {
