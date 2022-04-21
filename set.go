@@ -43,6 +43,10 @@ type Set[T comparable] interface {
 	// the item was added.
 	Add(val T) bool
 
+	// Append multiple elements to the set. Returns
+	// the number of elements added.
+	Append(val ...T) int
+
 	// Returns the number of elements in the set.
 	Cardinality() int
 

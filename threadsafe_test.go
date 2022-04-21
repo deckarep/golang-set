@@ -59,6 +59,30 @@ func Test_AddConcurrent(t *testing.T) {
 	}
 }
 
+func Test_AppendConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s := NewSet[int]()
+	ints := rand.Perm(N)
+
+	n := len(ints) >> 1
+	var wg sync.WaitGroup
+	wg.Add(n)
+	for i := 0; i < n; i++ {
+		go func(i int) {
+			s.Append(i, N-i-1)
+			wg.Done()
+		}(i)
+	}
+
+	wg.Wait()
+	for _, i := range ints {
+		if !s.Contains(i) {
+			t.Errorf("Set is missing element: %v", i)
+		}
+	}
+}
+
 func Test_CardinalityConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 

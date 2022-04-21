@@ -47,6 +47,14 @@ func (s *threadUnsafeSet[T]) Add(v T) bool {
 	return prevLen != len(*s)
 }
 
+func (s *threadUnsafeSet[T]) Append(v ...T) int {
+	prevLen := len(*s)
+	for _, val := range v {
+		(*s)[val] = struct{}{}
+	}
+	return len(*s) - prevLen
+}
+
 func (s *threadUnsafeSet[T]) Cardinality() int {
 	return len(*s)
 }

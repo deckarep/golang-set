@@ -35,12 +35,12 @@ type yourType struct {
 
 func Test_ExampleIterator(t *testing.T) {
 
-	s := NewSet[*yourType](
+	s := NewSet(
 		[]*yourType{
-			&yourType{name: "Alise"},
-			&yourType{name: "Bob"},
-			&yourType{name: "John"},
-			&yourType{name: "Nick"},
+			{name: "Alise"},
+			{name: "Bob"},
+			{name: "John"},
+			{name: "Nick"},
 		}...,
 	)
 
