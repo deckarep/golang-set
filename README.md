@@ -76,7 +76,7 @@ package main
 
 import (
   "fmt"
-  mapset "github.com/deckarep/golang-set"
+  mapset "github.com/deckarep/golang-set/v2"
 )
 
 func main() {
