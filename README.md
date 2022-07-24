@@ -1,6 +1,6 @@
 ![example workflow](https://github.com/deckarep/golang-set/actions/workflows/ci.yml/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/deckarep/golang-set)](https://goreportcard.com/report/github.com/deckarep/golang-set)
-[![GoDoc](https://godoc.org/github.com/deckarep/golang-set?status.svg)](http://godoc.org/github.com/deckarep/golang-set)
+[![Go Report Card](https://goreportcard.com/badge/github.com/deckarep/golang-set/v2)](https://goreportcard.com/report/github.com/deckarep/golang-set/v2)
+[![GoDoc](https://godoc.org/github.com/deckarep/golang-set/v2?status.svg)](http://godoc.org/github.com/deckarep/golang-set/v2)
 
 # golang-set
 
