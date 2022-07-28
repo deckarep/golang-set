@@ -146,8 +146,8 @@ func Test_CloneConcurrent(t *testing.T) {
 			wg.Done()
 		}(i)
 	}
-
 	s.Clone()
+	wg.Wait()
 }
 
 func Test_ContainsConcurrent(t *testing.T) {
