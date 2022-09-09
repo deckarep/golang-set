@@ -35,6 +35,11 @@ This package is trusted by many companies and thousands of open-source packages.
   * 1Password
   * Hashicorp
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=deckarep/golang-set&type=Date)](https://star-history.com/#deckarep/golang-set&Date)
+
+
 ## Usage
 
 The code below demonstrates how a Set collection can better manage data and actually minimize boilerplate and needless loops in code. This package now fully supports *generic* syntax so you are now able to instantiate a collection for any [comparable](https://flaviocopes.com/golang-comparing-values/) type object.
