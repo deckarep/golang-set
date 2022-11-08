@@ -182,7 +182,7 @@ func NewSet[T comparable](vals ...T) Set[T] {
 	for _, item := range vals {
 		s.Add(item)
 	}
-	return &s
+	return s
 }
 
 // NewThreadUnsafeSet creates and returns a new set with the given elements.
@@ -192,7 +192,7 @@ func NewThreadUnsafeSet[T comparable](vals ...T) Set[T] {
 	for _, item := range vals {
 		s.Add(item)
 	}
-	return &s
+	return s
 }
 
 // Creates and returns a new set with the given keys of the map.
