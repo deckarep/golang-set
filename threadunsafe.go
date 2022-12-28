@@ -194,12 +194,12 @@ func (s *threadUnsafeSet[T]) Iterator() *Iterator[T] {
 }
 
 // TODO: how can we make this properly , return T but can't return nil.
-func (s *threadUnsafeSet[T]) Pop() (v T, ok bool) {
+func (s *threadUnsafeSet[T]) Pop() (T, bool) {
 	for item := range *s {
 		delete(*s, item)
 		return item, true
 	}
-	return
+	return *new(T), false
 }
 
 func (s *threadUnsafeSet[T]) Remove(v T) {
