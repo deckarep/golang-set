@@ -47,12 +47,12 @@ func (s threadUnsafeSet[T]) Add(v T) bool {
 	return prevLen != len(s)
 }
 
-func (s *threadUnsafeSet[T]) Append(v ...T) int {
-	prevLen := len(*s)
+func (s threadUnsafeSet[T]) Append(v ...T) int {
+	prevLen := len(s)
 	for _, val := range v {
-		(*s)[val] = struct{}{}
+		(s)[val] = struct{}{}
 	}
-	return len(*s) - prevLen
+	return len(s) - prevLen
 }
 
 // private version of Add which doesn't return a value
