@@ -25,7 +25,9 @@ SOFTWARE.
 
 package mapset
 
-import "testing"
+import (
+	"testing"
+)
 
 func makeSetInt(ints []int) Set[int] {
 	s := NewSet[int]()
@@ -1144,6 +1146,82 @@ func Test_ToSliceUnthreadsafe(t *testing.T) {
 	for _, i := range setAsSlice {
 		if !s.Contains(i) {
 			t.Errorf("Set is missing element: %v", i)
+		}
+	}
+}
+
+func Test_NewSetFromMapKey_Ints(t *testing.T) {
+	m := map[int]int{
+		5: 5,
+		2: 3,
+	}
+
+	s := NewSetFromMapKeys(m)
+
+	if len(m) != s.Cardinality() {
+		t.Errorf("Length of Set is not the same as the map. Expected: %d. Actual: %d", len(m), s.Cardinality())
+	}
+
+	for k := range m {
+		if !s.Contains(k) {
+			t.Errorf("Element %d not found in map: %v", k, m)
+		}
+	}
+}
+
+func Test_NewSetFromMapKey_Strings(t *testing.T) {
+	m := map[int]int{
+		5: 5,
+		2: 3,
+	}
+
+	s := NewSetFromMapKeys(m)
+
+	if len(m) != s.Cardinality() {
+		t.Errorf("Length of Set is not the same as the map. Expected: %d. Actual: %d", len(m), s.Cardinality())
+	}
+
+	for k := range m {
+		if !s.Contains(k) {
+			t.Errorf("Element %q not found in map: %v", k, m)
+		}
+	}
+}
+
+func Test_NewThreadUnsafeSetFromMapKey_Ints(t *testing.T) {
+	m := map[int]int{
+		5: 5,
+		2: 3,
+	}
+
+	s := NewThreadUnsafeSetFromMapKeys(m)
+
+	if len(m) != s.Cardinality() {
+		t.Errorf("Length of Set is not the same as the map. Expected: %d. Actual: %d", len(m), s.Cardinality())
+	}
+
+	for k := range m {
+		if !s.Contains(k) {
+			t.Errorf("Element %d not found in map: %v", k, m)
+		}
+	}
+}
+
+func Test_NewThreadUnsafeSetFromMapKey_Strings(t *testing.T) {
+	m := map[int]int{
+		5: 5,
+		2: 3,
+	}
+
+	s := NewThreadUnsafeSetFromMapKeys(m)
+
+	if len(m) != s.Cardinality() {
+		t.Errorf("Length of Set is not the same as the map. Expected: %d. Actual: %d", len(m), s.Cardinality())
+	}
+
+	for k := range m {
+		if !s.Contains(k) {
+			t.Errorf("Element %q not found in map: %v", k, m)
 		}
 	}
 }

@@ -39,7 +39,7 @@ package mapset
 // represents an unordered set of data and a large number of
 // operations that can be applied to that set.
 type Set[T comparable] interface {
-	// Adds an element to the set. Returns whether
+	// Add adds an element to the set. Returns whether
 	// the item was added.
 	Add(val T) bool
 
@@ -47,22 +47,22 @@ type Set[T comparable] interface {
 	// the number of elements added.
 	Append(val ...T) int
 
-	// Returns the number of elements in the set.
+	// Cardinality returns the number of elements in the set.
 	Cardinality() int
 
-	// Removes all elements from the set, leaving
+	// Clear removes all elements from the set, leaving
 	// the empty set.
 	Clear()
 
-	// Returns a clone of the set using the same
+	// Clone returns a clone of the set using the same
 	// implementation, duplicating all keys.
 	Clone() Set[T]
 
-	// Returns whether the given items
+	// Contains returns whether the given items
 	// are all in the set.
 	Contains(val ...T) bool
 
-	// Returns the difference between this set
+	// Difference returns the difference between this set
 	// and other. The returned set will contain
 	// all elements of this set that are not also
 	// elements of other.
@@ -73,7 +73,7 @@ type Set[T comparable] interface {
 	// panic.
 	Difference(other Set[T]) Set[T]
 
-	// Determines if two sets are equal to each
+	// Equal determines if two sets are equal to each
 	// other. If they have the same cardinality
 	// and contain the same elements, they are
 	// considered equal. The order in which
@@ -84,7 +84,7 @@ type Set[T comparable] interface {
 	// method. Otherwise, Equal will panic.
 	Equal(other Set[T]) bool
 
-	// Returns a new set containing only the elements
+	// Intersect returns a new set containing only the elements
 	// that exist only in both sets.
 	//
 	// Note that the argument to Intersect
@@ -93,7 +93,7 @@ type Set[T comparable] interface {
 	// panic.
 	Intersect(other Set[T]) Set[T]
 
-	// Determines if every element in this set is in
+	// IsProperSubset determines if every element in this set is in
 	// the other set but the two sets are not equal.
 	//
 	// Note that the argument to IsProperSubset
@@ -102,7 +102,7 @@ type Set[T comparable] interface {
 	// will panic.
 	IsProperSubset(other Set[T]) bool
 
-	// Determines if every element in the other set
+	// IsProperSuperset determines if every element in the other set
 	// is in this set but the two sets are not
 	// equal.
 	//
@@ -112,7 +112,7 @@ type Set[T comparable] interface {
 	// panic.
 	IsProperSuperset(other Set[T]) bool
 
-	// Determines if every element in this set is in
+	// IsSubset determines if every element in this set is in
 	// the other set.
 	//
 	// Note that the argument to IsSubset
@@ -121,7 +121,7 @@ type Set[T comparable] interface {
 	// panic.
 	IsSubset(other Set[T]) bool
 
-	// Determines if every element in the other set
+	// IsSuperset determines if every element in the other set
 	// is in this set.
 	//
 	// Note that the argument to IsSuperset
@@ -130,26 +130,26 @@ type Set[T comparable] interface {
 	// panic.
 	IsSuperset(other Set[T]) bool
 
-	// Iterates over elements and executes the passed func against each element.
+	// Each iterates over elements and executes the passed func against each element.
 	// If passed func returns true, stop iteration at the time.
 	Each(func(T) bool)
 
-	// Returns a channel of elements that you can
+	// Iter returns a channel of elements that you can
 	// range over.
 	Iter() <-chan T
 
-	// Returns an Iterator object that you can
+	// Iterator returns an Iterator object that you can
 	// use to range over the set.
 	Iterator() *Iterator[T]
 
-	// Remove a single element from the set.
+	// Remove removes a single element from the set.
 	Remove(i T)
 
-	// Provides a convenient string representation
+	// String provides a convenient string representation
 	// of the current state of the set.
 	String() string
 
-	// Returns a new set with all elements which are
+	// SymmetricDifference returns a new set with all elements which are
 	// in either this set or the other set but not in both.
 	//
 	// Note that the argument to SymmetricDifference
@@ -158,7 +158,7 @@ type Set[T comparable] interface {
 	// will panic.
 	SymmetricDifference(other Set[T]) Set[T]
 
-	// Returns a new set with all elements in both sets.
+	// Union returns a new set with all elements in both sets.
 	//
 	// Note that the argument to Union must be of the
 	// same type as the receiver of the method.
@@ -168,7 +168,7 @@ type Set[T comparable] interface {
 	// Pop removes and returns an arbitrary item from the set.
 	Pop() (T, bool)
 
-	// Returns the members of the set as a slice.
+	// ToSlice returns the members of the set as a slice.
 	ToSlice() []T
 
 	// MarshalJSON will marshal the set into a JSON-based representation.
@@ -186,7 +186,7 @@ func NewSet[T comparable](vals ...T) Set[T] {
 	for _, item := range vals {
 		s.Add(item)
 	}
-	return &s
+	return s
 }
 
 // NewThreadUnsafeSet creates and returns a new set with the given elements.
@@ -196,5 +196,29 @@ func NewThreadUnsafeSet[T comparable](vals ...T) Set[T] {
 	for _, item := range vals {
 		s.Add(item)
 	}
-	return &s
+	return s
+}
+
+// Creates and returns a new set with the given keys of the map.
+// Operations on the resulting set are thread-safe.
+func NewSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
+	s := NewSet[T]()
+
+	for k := range val {
+		s.Add(k)
+	}
+
+	return s
+}
+
+// Creates and returns a new set with the given keys of the map.
+// Operations on the resulting set are not thread-safe.
+func NewThreadUnsafeSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
+	s := NewThreadUnsafeSet[T]()
+
+	for k := range val {
+		s.Add(k)
+	}
+
+	return s
 }
