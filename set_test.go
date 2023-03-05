@@ -45,6 +45,18 @@ func makeUnsafeSetInt(ints []int) Set[int] {
 	return s
 }
 
+func makeSetIntWithAppend(ints ...int) Set[int] {
+	s := NewSet[int]()
+	s.Append(ints...)
+	return s
+}
+
+func makeUnsafeSetIntWithAppend(ints ...int) Set[int] {
+	s := NewThreadUnsafeSet[int]()
+	s.Append(ints...)
+	return s
+}
+
 func assertEqual[T comparable](a, b Set[T], t *testing.T) {
 	if !a.Equal(b) {
 		t.Errorf("%v != %v\n", a, b)
@@ -88,6 +100,22 @@ func Test_AddUnsafeSet(t *testing.T) {
 	}
 }
 
+func Test_AppendSet(t *testing.T) {
+	a := makeSetIntWithAppend(1, 2, 3)
+
+	if a.Cardinality() != 3 {
+		t.Error("AppendSet does not have a size of 3 even though 3 items were added to a new set")
+	}
+}
+
+func Test_AppendUnsafeSet(t *testing.T) {
+	a := makeUnsafeSetIntWithAppend(1, 2, 3)
+
+	if a.Cardinality() != 3 {
+		t.Error("AppendSet does not have a size of 3 even though 3 items were added to a new set")
+	}
+}
+
 func Test_AddSetNoDuplicate(t *testing.T) {
 	a := makeSetInt([]int{7, 5, 3, 7})
 
@@ -109,6 +137,30 @@ func Test_AddUnsafeSetNoDuplicate(t *testing.T) {
 
 	if !(a.Contains(7) && a.Contains(5) && a.Contains(3)) {
 		t.Error("AddSetNoDuplicate set should have a 7, 5, and 3 in it.")
+	}
+}
+
+func Test_AppendSetNoDuplicate(t *testing.T) {
+	a := makeSetIntWithAppend(7, 5, 3, 7)
+
+	if a.Cardinality() != 3 {
+		t.Error("AppendSetNoDuplicate set should have 3 elements since 7 is a duplicate")
+	}
+
+	if !(a.Contains(7) && a.Contains(5) && a.Contains(3)) {
+		t.Error("AppendSetNoDuplicate set should have a 7, 5, and 3 in it.")
+	}
+}
+
+func Test_AppendUnsafeSetNoDuplicate(t *testing.T) {
+	a := makeUnsafeSetIntWithAppend(7, 5, 3, 7)
+
+	if a.Cardinality() != 3 {
+		t.Error("AppendSetNoDuplicate set should have 3 elements since 7 is a duplicate")
+	}
+
+	if !(a.Contains(7) && a.Contains(5) && a.Contains(3)) {
+		t.Error("AppendSetNoDuplicate set should have a 7, 5, and 3 in it.")
 	}
 }
 

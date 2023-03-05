@@ -45,10 +45,18 @@ func (t *threadSafeSet[T]) Add(v T) bool {
 	return ret
 }
 
+func (t *threadSafeSet[T]) Append(v ...T) int {
+	t.Lock()
+	ret := t.uss.Append(v...)
+	t.Unlock()
+	return ret
+}
+
 func (t *threadSafeSet[T]) Contains(v ...T) bool {
 	t.RLock()
 	ret := t.uss.Contains(v...)
 	t.RUnlock()
+
 	return ret
 }
 
