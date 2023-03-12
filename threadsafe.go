@@ -38,6 +38,12 @@ func newThreadSafeSet[T comparable]() *threadSafeSet[T] {
 	}
 }
 
+func newThreadSafeSetWithSize[T comparable](cardinality int) *threadSafeSet[T] {
+	return &threadSafeSet[T]{
+		uss: newThreadUnsafeSetWithSize[T](cardinality),
+	}
+}
+
 func (t *threadSafeSet[T]) Add(v T) bool {
 	t.Lock()
 	ret := t.uss.Add(v)
@@ -152,6 +158,12 @@ func (t *threadSafeSet[T]) Clear() {
 func (t *threadSafeSet[T]) Remove(v T) {
 	t.Lock()
 	delete(t.uss, v)
+	t.Unlock()
+}
+
+func (t *threadSafeSet[T]) RemoveAll(i ...T) {
+	t.Lock()
+	t.uss.RemoveAll(i...)
 	t.Unlock()
 }
 

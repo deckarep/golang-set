@@ -145,6 +145,9 @@ type Set[T comparable] interface {
 	// Remove removes a single element from the set.
 	Remove(i T)
 
+	// RemoveAll removes multiple elements from the set.
+	RemoveAll(i ...T)
+
 	// String provides a convenient string representation
 	// of the current state of the set.
 	String() string
@@ -182,27 +185,41 @@ type Set[T comparable] interface {
 // NewSet creates and returns a new set with the given elements.
 // Operations on the resulting set are thread-safe.
 func NewSet[T comparable](vals ...T) Set[T] {
-	s := newThreadSafeSet[T]()
+	s := newThreadSafeSetWithSize[T](len(vals))
 	for _, item := range vals {
 		s.Add(item)
 	}
+	return s
+}
+
+// NewSetWithSize creates and returns a reference to an empty set with a specified
+// capacity. Operations on the resulting set are thread-safe.
+func NewSetWithSize[T comparable](cardinality int) Set[T] {
+	s := newThreadSafeSetWithSize[T](cardinality)
 	return s
 }
 
 // NewThreadUnsafeSet creates and returns a new set with the given elements.
 // Operations on the resulting set are not thread-safe.
 func NewThreadUnsafeSet[T comparable](vals ...T) Set[T] {
-	s := newThreadUnsafeSet[T]()
+	s := newThreadUnsafeSetWithSize[T](len(vals))
 	for _, item := range vals {
 		s.Add(item)
 	}
 	return s
 }
 
-// Creates and returns a new set with the given keys of the map.
+// NewThreadUnsafeSetWithSize creates and returns a reference to an empty set with
+// a specified capacity. Operations on the resulting set are not thread-safe.
+func NewThreadUnsafeSetWithSize[T comparable](cardinality int) Set[T] {
+	s := newThreadUnsafeSetWithSize[T](cardinality)
+	return s
+}
+
+// NewSetFromMapKeys creates and returns a new set with the given keys of the map.
 // Operations on the resulting set are thread-safe.
 func NewSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
-	s := NewSet[T]()
+	s := NewSetWithSize[T](len(val))
 
 	for k := range val {
 		s.Add(k)
@@ -211,10 +228,10 @@ func NewSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
 	return s
 }
 
-// Creates and returns a new set with the given keys of the map.
+// NewThreadUnsafeSetFromMapKeys creates and returns a new set with the given keys of the map.
 // Operations on the resulting set are not thread-safe.
 func NewThreadUnsafeSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
-	s := NewThreadUnsafeSet[T]()
+	s := NewThreadUnsafeSetWithSize[T](len(val))
 
 	for k := range val {
 		s.Add(k)
