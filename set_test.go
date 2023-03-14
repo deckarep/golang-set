@@ -185,6 +185,26 @@ func Test_RemoveSet(t *testing.T) {
 	}
 }
 
+func Test_RemoveAllSet(t *testing.T) {
+	a := makeSetInt([]int{6, 3, 1, 8, 9})
+
+	a.RemoveAll(3, 1)
+
+	if a.Cardinality() != 3 {
+		t.Error("RemoveAll should only have 2 items in the set")
+	}
+
+	if !a.Contains(6, 8, 9) {
+		t.Error("RemoveAll should have only items (6,8,9) in the set")
+	}
+
+	a.RemoveAll(6, 8, 9)
+
+	if a.Cardinality() != 0 {
+		t.Error("RemoveSet should be an empty set after removing 6 and 1")
+	}
+}
+
 func Test_RemoveUnsafeSet(t *testing.T) {
 	a := makeUnsafeSetInt([]int{6, 3, 1})
 
@@ -200,6 +220,26 @@ func Test_RemoveUnsafeSet(t *testing.T) {
 
 	a.Remove(6)
 	a.Remove(1)
+
+	if a.Cardinality() != 0 {
+		t.Error("RemoveSet should be an empty set after removing 6 and 1")
+	}
+}
+
+func Test_RemoveAllUnsafeSet(t *testing.T) {
+	a := makeUnsafeSetInt([]int{6, 3, 1, 8, 9})
+
+	a.RemoveAll(3, 1)
+
+	if a.Cardinality() != 3 {
+		t.Error("RemoveAll should only have 2 items in the set")
+	}
+
+	if !a.Contains(6, 8, 9) {
+		t.Error("RemoveAll should have only items (6,8,9) in the set")
+	}
+
+	a.RemoveAll(6, 8, 9)
 
 	if a.Cardinality() != 0 {
 		t.Error("RemoveSet should be an empty set after removing 6 and 1")

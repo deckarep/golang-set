@@ -41,6 +41,10 @@ func newThreadUnsafeSet[T comparable]() threadUnsafeSet[T] {
 	return make(threadUnsafeSet[T])
 }
 
+func newThreadUnsafeSetWithSize[T comparable](cardinality int) threadUnsafeSet[T] {
+	return make(threadUnsafeSet[T], cardinality)
+}
+
 func (s threadUnsafeSet[T]) Add(v T) bool {
 	prevLen := len(s)
 	s[v] = struct{}{}
@@ -74,7 +78,7 @@ func (s threadUnsafeSet[T]) Clear() {
 }
 
 func (s threadUnsafeSet[T]) Clone() Set[T] {
-	clonedSet := make(threadUnsafeSet[T], s.Cardinality())
+	clonedSet := newThreadUnsafeSetWithSize[T](s.Cardinality())
 	for elem := range s {
 		clonedSet.add(elem)
 	}
@@ -218,6 +222,12 @@ func (s threadUnsafeSet[T]) Pop() (v T, ok bool) {
 
 func (s threadUnsafeSet[T]) Remove(v T) {
 	delete(s, v)
+}
+
+func (s threadUnsafeSet[T]) RemoveAll(i ...T) {
+	for _, elem := range i {
+		delete(s, elem)
+	}
 }
 
 func (s threadUnsafeSet[T]) String() string {
