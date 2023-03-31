@@ -32,12 +32,6 @@ type threadSafeSet[T comparable] struct {
 	uss threadUnsafeSet[T]
 }
 
-func newThreadSafeSet[T comparable]() *threadSafeSet[T] {
-	return &threadSafeSet[T]{
-		uss: newThreadUnsafeSet[T](),
-	}
-}
-
 func newThreadSafeSetWithSize[T comparable](cardinality int) *threadSafeSet[T] {
 	return &threadSafeSet[T]{
 		uss: newThreadUnsafeSetWithSize[T](cardinality),
