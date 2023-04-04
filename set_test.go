@@ -632,7 +632,7 @@ func Test_SetUnion(t *testing.T) {
 
 	e := c.Union(d)
 	if e.Cardinality() != 8 {
-		t.Error("set e should should have 8 elements in it after being unioned with set c to d")
+		t.Error("set e should have 8 elements in it after being unioned with set c to d")
 	}
 
 	f := NewSet[int]()
@@ -668,7 +668,7 @@ func Test_UnsafeSetUnion(t *testing.T) {
 
 	e := c.Union(d)
 	if e.Cardinality() != 8 {
-		t.Error("set e should should have 8 elements in it after being unioned with set c to d")
+		t.Error("set e should have 8 elements in it after being unioned with set c to d")
 	}
 
 	f := NewThreadUnsafeSet[int]()
