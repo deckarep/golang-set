@@ -63,7 +63,7 @@ mySet := mapset.NewSet[int]()
 // Or perhaps you want a string set
 mySet := mapset.NewSet[string]()
 
-type myStruct {
+type myStruct struct {
   name string
   age uint8
 }
