@@ -62,6 +62,10 @@ type Set[T comparable] interface {
 	// are all in the set.
 	Contains(val ...T) bool
 
+	// ContainsAny returns whether at least one of the
+	// given items are in the set.
+	ContainsAny(val ...T) bool
+
 	// Difference returns the difference between this set
 	// and other. The returned set will contain
 	// all elements of this set that are not also

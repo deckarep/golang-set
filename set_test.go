@@ -318,6 +318,38 @@ func Test_ContainsMultipleUnsafeSet(t *testing.T) {
 	}
 }
 
+func Test_ContainsAnySet(t *testing.T) {
+	a := NewSet[int]()
+
+	a.Add(71)
+
+	if !a.ContainsAny(71) {
+		t.Error("ContainsSet should contain 71")
+	}
+
+	if !a.ContainsAny(71, 10) {
+		t.Error("ContainsSet should contain 71 or 10")
+	}
+
+	a.Remove(71)
+
+	if a.ContainsAny(71) {
+		t.Error("ContainsSet should not contain 71")
+	}
+
+	if a.ContainsAny(71, 10) {
+		t.Error("ContainsSet should not contain 71 or 10")
+	}
+
+	a.Add(13)
+	a.Add(7)
+	a.Add(1)
+
+	if !(a.ContainsAny(13, 17, 10)) {
+		t.Error("ContainsSet should contain 13, 17, or 10")
+	}
+}
+
 func Test_ClearSet(t *testing.T) {
 	a := makeSetInt([]int{2, 5, 9, 10})
 
