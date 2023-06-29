@@ -94,6 +94,15 @@ func (s threadUnsafeSet[T]) Contains(v ...T) bool {
 	return true
 }
 
+func (s threadUnsafeSet[T]) ContainsAny(v ...T) bool {
+	for _, val := range v {
+		if _, ok := s[val]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // private version of Contains for a single element v
 func (s threadUnsafeSet[T]) contains(v T) (ok bool) {
 	_, ok = s[v]
