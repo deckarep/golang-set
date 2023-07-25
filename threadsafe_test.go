@@ -540,7 +540,17 @@ func Test_UnmarshalJSON(t *testing.T) {
 		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
 	}
 }
-
+func TestThreadUnsafeSet_UnmarshalJSON(t *testing.T) {
+	expected := NewThreadUnsafeSet[int64](1, 2, 3)
+	actual := NewThreadUnsafeSet[int64]()
+	err := actual.UnmarshalJSON([]byte(`[1, 2, 3]`))
+	if err != nil {
+		t.Errorf("Error should be nil: %v", err)
+	}
+	if !expected.Equal(actual) {
+		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
+	}
+}
 func Test_MarshalJSON(t *testing.T) {
 	expected := NewSet(
 		[]string{
