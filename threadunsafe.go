@@ -26,7 +26,6 @@ SOFTWARE.
 package mapset
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -311,24 +310,12 @@ func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON recreates a set from a JSON array, it only decodes
 // primitive types. Numbers are decoded as json.Number.
 func (s threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
-	var i []any
-
-	d := json.NewDecoder(bytes.NewReader(b))
-	d.UseNumber()
-	err := d.Decode(&i)
+	var i []T
+	err := json.Unmarshal(b, &i)
 	if err != nil {
 		return err
 	}
-
-	for _, v := range i {
-		switch t := v.(type) {
-		case T:
-			s.add(t)
-		default:
-			// anything else must be skipped.
-			continue
-		}
-	}
+	s.Append(i...)
 
 	return nil
 }
