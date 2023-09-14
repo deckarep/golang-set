@@ -169,7 +169,7 @@ type Set[T comparable] interface {
 	//
 	// Note that the argument to Union must be of the
 	// same type as the receiver of the method.
-	// Otherwise, IsSuperset will panic.
+	// Otherwise, Union will panic.
 	Union(other Set[T]) Set[T]
 
 	// Pop removes and returns an arbitrary item from the set.
