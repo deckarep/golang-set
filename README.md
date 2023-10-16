@@ -17,6 +17,14 @@ The missing `generic` set collection for the Go language.  Until Go has sets bui
 Coming from Python one of the things I miss is the superbly wonderful set collection.  This is my attempt to mimic the primary features of the set collection from Python.
 You can of course argue that there is no need for a set in Go, otherwise the creators would have added one to the standard library.  To those I say simply ignore this repository and carry-on and to the rest that find this useful please contribute in helping me make it better by contributing with suggestions or PRs.
 
+## Install
+
+Use `go get` to install this package.
+
+```shell
+go get github.com/deckarep/golang-set/v2
+```
+
 ## Features
 
 * *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (requires [Go 1.18](https://go.dev/blog/go1.18beta1) or higher)
