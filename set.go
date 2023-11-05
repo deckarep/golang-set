@@ -97,6 +97,9 @@ type Set[T comparable] interface {
 	// panic.
 	Intersect(other Set[T]) Set[T]
 
+	// IsEmpty determines if there are elements in the set.
+	IsEmpty() bool
+
 	// IsProperSubset determines if every element in this set is in
 	// the other set but the two sets are not equal.
 	//

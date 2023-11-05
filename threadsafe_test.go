@@ -259,6 +259,29 @@ func Test_IntersectConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
+func Test_IsEmptyConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s := NewSet[int]()
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		for i := 0; i < N; i++ {
+			size := s.Cardinality()
+			if s.IsEmpty() && size > 0 {
+				t.Errorf("Is Empty should be return false")
+			}
+		}
+		wg.Done()
+	}()
+
+	for i := 0; i < N; i++ {
+		s.Add(rand.Int())
+	}
+	wg.Wait()
+}
+
 func Test_IsSubsetConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
