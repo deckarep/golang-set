@@ -163,6 +163,10 @@ func (s threadUnsafeSet[T]) Intersect(other Set[T]) Set[T] {
 	return intersection
 }
 
+func (s threadUnsafeSet[T]) IsEmpty() bool {
+	return s.Cardinality() == 0
+}
+
 func (s threadUnsafeSet[T]) IsProperSubset(other Set[T]) bool {
 	return s.Cardinality() < other.Cardinality() && s.IsSubset(other)
 }

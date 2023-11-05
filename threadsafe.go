@@ -74,6 +74,10 @@ func (t *threadSafeSet[T]) ContainsAny(v ...T) bool {
 	return ret
 }
 
+func (t *threadSafeSet[T]) IsEmpty() bool {
+	return t.Cardinality() == 0
+}
+
 func (t *threadSafeSet[T]) IsSubset(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 
