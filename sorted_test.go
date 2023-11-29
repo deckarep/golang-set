@@ -45,10 +45,10 @@ func Test_Sorted(t *testing.T) {
 			t.Errorf("Element 0 was not equal to apple: %s", sorted[0])
 		}
 		if sorted[1] != "banana" {
-			t.Errorf("Element 0 was not equal to banana: %s", sorted[1])
+			t.Errorf("Element 1 was not equal to banana: %s", sorted[1])
 		}
 		if sorted[2] != "pear" {
-			t.Errorf("Element 0 was not equal to pear: %s", sorted[2])
+			t.Errorf("Element 2 was not equal to pear: %s", sorted[2])
 		}
 	}
 
