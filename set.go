@@ -62,6 +62,13 @@ type Set[T comparable] interface {
 	// are all in the set.
 	Contains(val ...T) bool
 
+	// ContainsOne returns whether the given item
+	// is in the set.
+	//
+	// Contains may cause the argument to escape to the heap.
+	// See: https://github.com/deckarep/golang-set/issues/118
+	ContainsOne(val T) bool
+
 	// ContainsAny returns whether at least one of the
 	// given items are in the set.
 	ContainsAny(val ...T) bool
