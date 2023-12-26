@@ -180,6 +180,99 @@ func BenchmarkContains100Unsafe(b *testing.B) {
 	benchContains(b, 100, NewThreadUnsafeSet[int]())
 }
 
+func benchContainsOne(b *testing.B, n int, s Set[int]) {
+	nums := nrand(n)
+	for _, v := range nums {
+		s.Add(v)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.ContainsOne(-1)
+	}
+}
+
+func BenchmarkContainsOne1Safe(b *testing.B) {
+	benchContainsOne(b, 1, NewSet[int]())
+}
+
+func BenchmarkContainsOne1Unsafe(b *testing.B) {
+	benchContainsOne(b, 1, NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkContainsOne10Safe(b *testing.B) {
+	benchContainsOne(b, 10, NewSet[int]())
+}
+
+func BenchmarkContainsOne10Unsafe(b *testing.B) {
+	benchContainsOne(b, 10, NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkContainsOne100Safe(b *testing.B) {
+	benchContainsOne(b, 100, NewSet[int]())
+}
+
+func BenchmarkContainsOne100Unsafe(b *testing.B) {
+	benchContainsOne(b, 100, NewThreadUnsafeSet[int]())
+}
+
+// In this scenario, Contains argument escapes to the heap, while ContainsOne does not.
+func benchContainsComparison(b *testing.B, n int, s Set[int]) {
+	nums := nrand(n)
+	for _, v := range nums {
+		s.Add(v)
+	}
+
+	b.Run("Contains", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			for _, v := range nums {
+				s.Contains(v) // 1 allocation, v is moved to the heap
+			}
+		}
+	})
+	b.Run("Contains slice", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			for i := range nums {
+				s.Contains(nums[i : i+1]...) // no allocations, using heap-allocated slice
+			}
+		}
+	})
+	b.Run("ContainsOne", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			for _, v := range nums {
+				s.ContainsOne(v) // no allocations, using stack-allocated v
+			}
+		}
+	})
+}
+
+func BenchmarkContainsComparison1Unsafe(b *testing.B) {
+	benchContainsComparison(b, 1, NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkContainsComparison1Safe(b *testing.B) {
+	benchContainsComparison(b, 1, NewSet[int]())
+}
+
+func BenchmarkContainsComparison10Unsafe(b *testing.B) {
+	benchContainsComparison(b, 10, NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkContainsComparison10Safe(b *testing.B) {
+	benchContainsComparison(b, 10, NewSet[int]())
+}
+
+func BenchmarkContainsComparison100Unsafe(b *testing.B) {
+	benchContainsComparison(b, 100, NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkContainsComparison100Safe(b *testing.B) {
+	benchContainsComparison(b, 100, NewSet[int]())
+}
+
 func benchEqual(b *testing.B, n int, s, t Set[int]) {
 	nums := nrand(n)
 	for _, v := range nums {

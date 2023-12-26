@@ -318,6 +318,54 @@ func Test_ContainsMultipleUnsafeSet(t *testing.T) {
 	}
 }
 
+func Test_ContainsOneSet(t *testing.T) {
+	a := NewSet[int]()
+
+	a.Add(71)
+
+	if !a.ContainsOne(71) {
+		t.Error("ContainsSet should contain 71")
+	}
+
+	a.Remove(71)
+
+	if a.ContainsOne(71) {
+		t.Error("ContainsSet should not contain 71")
+	}
+
+	a.Add(13)
+	a.Add(7)
+	a.Add(1)
+
+	if !(a.ContainsOne(13) && a.ContainsOne(7) && a.ContainsOne(1)) {
+		t.Error("ContainsSet should contain 13, 7, 1")
+	}
+}
+
+func Test_ContainsOneUnsafeSet(t *testing.T) {
+	a := NewThreadUnsafeSet[int]()
+
+	a.Add(71)
+
+	if !a.ContainsOne(71) {
+		t.Error("ContainsSet should contain 71")
+	}
+
+	a.Remove(71)
+
+	if a.ContainsOne(71) {
+		t.Error("ContainsSet should not contain 71")
+	}
+
+	a.Add(13)
+	a.Add(7)
+	a.Add(1)
+
+	if !(a.ContainsOne(13) && a.ContainsOne(7) && a.ContainsOne(1)) {
+		t.Error("ContainsSet should contain 13, 7, 1")
+	}
+}
+
 func Test_ContainsAnySet(t *testing.T) {
 	a := NewSet[int]()
 
