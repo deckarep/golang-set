@@ -65,7 +65,7 @@ type Set[T comparable] interface {
 	// ContainsOne returns whether the given item
 	// is in the set.
 	//
-	// Regular Contains may cause the argument to escape to the heap.
+	// Contains may cause the argument to escape to the heap.
 	// See: https://github.com/deckarep/golang-set/issues/118
 	ContainsOne(val T) bool
 
