@@ -6,6 +6,9 @@
 
 The missing `generic` set collection for the Go language.  Until Go has sets built-in...use this.
 
+## Psst
+* Hi there, 👋! Do you use or have interest in the [Zig programming language](https://ziglang.org/) created by Andrew Kelley? If so, the golang-set project has a new sibling project: [ziglang-set](https://github.com/deckarep/ziglang-set)! Come check it out!
+
 ## Update 3/5/2023
 * Packaged version: `2.2.0` release includes a refactor to minimize pointer indirection, better method documentation standards and a few constructor convenience methods to increase ergonomics when appending items `Append` or creating a new set from an exist `Map`.
 * supports `new generic` syntax
