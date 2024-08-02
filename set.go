@@ -253,3 +253,11 @@ func NewThreadUnsafeSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
 
 	return s
 }
+
+func Values[T comparable](s Set[T]) func(func(element T) bool) {
+	return func(yield func(element T) bool) {
+		s.Each(func(t T) bool {
+			return !yield(t)
+		})
+	}
+}
