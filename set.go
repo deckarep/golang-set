@@ -203,7 +203,7 @@ func NewSet[T comparable](vals ...T) Set[T] {
 	for _, item := range vals {
 		s.Add(item)
 	}
-	return s
+	return &s
 }
 
 // NewSetWithSize creates and returns a reference to an empty set with a specified
@@ -220,7 +220,7 @@ func NewThreadUnsafeSet[T comparable](vals ...T) Set[T] {
 	for _, item := range vals {
 		s.Add(item)
 	}
-	return s
+	return &s
 }
 
 // NewThreadUnsafeSetWithSize creates and returns a reference to an empty set with
