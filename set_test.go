@@ -1346,6 +1346,54 @@ func Test_NewThreadUnsafeSetFromMapKey_Strings(t *testing.T) {
 	}
 }
 
+func Test_NewSetFromSeq(t *testing.T) {
+	values := []int{1, 2, 3}
+
+	seq := func(yield func(E) bool) {
+		for _, v := range values {
+			if !yield(v) {
+				return
+			}
+		}
+	}
+
+	s := NewSetFromSeq(seq)
+
+	if len(values) != s.Cardinality() {
+		t.Errorf("Length of Set is not the same as the iterator. Expected: %d. Actual: %d", len(values), s.Cardinality())
+	}
+
+	for v := range values {
+		if !s.Contains(v) {
+			t.Errorf("Set is missing element: %v", v)
+		}
+	}
+}
+
+func Test_NewThreadUnsafeSetFromSeq(t *testing.T) {
+	values := []int{1, 2, 3}
+
+	seq := func(yield func(E) bool) {
+		for _, v := range values {
+			if !yield(v) {
+				return
+			}
+		}
+	}
+
+	s := NewThreadUnsafeSetFromSeq(seq)
+
+	if len(values) != s.Cardinality() {
+		t.Errorf("Length of Set is not the same as the iterator. Expected: %d. Actual: %d", len(values), s.Cardinality())
+	}
+
+	for v := range values {
+		if !s.Contains(v) {
+			t.Errorf("Set is missing element: %v", v)
+		}
+	}
+}
+
 func Test_Example(t *testing.T) {
 	/*
 	   requiredClasses := NewSet()

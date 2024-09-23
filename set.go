@@ -253,3 +253,26 @@ func NewThreadUnsafeSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
 
 	return s
 }
+
+// NewSetFromSeq creates and returns a new set with the values from an iterator.
+// Operations on the resulting set are thread-safe.
+func NewSetFromSeq[T comparable](seq func(T) bool) Set[T] {
+	s := NewSetWithSize[T](0)
+	addAllFromSeq(s, seq)
+	return s
+}
+
+// NewThreadUnsafeSetFromSeq creates and returns a new set with the given keys of the map.
+// Operations on the resulting set are not thread-safe.
+func NewThreadUnsafeSetFromSeq[T comparable](seq func(T) bool) Set[T] {
+	s := NewThreadUnsafeSetWithSize[T](0)
+	addAllFromSeq(s, seq)
+	return s
+}
+
+func addAllFromSeq[T comparable](s Set[T], seq func(T) bool) {
+	seq(func(v T) bool {
+		s.Add(v)
+		return true
+	})
+}
