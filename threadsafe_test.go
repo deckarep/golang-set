@@ -217,6 +217,27 @@ func Test_ContainsAnyConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
+func Test_ContainsAnyElementConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s, ss := NewSet[int](), NewSet[int]()
+	ints := rand.Perm(N)
+	for _, v := range ints {
+		s.Add(v)
+		ss.Add(v)
+	}
+
+	var wg sync.WaitGroup
+	for range ints {
+		wg.Add(1)
+		go func() {
+			s.ContainsAnyElement(ss)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
 func Test_DifferenceConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
