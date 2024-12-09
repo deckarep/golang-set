@@ -1248,7 +1248,7 @@ func Test_EmptySetProperties(t *testing.T) {
 
 	c = a.Intersect(empty)
 	if !c.Equal(empty) {
-		t.Error("The intesection of any set with the empty set is supposed to be the empty set")
+		t.Error("The intersection of any set with the empty set is supposed to be the empty set")
 	}
 
 	if empty.Cardinality() != 0 {
