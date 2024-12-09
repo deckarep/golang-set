@@ -398,6 +398,33 @@ func Test_ContainsAnySet(t *testing.T) {
 	}
 }
 
+func Test_ContainsAnyElement(t *testing.T) {
+	a := NewSet[int]()
+	a.Add(1)
+	a.Add(3)
+	a.Add(5)
+
+	b := NewSet[int]()
+	a.Add(2)
+	a.Add(4)
+	a.Add(6)
+
+	if ret := a.ContainsAnyElement(b); ret {
+		t.Errorf("set a not contain any element in set b")
+	}
+
+	a.Add(10)
+
+	if ret := a.ContainsAnyElement(b); ret {
+		t.Errorf("set a not contain any element in set b")
+	}
+
+	b.Add(10)
+
+	if ret := a.ContainsAnyElement(b); !ret {
+		t.Errorf("set a contain 10")
+	}
+}
 func Test_ClearSet(t *testing.T) {
 	a := makeSetInt([]int{2, 5, 9, 10})
 
