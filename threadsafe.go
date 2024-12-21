@@ -46,38 +46,38 @@ func newThreadSafeSetWithSize[T comparable](cardinality int) *threadSafeSet[T] {
 
 func (t *threadSafeSet[T]) Add(v T) bool {
 	t.Lock()
+	defer t.Unlock()
 	ret := t.uss.Add(v)
-	t.Unlock()
 	return ret
 }
 
 func (t *threadSafeSet[T]) Append(v ...T) int {
 	t.Lock()
+	defer t.Unlock()
 	ret := t.uss.Append(v...)
-	t.Unlock()
 	return ret
 }
 
 func (t *threadSafeSet[T]) Contains(v ...T) bool {
 	t.RLock()
+	defer t.RUnlock()
 	ret := t.uss.Contains(v...)
-	t.RUnlock()
 
 	return ret
 }
 
 func (t *threadSafeSet[T]) ContainsOne(v T) bool {
 	t.RLock()
+	defer t.RUnlock()
 	ret := t.uss.ContainsOne(v)
-	t.RUnlock()
 
 	return ret
 }
 
 func (t *threadSafeSet[T]) ContainsAny(v ...T) bool {
 	t.RLock()
+	defer t.RUnlock()
 	ret := t.uss.ContainsAny(v...)
-	t.RUnlock()
 
 	return ret
 }
@@ -87,11 +87,11 @@ func (t *threadSafeSet[T]) ContainsAnyElement(other Set[T]) bool {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	ret := t.uss.ContainsAnyElement(o.uss)
 
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
@@ -104,10 +104,10 @@ func (t *threadSafeSet[T]) IsSubset(other Set[T]) bool {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	ret := t.uss.IsSubset(o.uss)
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
@@ -135,11 +135,11 @@ func (t *threadSafeSet[T]) Union(other Set[T]) Set[T] {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	unsafeUnion := t.uss.Union(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeUnion}
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
@@ -148,11 +148,11 @@ func (t *threadSafeSet[T]) Intersect(other Set[T]) Set[T] {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	unsafeIntersection := t.uss.Intersect(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeIntersection}
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
@@ -161,11 +161,11 @@ func (t *threadSafeSet[T]) Difference(other Set[T]) Set[T] {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	unsafeDifference := t.uss.Difference(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeDifference}
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
@@ -174,30 +174,30 @@ func (t *threadSafeSet[T]) SymmetricDifference(other Set[T]) Set[T] {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	unsafeDifference := t.uss.SymmetricDifference(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeDifference}
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
 func (t *threadSafeSet[T]) Clear() {
 	t.Lock()
+	defer t.Unlock()
 	t.uss.Clear()
-	t.Unlock()
 }
 
 func (t *threadSafeSet[T]) Remove(v T) {
 	t.Lock()
+	defer t.Unlock()
 	delete(*t.uss, v)
-	t.Unlock()
 }
 
 func (t *threadSafeSet[T]) RemoveAll(i ...T) {
 	t.Lock()
+	defer t.Unlock()
 	t.uss.RemoveAll(i...)
-	t.Unlock()
 }
 
 func (t *threadSafeSet[T]) Cardinality() int {
@@ -208,24 +208,23 @@ func (t *threadSafeSet[T]) Cardinality() int {
 
 func (t *threadSafeSet[T]) Each(cb func(T) bool) {
 	t.RLock()
+	defer t.RUnlock()
 	for elem := range *t.uss {
 		if cb(elem) {
 			break
 		}
 	}
-	t.RUnlock()
 }
 
 func (t *threadSafeSet[T]) Iter() <-chan T {
 	ch := make(chan T)
 	go func() {
 		t.RLock()
-
+		defer t.RUnlock()
 		for elem := range *t.uss {
 			ch <- elem
 		}
 		close(ch)
-		t.RUnlock()
 	}()
 
 	return ch
@@ -236,6 +235,7 @@ func (t *threadSafeSet[T]) Iterator() *Iterator[T] {
 
 	go func() {
 		t.RLock()
+		defer t.RUnlock()
 	L:
 		for elem := range *t.uss {
 			select {
@@ -245,7 +245,6 @@ func (t *threadSafeSet[T]) Iterator() *Iterator[T] {
 			}
 		}
 		close(ch)
-		t.RUnlock()
 	}()
 
 	return iterator
@@ -256,26 +255,26 @@ func (t *threadSafeSet[T]) Equal(other Set[T]) bool {
 
 	t.RLock()
 	o.RLock()
+	defer t.RUnlock()
+	defer o.RUnlock()
 
 	ret := t.uss.Equal(o.uss)
-	t.RUnlock()
-	o.RUnlock()
 	return ret
 }
 
 func (t *threadSafeSet[T]) Clone() Set[T] {
 	t.RLock()
+	defer t.RUnlock()
 
 	unsafeClone := t.uss.Clone().(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeClone}
-	t.RUnlock()
 	return ret
 }
 
 func (t *threadSafeSet[T]) String() string {
 	t.RLock()
+	defer t.RUnlock()
 	ret := t.uss.String()
-	t.RUnlock()
 	return ret
 }
 
@@ -288,25 +287,25 @@ func (t *threadSafeSet[T]) Pop() (T, bool) {
 func (t *threadSafeSet[T]) ToSlice() []T {
 	keys := make([]T, 0, t.Cardinality())
 	t.RLock()
+	defer t.RUnlock()
 	for elem := range *t.uss {
 		keys = append(keys, elem)
 	}
-	t.RUnlock()
 	return keys
 }
 
 func (t *threadSafeSet[T]) MarshalJSON() ([]byte, error) {
 	t.RLock()
+	defer t.RUnlock()
 	b, err := t.uss.MarshalJSON()
-	t.RUnlock()
 
 	return b, err
 }
 
 func (t *threadSafeSet[T]) UnmarshalJSON(p []byte) error {
 	t.RLock()
+	defer t.RUnlock()
 	err := t.uss.UnmarshalJSON(p)
-	t.RUnlock()
 
 	return err
 }
