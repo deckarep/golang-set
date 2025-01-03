@@ -21,3 +21,4 @@ _testmain.go
 
 *.exe
 .idea
+coverage.txt

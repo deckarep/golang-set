@@ -636,3 +636,21 @@ func Test_MarshalJSON(t *testing.T) {
 		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
 	}
 }
+
+func Test_MarshalJSONError(t *testing.T) {
+	a := NewSet([]complex128{1 + 2i, 2 + 2i}...)
+	_, err := a.MarshalJSON()
+	if err == nil {
+		t.Error("Error should not be nil")
+	}
+}
+
+func Test_UnmarshalJSONError(t *testing.T) {
+	a := NewThreadUnsafeSet[int64]()
+
+	err := a.UnmarshalJSON([]byte(`[s, 2, 3]`))
+	if err == nil {
+		t.Error("Error should not be nil")
+	}
+
+}

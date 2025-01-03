@@ -26,6 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -65,6 +66,19 @@ func assertEqual[T comparable](a, b Set[T], t *testing.T) {
 
 func Test_NewSet(t *testing.T) {
 	a := NewSet[int]()
+	if a.Cardinality() != 0 {
+		t.Error("NewSet should start out as an empty set")
+	}
+
+	assertEqual(NewSet([]int{}...), NewSet[int](), t)
+	assertEqual(NewSet([]int{1}...), NewSet(1), t)
+	assertEqual(NewSet([]int{1, 2}...), NewSet(1, 2), t)
+	assertEqual(NewSet([]string{"a"}...), NewSet("a"), t)
+	assertEqual(NewSet([]string{"a", "b"}...), NewSet("a", "b"), t)
+}
+
+func Test_newThreadSafeSet(t *testing.T) {
+	a := newThreadSafeSet[int]()
 	if a.Cardinality() != 0 {
 		t.Error("NewSet should start out as an empty set")
 	}
@@ -424,7 +438,12 @@ func Test_ContainsAnyElement(t *testing.T) {
 	if ret := a.ContainsAnyElement(b); !ret {
 		t.Errorf("set a contain 10")
 	}
+
+	if ret := b.ContainsAnyElement(a); !ret {
+		t.Errorf("set a contain 10")
+	}
 }
+
 func Test_ClearSet(t *testing.T) {
 	a := makeSetInt([]int{2, 5, 9, 10})
 
@@ -524,6 +543,10 @@ func Test_SetIsSubset(t *testing.T) {
 	b.Add(72)
 
 	if b.IsSubset(a) {
+		t.Error("set b should not be a subset of set a because it contains 72 which is not in the set of a")
+	}
+
+	if a.IsSubset(b) {
 		t.Error("set b should not be a subset of set a because it contains 72 which is not in the set of a")
 	}
 }
@@ -805,10 +828,22 @@ func Test_SetIntersect(t *testing.T) {
 		t.Error("set c should be the empty set because there is no common items to intersect")
 	}
 
+	c = b.Intersect(a)
+
+	if c.Cardinality() != 0 {
+		t.Error("set c should be the empty set because there is no common items to intersect")
+	}
+
 	a.Add(10)
 	b.Add(10)
 
 	d := a.Intersect(b)
+
+	if !(d.Cardinality() == 1 && d.Contains(10)) {
+		t.Error("set d should have a size of 1 and contain the item 10")
+	}
+
+	d = b.Intersect(a)
 
 	if !(d.Cardinality() == 1 && d.Contains(10)) {
 		t.Error("set d should have a size of 1 and contain the item 10")
@@ -832,10 +867,22 @@ func Test_UnsafeSetIntersect(t *testing.T) {
 		t.Error("set c should be the empty set because there is no common items to intersect")
 	}
 
+	c = b.Intersect(a)
+
+	if c.Cardinality() != 0 {
+		t.Error("set c should be the empty set because there is no common items to intersect")
+	}
+
 	a.Add(10)
 	b.Add(10)
 
 	d := a.Intersect(b)
+
+	if !(d.Cardinality() == 1 && d.Contains(10)) {
+		t.Error("set d should have a size of 1 and contain the item 10")
+	}
+
+	d = b.Intersect(a)
 
 	if !(d.Cardinality() == 1 && d.Contains(10)) {
 		t.Error("set d should have a size of 1 and contain the item 10")
@@ -963,6 +1010,12 @@ func Test_SetEqual(t *testing.T) {
 	if !a.Equal(b) {
 		t.Error("a and b should be equal with the same number of elements")
 	}
+
+	a.Add(12)
+	b.Add(22)
+	if a.Equal(b) {
+		t.Error("a and b have different elements and should not be equal")
+	}
 }
 
 func Test_UnsafeSetEqual(t *testing.T) {
@@ -1081,6 +1134,37 @@ func Test_Each(t *testing.T) {
 	}
 }
 
+func Test_UnSafeEach(t *testing.T) {
+	a := NewThreadUnsafeSet[string]()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	b := NewThreadUnsafeSet[string]()
+	a.Each(func(elem string) bool {
+		b.Add(elem)
+		return false
+	})
+
+	if !a.Equal(b) {
+		t.Error("The sets are not equal after iterating (Each) through the first set")
+	}
+
+	var count int
+	a.Each(func(elem string) bool {
+		if count == 2 {
+			return true
+		}
+		count++
+		return false
+	})
+	if count != 2 {
+		t.Error("Iteration should stop on the way")
+	}
+}
+
 func Test_Iter(t *testing.T) {
 	a := NewSet[string]()
 
@@ -1155,6 +1239,21 @@ func Test_UnsafeIterator(t *testing.T) {
 
 func Test_IteratorStop(t *testing.T) {
 	a := NewSet[string]()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	it := a.Iterator()
+	it.Stop()
+	for range it.C {
+		t.Error("The iterating (Iterator) did not stop after Stop() has been called")
+	}
+}
+
+func Test_UnsafeIteratorStop(t *testing.T) {
+	a := NewThreadUnsafeSet[string]()
 
 	a.Add("Z")
 	a.Add("Y")
@@ -1297,6 +1396,20 @@ func Test_ToSliceUnthreadsafe(t *testing.T) {
 	}
 }
 
+func Test_ToSliceThreadSafe(t *testing.T) {
+	s := makeSetInt([]int{1, 2, 3})
+	setAsSlice := s.ToSlice()
+	if len(setAsSlice) != s.Cardinality() {
+		t.Errorf("Set length is incorrect: %v", len(setAsSlice))
+	}
+
+	for _, i := range setAsSlice {
+		if !s.Contains(i) {
+			t.Errorf("Set is missing element: %v", i)
+		}
+	}
+}
+
 func Test_NewSetFromMapKey_Ints(t *testing.T) {
 	m := map[int]int{
 		5: 5,
@@ -1370,6 +1483,66 @@ func Test_NewThreadUnsafeSetFromMapKey_Strings(t *testing.T) {
 		if !s.Contains(k) {
 			t.Errorf("Element %q not found in map: %v", k, m)
 		}
+	}
+}
+
+func Test_StringSafe(t *testing.T) {
+	strSlice := []string{"a", "b", "c", "d"}
+	strSet := NewSet(strSlice...)
+
+	strSetToSlice := strSet.ToSlice()
+	strSetToString := strSet.String()
+	for _, v := range strSetToSlice {
+		if !strings.Contains(strSetToString, v) {
+			t.Errorf("String representation of set does not contain %s", v)
+		}
+	}
+}
+
+func Test_StringUnSafe(t *testing.T) {
+	strSlice := []string{"a", "b", "c", "d"}
+	strSet := NewThreadUnsafeSet(strSlice...)
+
+	strSetToSlice := strSet.ToSlice()
+	strSetToString := strSet.String()
+	for _, v := range strSetToSlice {
+		if !strings.Contains(strSetToString, v) {
+			t.Errorf("String representation of set does not contain %s", v)
+		}
+	}
+}
+
+func Test_IsEmptySafe(t *testing.T) {
+	s := NewSet[int]()
+	if !s.IsEmpty() {
+		t.Error("Set should be empty")
+	}
+
+	s.Add(1)
+	if s.IsEmpty() {
+		t.Error("Set should not be empty")
+	}
+
+	s.Remove(1)
+	if !s.IsEmpty() {
+		t.Error("Set should be empty")
+	}
+}
+
+func Test_IsEmptyUnSafe(t *testing.T) {
+	s := NewThreadUnsafeSet[int]()
+	if !s.IsEmpty() {
+		t.Error("Set should be empty")
+	}
+
+	s.Add(1)
+	if s.IsEmpty() {
+		t.Error("Set should not be empty")
+	}
+
+	s.Remove(1)
+	if !s.IsEmpty() {
+		t.Error("Set should be empty")
 	}
 }
 
