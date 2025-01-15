@@ -324,18 +324,7 @@ func (s threadUnsafeSet[T]) Union(other Set[T]) Set[T] {
 
 // MarshalJSON creates a JSON array from the set, it marshals all elements
 func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
-	items := make([]string, 0, s.Cardinality())
-
-	for elem := range s {
-		b, err := json.Marshal(elem)
-		if err != nil {
-			return nil, err
-		}
-
-		items = append(items, string(b))
-	}
-
-	return []byte(fmt.Sprintf("[%s]", strings.Join(items, ","))), nil
+	return json.Marshal(s.ToSlice())
 }
 
 // UnmarshalJSON recreates a set from a JSON array, it only decodes
