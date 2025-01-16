@@ -296,9 +296,9 @@ func (t *threadSafeSet[T]) ToSlice() []T {
 }
 
 func (t *threadSafeSet[T]) MarshalJSON() ([]byte, error) {
-	t.RLock()
+	t.Lock()
 	b, err := t.uss.MarshalJSON()
-	t.RUnlock()
+	t.Unlock()
 
 	return b, err
 }
