@@ -65,6 +65,28 @@ func TestThreadUnsafeSet_MarshalJSON(t *testing.T) {
 	}
 }
 
+func TestThreadUnsageSet_Size(t *testing.T) {
+	set := newThreadSafeSet[string]()
+	var expected int
+	if got := set.Size(); got != expected {
+		t.Fatalf("expected size of %d, got %d", expected, got)
+	}
+	set.Add("hello")
+	expected++
+	if got := set.Size(); got != expected {
+		t.Fatalf("expected size of %d, got %d", expected, got)
+	}
+	set.Add("hello")
+	if got := set.Size(); got != expected {
+		t.Fatalf("expected size of %d, got %d", expected, got)
+	}
+	set.Add("there")
+	expected++
+	if got := set.Size(); got != expected {
+		t.Fatalf("expected size of %d, got %d", expected, got)
+	}
+}
+
 func TestThreadUnsafeSet_UnmarshalJSON(t *testing.T) {
 	expected := NewThreadUnsafeSet[int64](1, 2, 3)
 	actual := NewThreadUnsafeSet[int64]()
@@ -107,6 +129,7 @@ func TestThreadUnsafeSet_MarshalJSON_Struct(t *testing.T) {
 		t.Errorf("Expected no difference, got: %v", expected.Set.Difference(actual.Set))
 	}
 }
+
 func TestThreadUnsafeSet_UnmarshalJSON_Struct(t *testing.T) {
 	expected := &testStruct{"test", NewThreadUnsafeSet("a", "b", "c")}
 	actual := &testStruct{}

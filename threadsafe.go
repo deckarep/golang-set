@@ -272,6 +272,13 @@ func (t *threadSafeSet[T]) Clone() Set[T] {
 	return ret
 }
 
+func (t *threadSafeSet[T]) Size() int {
+	t.RLock()
+	ret := t.uss.Size()
+	t.RUnlock()
+	return ret
+}
+
 func (t *threadSafeSet[T]) String() string {
 	t.RLock()
 	ret := t.uss.String()

@@ -269,6 +269,10 @@ func (s threadUnsafeSet[T]) RemoveAll(i ...T) {
 	}
 }
 
+func (s threadUnsafeSet[T]) Size() int {
+	return len(s)
+}
+
 func (s threadUnsafeSet[T]) String() string {
 	items := make([]string, 0, len(s))
 

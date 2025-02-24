@@ -166,6 +166,9 @@ type Set[T comparable] interface {
 	// RemoveAll removes multiple elements from the set.
 	RemoveAll(i ...T)
 
+	// Size of the set
+	Size() int
+
 	// String provides a convenient string representation
 	// of the current state of the set.
 	String() string
