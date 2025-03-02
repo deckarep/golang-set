@@ -125,7 +125,8 @@ type Set[T comparable] interface {
 	Each(func(T) bool)
 
 	// Elements returns a go1.23+ mapset iterator function which acts as described here: https://go.dev/ref/spec#For_range
-	// and here: https://pkg.go.dev/iter#hdr-Naming_Conventions
+	// and here: https://pkg.go.dev/iter#hdr-Naming_Conventions. Modification of the set during iteration results in
+	// undefined behavior.
 	Elements() iter.Seq[T]
 
 	// Iter returns a channel of elements that you can
