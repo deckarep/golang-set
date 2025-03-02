@@ -3,6 +3,8 @@
 
 package mapset
 
+import "iter"
+
 // Set is the primary interface provided by the mapset package.  It
 // represents an unordered set of data and a large number of
 // operations that can be applied to that set.
@@ -122,8 +124,9 @@ type Set[T comparable] interface {
 	// Deprecated: Use Elements instead.
 	Each(func(T) bool)
 
-	// Elements is the go1.23+ mapset iterator function and acts as described here: https://go.dev/ref/spec#For_range
-	Elements(func(T) bool)
+	// Elements returns a go1.23+ mapset iterator function which acts as described here: https://go.dev/ref/spec#For_range
+	// and here: https://pkg.go.dev/iter#hdr-Naming_Conventions
+	Elements() iter.Seq[T]
 
 	// Iter returns a channel of elements that you can
 	// range over.
@@ -177,14 +180,18 @@ type Set[T comparable] interface {
 	UnmarshalJSON(b []byte) error
 }
 
-func (t *threadSafeSet[T]) Elements(yield func(T) bool) {
-	t.Each(func(v T) bool {
-		return !yield(v)
-	})
+func (t *threadSafeSet[T]) Elements() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		t.Each(func(v T) bool {
+			return !yield(v)
+		})
+	}
 }
 
-func (s *threadUnsafeSet[T]) Elements(yield func(T) bool) {
-	s.Each(func(t T) bool {
-		return !yield(t)
-	})
+func (s *threadUnsafeSet[T]) Elements() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		s.Each(func(t T) bool {
+			return !yield(t)
+		})
+	}
 }

@@ -120,11 +120,12 @@ type Set[T comparable] interface {
 	// If passed func returns true, stop iteration at the time.
 	Each(func(T) bool)
 
-	// Elements is the go1.23+ mapset iterator function and acts as described here: https://go.dev/ref/spec#For_range
+	// Elements returns a go1.23+ mapset iterator function which acts as described here:
+	// https://go.dev/ref/spec#For_range and here: https://pkg.go.dev/iter#hdr-Naming_Conventions
 	//
-	// Upgrade to go1.23 to use this function in a range loop. Calling this method under versions prior to go1.23 will
-	// panic.
-	Elements(func(T) bool)
+	// Upgrade to go1.23 to use this returned function in a range loop. Calling the returned method under versions prior
+	// to go1.23 will panic.
+	Elements() func(T) bool
 
 	// Iter returns a channel of elements that you can
 	// range over.
@@ -174,10 +175,14 @@ type Set[T comparable] interface {
 	UnmarshalJSON(b []byte) error
 }
 
-func (t *threadSafeSet[T]) Elements(yield func(T) bool) {
-	panic("Upgrade to go1.23 to use this function in a range loop")
+func (t *threadSafeSet[T]) Elements() func(T) bool {
+	return func(T) bool {
+		panic("Upgrade to go1.23 to use this function in a range loop")
+	}
 }
 
-func (s *threadUnsafeSet[T]) Elements(yield func(T) bool) {
-	panic("Upgrade to go1.23 to use this function in a range loop")
+func (s *threadUnsafeSet[T]) Elements() func(T) bool {
+	return func(T) bool {
+		panic("Upgrade to go1.23 to use this function in a range loop")
+	}
 }

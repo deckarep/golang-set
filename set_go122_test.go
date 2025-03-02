@@ -16,9 +16,7 @@ func TestThreadUnsafeSetElements(t *testing.T) {
 			}
 		}()
 
-		s.Elements(func(x int) bool {
-			return false
-		})
+		s.Elements()(1)
 	}()
 
 	if !gotPanic {
@@ -27,7 +25,7 @@ func TestThreadUnsafeSetElements(t *testing.T) {
 }
 
 func TestThreadsafeSetElements(t *testing.T) {
-	s := NewThreadsafeSet(1, 2, 3)
+	s := NewSet(1, 2, 3)
 
 	var gotPanic bool
 	func() {
@@ -37,9 +35,7 @@ func TestThreadsafeSetElements(t *testing.T) {
 			}
 		}()
 
-		s.Elements(func(x int) bool {
-			return false
-		})
+		s.Elements()(1)
 	}()
 
 	if !gotPanic {

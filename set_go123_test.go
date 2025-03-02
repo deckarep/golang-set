@@ -17,7 +17,7 @@ func TestThreadUnsageSetElements(t *testing.T) {
 			}
 		}()
 
-		for i := range s.Elements {
+		for i := range s.Elements() {
 			got.Add(i)
 		}
 	}()
@@ -43,7 +43,7 @@ func TestThreadsafeSetElements(t *testing.T) {
 			}
 		}()
 
-		for i := range s.Elements {
+		for i := range s.Elements() {
 			got.Add(i)
 		}
 	}()
