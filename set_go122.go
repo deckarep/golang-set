@@ -120,8 +120,8 @@ type Set[T comparable] interface {
 	// If passed func returns true, stop iteration at the time.
 	Each(func(T) bool)
 
-	// Elements returns a go1.23+ mapset iterator function which acts as described here:
-	// https://go.dev/ref/spec#For_range and here: https://pkg.go.dev/iter#hdr-Naming_Conventions
+	// Elements returns a go1.23+ iterator function which acts as described here: https://go.dev/ref/spec#For_range and
+	// here: https://pkg.go.dev/iter#hdr-Naming_Conventions
 	//
 	// Upgrade to go1.23 to use this returned function in a range loop. Calling the returned method under versions prior
 	// to go1.23 will panic.
