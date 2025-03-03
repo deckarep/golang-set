@@ -186,3 +186,39 @@ func (s *threadUnsafeSet[T]) Elements() func(T) bool {
 		panic("Upgrade to go1.23 to use this function in a range loop")
 	}
 }
+
+// NewSetFromSeq creates a new set from a go1.23+ iter.Seq
+// This function will panic if called under go1.22 or earlier.
+func NewSetFromSeq[T comparable](iter func(yield func(T) bool)) Set[T] {
+	panic("Upgrade to go1.23 to use this function")
+}
+
+// NewSetFromSeq2Keys creates a new set from a go1.23+ iter.Seq2's Keys
+// This function will panic if called under go1.22 or earlier.
+func NewSetFromSeq2Keys[K comparable, V any](iter func(yield func(K, V) bool)) Set[K] {
+	panic("Upgrade to go1.23 to use this function")
+}
+
+// NewSetFromSeq2Values creates a new set from a go1.23+ iter.Seq2's Values
+// This function will panic if called under go1.22 or earlier.
+func NewSetFromSeq2Values[K any, V comparable](iter func(yield func(K, V) bool)) Set[V] {
+	panic("Upgrade to go1.23 to use this function")
+}
+
+// NewThreadUnsafeSetFromSeq creates a new set from a go1.23+ iter,Seq
+// This function will panic if called under go1.22 or earlier.
+func NewThreadUnsafeSetFromSeq[T comparable](iter func(func(T) bool)) Set[T] {
+	panic("Upgrade to go1.23 to use this function")
+}
+
+// NewSetFromSeq2Keys creates a new set from a go1.23+ iter.Seq2 Keys
+// This function will panic if called under go1.22 or earlier.
+func NewThreadUnsafeSetFromSeq2Keys[K comparable, V any](iter func(yield func(K, V) bool)) Set[K] {
+	panic("Upgrade to go1.23 to use this function")
+}
+
+// NewSetFromSeq2Values creates a new set from a go1.23+ iter.Seq2's Values
+// This function will panic if called under go1.22 or earlier.
+func NewThreadUnsafeSetFromSeq2Values[K any, V comparable](iter func(yield func(K, V) bool)) Set[V] {
+	panic("Upgrade to go1.23 to use this function")
+}

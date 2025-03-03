@@ -196,3 +196,57 @@ func (s *threadUnsafeSet[T]) Elements() iter.Seq[T] {
 		})
 	}
 }
+
+// NewSetFromSeq creates a new set from a go1.23+ iter.Seq
+func NewSetFromSeq[T comparable](iter iter.Seq[T]) Set[T] {
+	s := NewSet[T]()
+	for k := range iter {
+		s.Add(k)
+	}
+	return s
+}
+
+// NewSetFromSeq2Keys creates a new set from a go1.23+ iter.Seq2's Keys
+func NewSetFromSeq2Keys[K comparable, V any](iter iter.Seq2[K, V]) Set[K] {
+	s := NewSet[K]()
+	for k := range iter {
+		s.Add(k)
+	}
+	return s
+}
+
+// NewSetFromSeq2Values creates a new set from a go1.23+ iter.Seq2's Values
+func NewSetFromSeq2Values[K any, V comparable](iter iter.Seq2[K, V]) Set[V] {
+	s := NewSet[V]()
+	for _, v := range iter {
+		s.Add(v)
+	}
+	return s
+}
+
+// NewSetFromSeq creates a new set from a go1.23+ iterator.
+func NewThreadUnsafeSetFromSeq[T comparable](iter iter.Seq[T]) Set[T] {
+	s := NewThreadUnsafeSet[T]()
+	for k := range iter {
+		s.Add(k)
+	}
+	return s
+}
+
+// NewThreadUnsafeSetFromSeq2Keys creates a new set from a go1.23+ iter.Seq2's Keys
+func NewThreadUnsafeSetFromSeq2Keys[K comparable, V any](iter iter.Seq2[K, V]) Set[K] {
+	s := NewThreadUnsafeSet[K]()
+	for k := range iter {
+		s.Add(k)
+	}
+	return s
+}
+
+// NewThreadUnsafeSetFromSeq2Values creates a new set from a go1.23+ iter.Seq2's Values
+func NewThreadUnsafeSetFromSeq2Values[K any, V comparable](iter iter.Seq2[K, V]) Set[V] {
+	s := NewThreadUnsafeSet[V]()
+	for _, v := range iter {
+		s.Add(v)
+	}
+	return s
+}
