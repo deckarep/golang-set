@@ -3,9 +3,11 @@
 
 package mapset
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestAll123(t *testing.T) {
+func Test_Elements123(t *testing.T) {
 	a := NewSet[string]()
 
 	a.Add("Z")
@@ -14,7 +16,7 @@ func TestAll123(t *testing.T) {
 	a.Add("W")
 
 	b := NewSet[string]()
-	for elem := range Values(a) {
+	for elem := range Elements(a) {
 		b.Add(elem)
 	}
 
@@ -23,7 +25,7 @@ func TestAll123(t *testing.T) {
 	}
 
 	var count int
-	for range Values(a) {
+	for range Elements(a) {
 		if count == 2 {
 			break
 		}

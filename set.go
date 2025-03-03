@@ -254,7 +254,9 @@ func NewThreadUnsafeSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
 	return s
 }
 
-func Values[T comparable](s Set[T]) func(func(element T) bool) {
+// Elements returns an iterator that yields the elements of the set. Starting
+// with Go 1.23, users can use a for loop to iterate over it.
+func Elements[T comparable](s Set[T]) func(func(element T) bool) {
 	return func(yield func(element T) bool) {
 		s.Each(func(t T) bool {
 			return !yield(t)
