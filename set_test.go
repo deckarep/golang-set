@@ -1373,6 +1373,38 @@ func Test_NewThreadUnsafeSetFromMapKey_Strings(t *testing.T) {
 	}
 }
 
+func Test_Elements(t *testing.T) {
+	a := NewSet[string]()
+
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	b := NewSet[string]()
+	Elements(a)(func(elem string) bool {
+		b.Add(elem)
+		return true
+	})
+
+	if !a.Equal(b) {
+		t.Error("The sets are not equal after iterating (Each) through the first set")
+	}
+
+	var count int
+	Elements(a)(func(elem string) bool {
+		if count == 2 {
+			return false
+		}
+		count++
+		return true
+	})
+
+	if count != 2 {
+		t.Error("Iteration should stop on the way")
+	}
+}
+
 func Test_Example(t *testing.T) {
 	/*
 	   requiredClasses := NewSet()
