@@ -304,9 +304,9 @@ func (t *threadSafeSet[T]) MarshalJSON() ([]byte, error) {
 }
 
 func (t *threadSafeSet[T]) UnmarshalJSON(p []byte) error {
-	t.RLock()
+	t.Lock()
 	err := t.uss.UnmarshalJSON(p)
-	t.RUnlock()
+	t.Unlock()
 
 	return err
 }
