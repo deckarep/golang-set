@@ -27,6 +27,7 @@ package mapset
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"runtime"
 	"sync"
@@ -634,5 +635,52 @@ func Test_MarshalJSON(t *testing.T) {
 
 	if !expected.Equal(actual) {
 		t.Errorf("Expected no difference, got: %v", expected.Difference(actual))
+	}
+}
+
+// Test_DeadlockOnEachCallbackWhenPanic ensures that should a panic occur within the context
+// of the Each callback, progress can still be made on recovery. This is an edge case
+// that was called out on issue: https://github.com/deckarep/golang-set/issues/163.
+func Test_DeadlockOnEachCallbackWhenPanic(t *testing.T) {
+	numbers := []int{1, 2, 3, 4}
+	widgets := NewSet[*int]()
+	widgets.Append(&numbers[0], &numbers[1], nil, &numbers[2])
+
+	var panicOccured = false
+
+	doWork := func(s Set[*int]) (err error) {
+		defer func() {
+			if r := recover(); r != nil {
+				panicOccured = true
+				err = fmt.Errorf("failed to print IDs: panicked: %v", r)
+			}
+		}()
+
+		s.Each(func(n *int) bool {
+			// NOTE: this will throw a panic once we get to the nil element.
+			result := *n * 2
+			fmt.Println("result is dereferenced doubled:", result)
+			return false
+		})
+
+		return nil
+	}
+
+	card := widgets.Cardinality()
+	if widgets.Cardinality() != 4 {
+		t.Errorf("Expected widgets to have 4 elements, but has %d", card)
+	}
+
+	doWork(widgets)
+
+	if !panicOccured {
+		t.Error("Expected a panic to occur followed by recover for test to be valid")
+	}
+
+	widgets.Add(&numbers[3])
+
+	card = widgets.Cardinality()
+	if widgets.Cardinality() != 5 {
+		t.Errorf("Expected widgets to have 5 elements, but has %d", card)
 	}
 }
