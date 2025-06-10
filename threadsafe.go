@@ -208,12 +208,12 @@ func (t *threadSafeSet[T]) Cardinality() int {
 
 func (t *threadSafeSet[T]) Each(cb func(T) bool) {
 	t.RLock()
+	defer t.RUnlock()
 	for elem := range *t.uss {
 		if cb(elem) {
 			break
 		}
 	}
-	t.RUnlock()
 }
 
 func (t *threadSafeSet[T]) Iter() <-chan T {
@@ -286,8 +286,9 @@ func (t *threadSafeSet[T]) Pop() (T, bool) {
 }
 
 func (t *threadSafeSet[T]) ToSlice() []T {
-	keys := make([]T, 0, t.Cardinality())
 	t.RLock()
+	l := len(*t.uss)
+	keys := make([]T, 0, l)
 	for elem := range *t.uss {
 		keys = append(keys, elem)
 	}
