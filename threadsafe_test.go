@@ -652,14 +652,13 @@ func Test_DeadlockOnEachCallbackWhenPanic(t *testing.T) {
 		defer func() {
 			if r := recover(); r != nil {
 				panicOccured = true
-				err = fmt.Errorf("failed to print IDs: panicked: %v", r)
+				err = fmt.Errorf("failed to do work: %v", r)
 			}
 		}()
 
 		s.Each(func(n *int) bool {
 			// NOTE: this will throw a panic once we get to the nil element.
-			result := *n * 2
-			fmt.Println("result is dereferenced doubled:", result)
+			_ = *n * 2
 			return false
 		})
 
