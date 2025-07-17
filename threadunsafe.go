@@ -259,6 +259,27 @@ func (s *threadUnsafeSet[T]) Pop() (v T, ok bool) {
 	return v, false
 }
 
+func (s *threadUnsafeSet[T]) PopN(n int) (items []T, count int) {
+	if n <= 0 || len(*s) == 0 {
+		return make([]T, 0), 0
+	}
+	sn := s.Cardinality()
+	if n > sn {
+		n = sn
+	}
+
+	items = make([]T, 0, sn)
+	for item := range *s {
+		if count >= n {
+			break
+		}
+		delete(*s, item)
+		items = append(items, item)
+		count++
+	}
+	return items, count
+}
+
 func (s threadUnsafeSet[T]) Remove(v T) {
 	delete(s, v)
 }

@@ -189,6 +189,12 @@ type Set[T comparable] interface {
 	// Pop removes and returns an arbitrary item from the set.
 	Pop() (T, bool)
 
+	// PopN removes and returns up to n arbitrary items from the set.
+	// It returns a slice of the removed items and the actual number of items removed.
+	// If the set is empty or n is less than or equal to 0s, it returns an empty slice and 0.
+	// If n is greater than the set's size, all items are
+	PopN(n int) ([]T, int)
+
 	// ToSlice returns the members of the set as a slice.
 	ToSlice() []T
 

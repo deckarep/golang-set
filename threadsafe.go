@@ -285,6 +285,12 @@ func (t *threadSafeSet[T]) Pop() (T, bool) {
 	return t.uss.Pop()
 }
 
+func (t *threadSafeSet[T]) PopN(n int) ([]T, int) {
+	t.Lock()
+	defer t.Unlock()
+	return t.uss.PopN(n)
+}
+
 func (t *threadSafeSet[T]) ToSlice() []T {
 	t.RLock()
 	l := len(*t.uss)
