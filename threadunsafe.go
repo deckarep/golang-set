@@ -29,6 +29,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
 type threadUnsafeSet[T comparable] map[T]struct{}
@@ -343,6 +346,27 @@ func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
 func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 	var i []T
 	err := json.Unmarshal(b, &i)
+	if err != nil {
+		return err
+	}
+	s.Append(i...)
+
+	return nil
+}
+
+// MarshalBSON creates a BSON array from the set.
+func (s threadUnsafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
+	return bson.MarshalValue(s.ToSlice())
+}
+
+// UnmarshalBSON recreates a set from a BSON array.
+func (s threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
+	if bt != bson.TypeArray {
+		return fmt.Errorf("must use BSON Array to unmarshal Set")
+	}
+
+	var i []T
+	err := bson.UnmarshalValue(bt, b, &i)
 	if err != nil {
 		return err
 	}
