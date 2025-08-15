@@ -1242,6 +1242,118 @@ func Test_PopUnsafe(t *testing.T) {
 	}
 }
 
+func Test_PopNSafe(t *testing.T) {
+	a := NewSet[string]()
+	a.Add("a")
+	a.Add("b")
+	a.Add("c")
+	a.Add("d")
+
+	// Test pop with n <= 0
+	items, count := a.PopN(0)
+	if count != 0 {
+		t.Errorf("expected 0 items popped, got %d", count)
+	}
+	items, count = a.PopN(-1)
+	if count != 0 {
+		t.Errorf("expected 0 items popped, got %d", count)
+	}
+
+	captureSet := NewSet[string]()
+
+	// Test pop 2 items
+	items, count = a.PopN(2)
+	if count != 2 {
+		t.Errorf("expected 2 items popped, got %d", count)
+	}
+	if len(items) != 2 {
+		t.Errorf("expected 2 items in slice, got %d", len(items))
+	}
+	if a.Cardinality() != 2 {
+		t.Errorf("expected 2 items remaining, got %d", a.Cardinality())
+	}
+	captureSet.Append(items...)
+
+	// Test pop more than remaining
+	items, count = a.PopN(3)
+	if count != 2 {
+		t.Errorf("expected 2 items popped, got %d", count)
+	}
+	if a.Cardinality() != 0 {
+		t.Errorf("expected 0 items remaining, got %d", a.Cardinality())
+	}
+	captureSet.Append(items...)
+
+	// Test pop from empty set
+	items, count = a.PopN(1)
+	if count != 0 {
+		t.Errorf("expected 0 items popped, got %d", count)
+	}
+	if len(items) != 0 {
+		t.Errorf("expected empty slice, got %d items", len(items))
+	}
+
+	if !captureSet.Contains("c", "a", "d", "b") {
+		t.Error("unexpected result set; should be a,b,c,d (any order is fine")
+	}
+}
+
+func Test_PopNUnsafe(t *testing.T) {
+	a := NewThreadUnsafeSet[string]()
+	a.Add("a")
+	a.Add("b")
+	a.Add("c")
+	a.Add("d")
+
+	// Test pop with n <= 0
+	items, count := a.PopN(0)
+	if count != 0 {
+		t.Errorf("expected 0 items popped, got %d", count)
+	}
+	items, count = a.PopN(-1)
+	if count != 0 {
+		t.Errorf("expected 0 items popped, got %d", count)
+	}
+
+	captureSet := NewThreadUnsafeSet[string]()
+
+	// Test pop 2 items
+	items, count = a.PopN(2)
+	if count != 2 {
+		t.Errorf("expected 2 items popped, got %d", count)
+	}
+	if len(items) != 2 {
+		t.Errorf("expected 2 items in slice, got %d", len(items))
+	}
+	if a.Cardinality() != 2 {
+		t.Errorf("expected 2 items remaining, got %d", a.Cardinality())
+	}
+	captureSet.Append(items...)
+
+	// Test pop more than remaining
+	items, count = a.PopN(3)
+	if count != 2 {
+		t.Errorf("expected 2 items popped, got %d", count)
+	}
+	if a.Cardinality() != 0 {
+		t.Errorf("expected 0 items remaining, got %d", a.Cardinality())
+	}
+	captureSet.Append(items...)
+
+	// Test pop from empty set
+	items, count = a.PopN(1)
+	if count != 0 {
+		t.Errorf("expected 0 items popped, got %d", count)
+	}
+	if len(items) != 0 {
+		t.Errorf("expected empty slice, got %d items", len(items))
+	}
+
+	if !captureSet.Contains("c", "a", "d", "b") {
+		t.Error("unexpected result set; should be a,b,c,d (any order is fine")
+	}
+}
+
 func Test_EmptySetProperties(t *testing.T) {
 	empty := NewSet[string]()
 
