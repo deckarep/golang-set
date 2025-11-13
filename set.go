@@ -161,6 +161,10 @@ type Set[T comparable] interface {
 	// Iterator returns an Iterator object that you can
 	// use to range over the set.
 	Iterator() *Iterator[T]
+	
+	// MatchesFunc() returns whether at least one element in the set
+	// matches the provided predicate function.
+	MatchesFunc(func(T) bool) bool
 
 	// Remove removes a single element from the set.
 	Remove(i T)
