@@ -49,18 +49,18 @@ func newThreadUnsafeSetWithSize[T comparable](cardinality int) *threadUnsafeSet[
 	return &t
 }
 
-func (s threadUnsafeSet[T]) Add(v T) bool {
-	prevLen := len(s)
-	s[v] = struct{}{}
-	return prevLen != len(s)
+func (s *threadUnsafeSet[T]) Add(v T) bool {
+	prevLen := s.Cardinality()
+	s.add(v)
+	return prevLen != s.Cardinality()
 }
 
-func (s *threadUnsafeSet[T]) Append(v ...T) int {
-	prevLen := len(*s)
-	for _, val := range v {
-		(*s)[val] = struct{}{}
+func (s *threadUnsafeSet[T]) Append(vs ...T) int {
+	prevLen := s.Cardinality()
+	for i := range vs {
+		s.add(vs[i])
 	}
-	return len(*s) - prevLen
+	return s.Cardinality() - prevLen
 }
 
 // private version of Add which doesn't return a value
@@ -365,13 +365,14 @@ func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON recreates a set from a JSON array, it only decodes
 // primitive types. Numbers are decoded as json.Number.
 func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
-	var i []T
-	err := json.Unmarshal(b, &i)
-	if err != nil {
+	var is []T
+	if err := json.Unmarshal(b, &is); err != nil {
 		return err
 	}
-	s.Append(i...)
 
+	for i := range is {
+		s.add(is[i])
+	}
 	return nil
 }
 
@@ -381,17 +382,18 @@ func (s threadUnsafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
 }
 
 // UnmarshalBSON recreates a set from a BSON array.
-func (s threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
+func (s *threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
 	if bt != bson.TypeArray {
 		return fmt.Errorf("must use BSON Array to unmarshal Set")
 	}
 
-	var i []T
-	err := bson.UnmarshalValue(bt, b, &i)
-	if err != nil {
+	var is []T
+	if err := bson.UnmarshalValue(bt, b, &is); err != nil {
 		return err
 	}
-	s.Append(i...)
 
+	for i := range is {
+		s.add(is[i])
+	}
 	return nil
 }
