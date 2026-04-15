@@ -27,6 +27,7 @@ package mapset
 
 import (
 	"sync"
+	"unsafe"
 
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
@@ -34,6 +35,24 @@ import (
 type threadSafeSet[T comparable] struct {
 	sync.RWMutex
 	uss *threadUnsafeSet[T]
+}
+
+// lockTwo locks two RWMutexes for reading in a consistent order based on
+// pointer address to prevent deadlocks when two goroutines lock the same
+// pair in opposite order.
+func lockTwo[T comparable](a, b *threadSafeSet[T]) {
+	if uintptr(unsafe.Pointer(a)) < uintptr(unsafe.Pointer(b)) {
+		a.RLock()
+		b.RLock()
+	} else {
+		b.RLock()
+		a.RLock()
+	}
+}
+
+func unlockTwo[T comparable](a, b *threadSafeSet[T]) {
+	a.RUnlock()
+	b.RUnlock()
 }
 
 func newThreadSafeSet[T comparable]() *threadSafeSet[T] {
@@ -89,13 +108,13 @@ func (t *threadSafeSet[T]) ContainsAny(v ...T) bool {
 func (t *threadSafeSet[T]) ContainsAnyElement(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	ret := t.uss.ContainsAnyElement(o.uss)
 
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
@@ -106,22 +125,22 @@ func (t *threadSafeSet[T]) IsEmpty() bool {
 func (t *threadSafeSet[T]) IsSubset(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	ret := t.uss.IsSubset(o.uss)
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
 func (t *threadSafeSet[T]) IsProperSubset(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	defer t.RUnlock()
-	o.RLock()
-	defer o.RUnlock()
+	lockTwo(t, o)
+	defer unlockTwo(t, o)
+	
+	
 
 	return t.uss.IsProperSubset(o.uss)
 }
@@ -137,52 +156,52 @@ func (t *threadSafeSet[T]) IsProperSuperset(other Set[T]) bool {
 func (t *threadSafeSet[T]) Union(other Set[T]) Set[T] {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	unsafeUnion := t.uss.Union(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeUnion}
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
 func (t *threadSafeSet[T]) Intersect(other Set[T]) Set[T] {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	unsafeIntersection := t.uss.Intersect(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeIntersection}
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
 func (t *threadSafeSet[T]) Difference(other Set[T]) Set[T] {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	unsafeDifference := t.uss.Difference(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeDifference}
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
 func (t *threadSafeSet[T]) SymmetricDifference(other Set[T]) Set[T] {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	unsafeDifference := t.uss.SymmetricDifference(o.uss).(*threadUnsafeSet[T])
 	ret := &threadSafeSet[T]{uss: unsafeDifference}
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
@@ -258,12 +277,12 @@ func (t *threadSafeSet[T]) Iterator() *Iterator[T] {
 func (t *threadSafeSet[T]) Equal(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 
-	t.RLock()
-	o.RLock()
+	lockTwo(t, o)
+	
 
 	ret := t.uss.Equal(o.uss)
-	t.RUnlock()
-	o.RUnlock()
+	unlockTwo(t, o)
+	
 	return ret
 }
 
