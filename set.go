@@ -154,6 +154,10 @@ type Set[T comparable] interface {
 	// If passed func returns true, stop iteration at the time.
 	Each(func(T) bool)
 
+	// Filter iterates over elements and executes the passed func against each element.
+	// If passed func returns true, the element will be added to the returned set.
+	Filter(func(T) bool) Set[T]
+
 	// Iter returns a channel of elements that you can
 	// range over.
 	Iter() <-chan T

@@ -440,6 +440,45 @@ func Test_EachConcurrent(t *testing.T) {
 	}
 }
 
+func Test_FilterConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+	concurrent := 10
+
+	s := NewSet[int]()
+	ints := rand.Perm(N)
+	for _, v := range ints {
+		s.Add(v)
+	}
+
+	var count int64
+	wg := new(sync.WaitGroup)
+	wg.Add(concurrent)
+	for n := 0; n < concurrent; n++ {
+		go func() {
+			defer wg.Done()
+			mapped := s.Filter(func(elem int) bool {
+				atomic.AddInt64(&count, 1)
+				return elem%2 == 0
+			})
+			// Every retained element must be even and present in the source.
+			mapped.Each(func(elem int) bool {
+				if elem%2 != 0 {
+					t.Errorf("Filter produced odd element %d", elem)
+				}
+				if !s.Contains(elem) {
+					t.Errorf("Filter produced element %d not in source", elem)
+				}
+				return false
+			})
+		}()
+	}
+	wg.Wait()
+
+	if count != int64(N*concurrent) {
+		t.Errorf("%v != %v", count, int64(N*concurrent))
+	}
+}
+
 func Test_IterConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
