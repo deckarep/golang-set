@@ -235,9 +235,7 @@ func NewSetWithSize[T comparable](cardinality int) Set[T] {
 // Operations on the resulting set are not thread-safe.
 func NewThreadUnsafeSet[T comparable](vs ...T) Set[T] {
 	s := newThreadUnsafeSetWithSize[T](len(vs))
-	for i := range vs {
-		s.add(vs[i])
-	}
+	s.append(vs...)
 	return s
 }
 

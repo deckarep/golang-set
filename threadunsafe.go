@@ -55,17 +55,22 @@ func (s *threadUnsafeSet[T]) Add(v T) bool {
 	return prevLen != s.Cardinality()
 }
 
-func (s *threadUnsafeSet[T]) Append(vs ...T) int {
-	prevLen := s.Cardinality()
-	for i := range vs {
-		s.add(vs[i])
-	}
-	return s.Cardinality() - prevLen
-}
-
 // private version of Add which doesn't return a value
 func (s *threadUnsafeSet[T]) add(v T) {
 	(*s)[v] = struct{}{}
+}
+
+func (s *threadUnsafeSet[T]) Append(vs ...T) int {
+	prevLen := s.Cardinality()
+	s.append(vs...)
+	return s.Cardinality() - prevLen
+}
+
+// private version of Append which doesn't return a value
+func (s *threadUnsafeSet[T]) append(vs ...T) {
+	for i := range vs {
+		s.add(vs[i])
+	}
 }
 
 func (s *threadUnsafeSet[T]) Cardinality() int {
@@ -83,15 +88,15 @@ func (s *threadUnsafeSet[T]) Clear() {
 
 func (s *threadUnsafeSet[T]) Clone() Set[T] {
 	clonedSet := newThreadUnsafeSetWithSize[T](s.Cardinality())
-	for elem := range *s {
-		clonedSet.add(elem)
+	for v := range *s {
+		clonedSet.add(v)
 	}
 	return clonedSet
 }
 
-func (s *threadUnsafeSet[T]) Contains(v ...T) bool {
-	for _, val := range v {
-		if _, ok := (*s)[val]; !ok {
+func (s *threadUnsafeSet[T]) Contains(vs ...T) bool {
+	for _, v := range vs {
+		if !s.contains(v) {
 			return false
 		}
 	}
@@ -99,13 +104,12 @@ func (s *threadUnsafeSet[T]) Contains(v ...T) bool {
 }
 
 func (s *threadUnsafeSet[T]) ContainsOne(v T) bool {
-	_, ok := (*s)[v]
-	return ok
+	return s.contains(v)
 }
 
-func (s *threadUnsafeSet[T]) ContainsAny(v ...T) bool {
-	for _, val := range v {
-		if _, ok := (*s)[val]; ok {
+func (s *threadUnsafeSet[T]) ContainsAny(vs ...T) bool {
+	for _, v := range vs {
+		if s.contains(v) {
 			return true
 		}
 	}
@@ -289,8 +293,8 @@ func (s threadUnsafeSet[T]) Remove(v T) {
 	delete(s, v)
 }
 
-func (s threadUnsafeSet[T]) RemoveAll(i ...T) {
-	for _, elem := range i {
+func (s threadUnsafeSet[T]) RemoveAll(vs ...T) {
+	for _, elem := range vs {
 		delete(s, elem)
 	}
 }
@@ -372,9 +376,7 @@ func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	for i := range is {
-		s.add(is[i])
-	}
+	s.append(is...)
 	return nil
 }
 
@@ -394,8 +396,6 @@ func (s *threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) erro
 		return err
 	}
 
-	for i := range is {
-		s.add(is[i])
-	}
+	s.append(is...)
 	return nil
 }
