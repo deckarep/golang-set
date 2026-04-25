@@ -219,9 +219,7 @@ type Set[T comparable] interface {
 // Operations on the resulting set are thread-safe.
 func NewSet[T comparable](vs ...T) Set[T] {
 	s := newThreadSafeSetWithSize[T](len(vs))
-	for i := range vs {
-		s.Add(vs[i])
-	}
+	s.uss.append(vs...)
 	return s
 }
 
@@ -248,10 +246,10 @@ func NewThreadUnsafeSetWithSize[T comparable](cardinality int) Set[T] {
 // NewSetFromMapKeys creates and returns a new set with the given keys of the map.
 // Operations on the resulting set are thread-safe.
 func NewSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
-	s := NewSetWithSize[T](len(val))
+	s := newThreadSafeSetWithSize[T](len(val))
 
 	for k := range val {
-		s.Add(k)
+		s.uss.add(k)
 	}
 
 	return s

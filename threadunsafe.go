@@ -88,15 +88,15 @@ func (s *threadUnsafeSet[T]) Clear() {
 
 func (s *threadUnsafeSet[T]) Clone() Set[T] {
 	clonedSet := newThreadUnsafeSetWithSize[T](s.Cardinality())
-	for v := range *s {
-		clonedSet.add(v)
+	for elem := range *s {
+		clonedSet.add(elem)
 	}
 	return clonedSet
 }
 
-func (s *threadUnsafeSet[T]) Contains(vs ...T) bool {
-	for _, v := range vs {
-		if !s.contains(v) {
+func (s *threadUnsafeSet[T]) Contains(v ...T) bool {
+	for _, val := range v {
+		if !s.contains(val) {
 			return false
 		}
 	}
@@ -107,9 +107,9 @@ func (s *threadUnsafeSet[T]) ContainsOne(v T) bool {
 	return s.contains(v)
 }
 
-func (s *threadUnsafeSet[T]) ContainsAny(vs ...T) bool {
-	for _, v := range vs {
-		if s.contains(v) {
+func (s *threadUnsafeSet[T]) ContainsAny(v ...T) bool {
+	for _, val := range v {
+		if s.contains(val) {
 			return true
 		}
 	}
@@ -138,8 +138,8 @@ func (s *threadUnsafeSet[T]) ContainsAnyElement(other Set[T]) bool {
 
 // private version of Contains for a single element v
 func (s *threadUnsafeSet[T]) contains(v T) (ok bool) {
-	_, ok = (*s)[v]
-	return ok
+	_, found := (*s)[v]
+	return found
 }
 
 func (s *threadUnsafeSet[T]) Difference(other Set[T]) Set[T] {
@@ -293,8 +293,8 @@ func (s threadUnsafeSet[T]) Remove(v T) {
 	delete(s, v)
 }
 
-func (s threadUnsafeSet[T]) RemoveAll(vs ...T) {
-	for _, elem := range vs {
+func (s threadUnsafeSet[T]) RemoveAll(i ...T) {
+	for _, elem := range i {
 		delete(s, elem)
 	}
 }
@@ -371,12 +371,13 @@ func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON recreates a set from a JSON array, it only decodes
 // primitive types. Numbers are decoded as json.Number.
 func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
-	var is []T
-	if err := json.Unmarshal(b, &is); err != nil {
+	var i []T
+	err := json.Unmarshal(b, &i)
+	if err != nil {
 		return err
 	}
+	s.append(i...)
 
-	s.append(is...)
 	return nil
 }
 
@@ -386,16 +387,17 @@ func (s threadUnsafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
 }
 
 // UnmarshalBSON recreates a set from a BSON array.
-func (s *threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
+func (s threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
 	if bt != bson.TypeArray {
 		return fmt.Errorf("must use BSON Array to unmarshal Set")
 	}
 
-	var is []T
-	if err := bson.UnmarshalValue(bt, b, &is); err != nil {
+	var i []T
+	err := bson.UnmarshalValue(bt, b, &i)
+	if err != nil {
 		return err
 	}
+	s.append(i...)
 
-	s.append(is...)
 	return nil
 }
