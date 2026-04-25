@@ -220,6 +220,18 @@ func (t *threadSafeSet[T]) Each(cb func(T) bool) {
 	}
 }
 
+func (t *threadSafeSet[T]) Filter(cb func(T) bool) Set[T] {
+	t.RLock()
+	defer t.RUnlock()
+	mappedSet := newThreadSafeSetWithSize[T](t.uss.Cardinality())
+	for elem := range *t.uss {
+		if cb(elem) {
+			mappedSet.uss.add(elem)
+		}
+	}
+	return mappedSet
+}
+
 func (t *threadSafeSet[T]) Iter() <-chan T {
 	ch := make(chan T)
 	go func() {

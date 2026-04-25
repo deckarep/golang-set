@@ -158,6 +158,16 @@ func (s *threadUnsafeSet[T]) Each(cb func(T) bool) {
 	}
 }
 
+func (s *threadUnsafeSet[T]) Filter(cb func(T) bool) Set[T] {
+	mappedSet := newThreadUnsafeSetWithSize[T](s.Cardinality())
+	for elem := range *s {
+		if cb(elem) {
+			mappedSet.add(elem)
+		}
+	}
+	return mappedSet
+}
+
 func (s *threadUnsafeSet[T]) Equal(other Set[T]) bool {
 	o := other.(*threadUnsafeSet[T])
 

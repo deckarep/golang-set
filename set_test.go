@@ -1081,6 +1081,100 @@ func Test_Each(t *testing.T) {
 	}
 }
 
+func Test_Filter(t *testing.T) {
+	a := NewSet[string]()
+	a.Add("Z")
+	a.Add("Y")
+	a.Add("X")
+	a.Add("W")
+
+	// Returning true keeps the element; returning false drops it.
+	keepFromX := a.Filter(func(elem string) bool {
+		return elem >= "X"
+	})
+
+	expected := NewSet("Z", "Y", "X")
+	if !keepFromX.Equal(expected) {
+		t.Errorf("Expected %v, got %v", expected, keepFromX)
+	}
+
+	// Source set must be unmodified.
+	if a.Cardinality() != 4 {
+		t.Errorf("Expected source cardinality 4, got %d", a.Cardinality())
+	}
+
+	// Returning true for all elements should clone the set.
+	all := a.Filter(func(string) bool { return true })
+	if !all.Equal(a) {
+		t.Errorf("Expected clone of source, got %v", all)
+	}
+	if all == a {
+		t.Error("Expected Filter to return a new Set, not the same reference")
+	}
+
+	// Returning false for all elements should yield an empty set.
+	none := a.Filter(func(string) bool { return false })
+	if none.Cardinality() != 0 {
+		t.Errorf("Expected empty set, got %v", none)
+	}
+
+	// Filter on an empty set returns an empty set.
+	empty := NewSet[string]()
+	emptyOut := empty.Filter(func(string) bool { return true })
+	if emptyOut.Cardinality() != 0 {
+		t.Errorf("Expected empty set from empty source, got %v", emptyOut)
+	}
+}
+
+func Test_UnsafeFilter(t *testing.T) {
+	a := NewThreadUnsafeSet[int]()
+	a.Add(1)
+	a.Add(2)
+	a.Add(3)
+	a.Add(4)
+
+	evens := a.Filter(func(elem int) bool {
+		return elem%2 == 0
+	})
+
+	expected := NewThreadUnsafeSet(2, 4)
+	if !evens.Equal(expected) {
+		t.Errorf("Expected %v, got %v", expected, evens)
+	}
+
+	// Source set must be unmodified.
+	if a.Cardinality() != 4 {
+		t.Errorf("Expected source cardinality 4, got %d", a.Cardinality())
+	}
+
+	// Drop everything.
+	none := a.Filter(func(int) bool { return false })
+	if none.Cardinality() != 0 {
+		t.Errorf("Expected empty set, got %v", none)
+	}
+
+	// Empty source.
+	empty := NewThreadUnsafeSet[int]()
+	emptyOut := empty.Filter(func(int) bool { return true })
+	if emptyOut.Cardinality() != 0 {
+		t.Errorf("Expected empty set from empty source, got %v", emptyOut)
+	}
+}
+
+func Test_FilterVisitsAllElements(t *testing.T) {
+	a := NewSet(1, 2, 3, 4, 5)
+
+	visited := NewSet[int]()
+	a.Filter(func(elem int) bool {
+		visited.Add(elem)
+		return false
+	})
+
+	if !visited.Equal(a) {
+		t.Errorf("Filter did not visit every element: visited %v, expected %v", visited, a)
+	}
+}
+
 func Test_Iter(t *testing.T) {
 	a := NewSet[string]()
 
