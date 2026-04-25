@@ -62,6 +62,14 @@ func (t *threadSafeSet[T]) Append(v ...T) int {
 	return ret
 }
 
+func (t *threadSafeSet[T]) MatchesFunc(predicate func(T) bool) bool {
+	t.RLock()
+	ret := t.uss.MatchesFunc(predicate)
+	t.RUnlock()
+	
+	return ret
+}
+
 func (t *threadSafeSet[T]) Contains(v ...T) bool {
 	t.RLock()
 	ret := t.uss.Contains(v...)

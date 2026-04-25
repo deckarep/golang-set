@@ -91,6 +91,15 @@ func (s *threadUnsafeSet[T]) Clone() Set[T] {
 	return &t
 }
 
+func (s *threadUnsafeSet[T]) MatchesFunc(predicate func(T) bool) bool {
+	for elem := range *s {
+		if predicate(elem) {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *threadUnsafeSet[T]) Contains(v ...T) bool {
 	for _, val := range v {
 		if !s.contains(val) {
