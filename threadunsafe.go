@@ -87,11 +87,8 @@ func (s *threadUnsafeSet[T]) Clear() {
 }
 
 func (s *threadUnsafeSet[T]) Clone() Set[T] {
-	clonedSet := newThreadUnsafeSetWithSize[T](s.Cardinality())
-	for elem := range *s {
-		clonedSet.add(elem)
-	}
-	return clonedSet
+	t := threadUnsafeSet[T](mapclone(*s))
+	return &t
 }
 
 func (s *threadUnsafeSet[T]) Contains(v ...T) bool {
