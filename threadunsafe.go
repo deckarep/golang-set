@@ -265,6 +265,16 @@ func (s *threadUnsafeSet[T]) Iterator() *Iterator[T] {
 	return iterator
 }
 
+func (s *threadUnsafeSet[T]) Import(other Set[T]) int {
+	o := other.(*threadUnsafeSet[T])
+
+	prevLen := s.Cardinality()
+	for elem := range *o {
+		s.add(elem)
+	}
+	return s.Cardinality() - prevLen
+}
+
 // Pop returns a popped item in case set is not empty, or nil-value of T
 // if set is already empty
 func (s *threadUnsafeSet[T]) Pop() (v T, ok bool) {

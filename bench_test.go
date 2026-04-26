@@ -608,6 +608,40 @@ func BenchmarkSymmetricDifference100Unsafe(b *testing.B) {
 	benchSymmetricDifference(b, 100, NewThreadUnsafeSet[int](), NewThreadUnsafeSet[int]())
 }
 
+func benchImport(b *testing.B, n int, s, t Set[int]) {
+	s.Append(nrand(n)...)
+	t.Append(nrand(n)...)
+
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = s.Import(t)
+	}
+}
+
+func BenchmarkImport1Safe(b *testing.B) {
+	benchImport(b, 1, NewSet[int](), NewSet[int]())
+}
+
+func BenchmarkImport1Unsafe(b *testing.B) {
+	benchImport(b, 1, NewThreadUnsafeSet[int](), NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkImport10Safe(b *testing.B) {
+	benchImport(b, 10, NewSet[int](), NewSet[int]())
+}
+
+func BenchmarkImport10Unsafe(b *testing.B) {
+	benchImport(b, 10, NewThreadUnsafeSet[int](), NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkImport100Safe(b *testing.B) {
+	benchImport(b, 100, NewSet[int](), NewSet[int]())
+}
+
+func BenchmarkImport100Unsafe(b *testing.B) {
+	benchImport(b, 100, NewThreadUnsafeSet[int](), NewThreadUnsafeSet[int]())
+}
+
 func benchUnion(b *testing.B, n int, s, t Set[int]) {
 	nums := nrand(n)
 	for _, v := range nums[:n/2] {

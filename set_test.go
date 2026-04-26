@@ -1611,6 +1611,30 @@ func Test_Elements(t *testing.T) {
 	}
 }
 
+func Test_Import(t *testing.T) {
+	a := NewSet("Z", "Y", "X", "W")
+	num := a.Import(NewSet("A", "B", "X", "W"))
+
+	if !a.Equal(NewSet("Z", "Y", "X", "W", "A", "B")) {
+		t.Error("Imported set is not correct")
+	}
+	if num != 2 {
+		t.Errorf("Number of imported elements is not correct. num: %d", num)
+	}
+}
+
+func Test_UnsafeImport(t *testing.T) {
+	a := NewThreadUnsafeSet("Z", "Y", "X", "W")
+	num := a.Import(NewThreadUnsafeSet("A", "B", "X", "W"))
+
+	if !a.Equal(NewThreadUnsafeSet("Z", "Y", "X", "W", "A", "B")) {
+		t.Error("Imported set is not correct")
+	}
+	if num != 2 {
+		t.Errorf("Number of imported elements is not correct. num: %d", num)
+	}
+}
+
 func Test_Example(t *testing.T) {
 	/*
 	   requiredClasses := NewSet()

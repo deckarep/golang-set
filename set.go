@@ -166,6 +166,10 @@ type Set[T comparable] interface {
 	// use to range over the set.
 	Iterator() *Iterator[T]
 
+	// Import elements from another set into this set. (shorthand of s.Append(other.ToSlice()...))
+	// Returns the number of elements imported.
+	Import(other Set[T]) int
+
 	// Remove removes a single element from the set.
 	Remove(i T)
 

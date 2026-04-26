@@ -267,6 +267,17 @@ func (t *threadSafeSet[T]) Iterator() *Iterator[T] {
 	return iterator
 }
 
+func (t *threadSafeSet[T]) Import(other Set[T]) int {
+	o := other.(*threadSafeSet[T])
+
+	t.Lock()
+	o.RLock()
+	defer t.Unlock()
+	defer o.RUnlock()
+
+	return t.uss.Import(o.uss)
+}
+
 func (t *threadSafeSet[T]) Equal(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 
