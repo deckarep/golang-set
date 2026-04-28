@@ -141,6 +141,16 @@ type Set[T comparable] interface {
 	// panic.
 	IsSubset(other Set[T]) bool
 
+	// IsDisjoint determines if this set and the other set have
+	// no elements in common. Returns true if the two sets are
+	// disjoint (no common elements), false otherwise.
+	//
+	// Note that the argument to IsDisjoint
+	// must be of the same type as the receiver
+	// of the method. Otherwise, IsDisjoint will
+	// panic.
+	IsDisjoint(other Set[T]) bool
+
 	// IsSuperset determines if every element in the other set
 	// is in this set.
 	//

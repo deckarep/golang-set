@@ -594,6 +594,114 @@ func Test_UnsafeSetIsProperSubset(t *testing.T) {
 	}
 }
 
+func Test_SetIsDisjoint(t *testing.T) {
+	tests := []struct {
+		name     string
+		a        Set[int]
+		b        Set[int]
+		expected bool
+	}{
+		{
+			name:     "完全不相交",
+			a:        NewSet(1, 2),
+			b:        NewSet(3, 4),
+			expected: true,
+		},
+		{
+			name:     "有交集",
+			a:        NewSet(1, 2),
+			b:        NewSet(2, 3),
+			expected: false,
+		},
+		{
+			name:     "第一个为空",
+			a:        NewSet[int](),
+			b:        NewSet(1, 2),
+			expected: true,
+		},
+		{
+			name:     "第二个为空",
+			a:        NewSet(1, 2),
+			b:        NewSet[int](),
+			expected: true,
+		},
+		{
+			name:     "两个都为空",
+			a:        NewSet[int](),
+			b:        NewSet[int](),
+			expected: true,
+		},
+		{
+			name:     "两个完全相同的非空集合",
+			a:        NewSet(1, 2, 3),
+			b:        NewSet(1, 2, 3),
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.a.IsDisjoint(tt.b); got != tt.expected {
+				t.Errorf("IsDisjoint() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func Test_UnsafeSetIsDisjoint(t *testing.T) {
+	tests := []struct {
+		name     string
+		a        Set[int]
+		b        Set[int]
+		expected bool
+	}{
+		{
+			name:     "完全不相交",
+			a:        NewThreadUnsafeSet(1, 2),
+			b:        NewThreadUnsafeSet(3, 4),
+			expected: true,
+		},
+		{
+			name:     "有交集",
+			a:        NewThreadUnsafeSet(1, 2),
+			b:        NewThreadUnsafeSet(2, 3),
+			expected: false,
+		},
+		{
+			name:     "第一个为空",
+			a:        NewThreadUnsafeSet[int](),
+			b:        NewThreadUnsafeSet(1, 2),
+			expected: true,
+		},
+		{
+			name:     "第二个为空",
+			a:        NewThreadUnsafeSet(1, 2),
+			b:        NewThreadUnsafeSet[int](),
+			expected: true,
+		},
+		{
+			name:     "两个都为空",
+			a:        NewThreadUnsafeSet[int](),
+			b:        NewThreadUnsafeSet[int](),
+			expected: true,
+		},
+		{
+			name:     "两个完全相同的非空集合",
+			a:        NewThreadUnsafeSet(1, 2, 3),
+			b:        NewThreadUnsafeSet(1, 2, 3),
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.a.IsDisjoint(tt.b); got != tt.expected {
+				t.Errorf("IsDisjoint() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
 func Test_SetIsSuperset(t *testing.T) {
 	a := NewSet[int]()
 	a.Add(9)
