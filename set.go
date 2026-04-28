@@ -49,6 +49,10 @@ type Set[T comparable] interface {
 	// the number of elements added.
 	Append(val ...T) int
 
+	// AppendFrom elements from another set into this set. (shorthand of s.Append(other.ToSlice()...))
+	// Returns the number of elements added.
+	AppendFrom(other Set[T]) int
+
 	// Cardinality returns the number of elements in the set.
 	Cardinality() int
 

@@ -164,6 +164,30 @@ func Test_AppendUnsafeSetNoDuplicate(t *testing.T) {
 	}
 }
 
+func Test_AppendFrom(t *testing.T) {
+	a := NewSet("Z", "Y", "X", "W")
+	num := a.AppendFrom(NewSet("A", "B", "X", "W"))
+
+	if !a.Equal(NewSet("Z", "Y", "X", "W", "A", "B")) {
+		t.Error("Added set is not correct")
+	}
+	if num != 2 {
+		t.Errorf("Number of added elements is not correct. num: %d", num)
+	}
+}
+
+func Test_UnsafeAppendFrom(t *testing.T) {
+	a := NewThreadUnsafeSet("Z", "Y", "X", "W")
+	num := a.AppendFrom(NewThreadUnsafeSet("A", "B", "X", "W"))
+
+	if !a.Equal(NewThreadUnsafeSet("Z", "Y", "X", "W", "A", "B")) {
+		t.Error("Added set is not correct")
+	}
+	if num != 2 {
+		t.Errorf("Number of added elements is not correct. num: %d", num)
+	}
+}
+
 func Test_RemoveSet(t *testing.T) {
 	a := makeSetInt([]int{6, 3, 1})
 

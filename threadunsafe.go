@@ -73,6 +73,16 @@ func (s *threadUnsafeSet[T]) append(vs ...T) {
 	}
 }
 
+func (s *threadUnsafeSet[T]) AppendFrom(other Set[T]) int {
+	o := other.(*threadUnsafeSet[T])
+
+	prevLen := s.Cardinality()
+	for elem := range *o {
+		s.add(elem)
+	}
+	return s.Cardinality() - prevLen
+}
+
 func (s *threadUnsafeSet[T]) Cardinality() int {
 	return len(*s)
 }
