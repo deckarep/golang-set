@@ -73,6 +73,16 @@ func (s *threadUnsafeSet[T]) append(vs ...T) {
 	}
 }
 
+func (s *threadUnsafeSet[T]) AppendFrom(other Set[T]) int {
+	o := other.(*threadUnsafeSet[T])
+
+	prevLen := s.Cardinality()
+	for elem := range *o {
+		s.add(elem)
+	}
+	return s.Cardinality() - prevLen
+}
+
 func (s *threadUnsafeSet[T]) Cardinality() int {
 	return len(*s)
 }
@@ -263,16 +273,6 @@ func (s *threadUnsafeSet[T]) Iterator() *Iterator[T] {
 	}()
 
 	return iterator
-}
-
-func (s *threadUnsafeSet[T]) Import(other Set[T]) int {
-	o := other.(*threadUnsafeSet[T])
-
-	prevLen := s.Cardinality()
-	for elem := range *o {
-		s.add(elem)
-	}
-	return s.Cardinality() - prevLen
 }
 
 // Pop returns a popped item in case set is not empty, or nil-value of T

@@ -49,6 +49,10 @@ type Set[T comparable] interface {
 	// the number of elements added.
 	Append(val ...T) int
 
+	// AppendFrom elements from another set into this set. (shorthand of s.Append(other.ToSlice()...))
+	// Returns the number of elements added.
+	AppendFrom(other Set[T]) int
+
 	// Cardinality returns the number of elements in the set.
 	Cardinality() int
 
@@ -165,10 +169,6 @@ type Set[T comparable] interface {
 	// Iterator returns an Iterator object that you can
 	// use to range over the set.
 	Iterator() *Iterator[T]
-
-	// Import elements from another set into this set. (shorthand of s.Append(other.ToSlice()...))
-	// Returns the number of elements imported.
-	Import(other Set[T]) int
 
 	// Remove removes a single element from the set.
 	Remove(i T)

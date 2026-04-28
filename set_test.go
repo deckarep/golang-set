@@ -164,6 +164,30 @@ func Test_AppendUnsafeSetNoDuplicate(t *testing.T) {
 	}
 }
 
+func Test_AppendFrom(t *testing.T) {
+	a := NewSet("Z", "Y", "X", "W")
+	num := a.AppendFrom(NewSet("A", "B", "X", "W"))
+
+	if !a.Equal(NewSet("Z", "Y", "X", "W", "A", "B")) {
+		t.Error("Added set is not correct")
+	}
+	if num != 2 {
+		t.Errorf("Number of added elements is not correct. num: %d", num)
+	}
+}
+
+func Test_UnsafeAppendFrom(t *testing.T) {
+	a := NewThreadUnsafeSet("Z", "Y", "X", "W")
+	num := a.AppendFrom(NewThreadUnsafeSet("A", "B", "X", "W"))
+
+	if !a.Equal(NewThreadUnsafeSet("Z", "Y", "X", "W", "A", "B")) {
+		t.Error("Added set is not correct")
+	}
+	if num != 2 {
+		t.Errorf("Number of added elements is not correct. num: %d", num)
+	}
+}
+
 func Test_RemoveSet(t *testing.T) {
 	a := makeSetInt([]int{6, 3, 1})
 
@@ -1608,30 +1632,6 @@ func Test_Elements(t *testing.T) {
 
 	if count != 2 {
 		t.Error("Iteration should stop on the way")
-	}
-}
-
-func Test_Import(t *testing.T) {
-	a := NewSet("Z", "Y", "X", "W")
-	num := a.Import(NewSet("A", "B", "X", "W"))
-
-	if !a.Equal(NewSet("Z", "Y", "X", "W", "A", "B")) {
-		t.Error("Imported set is not correct")
-	}
-	if num != 2 {
-		t.Errorf("Number of imported elements is not correct. num: %d", num)
-	}
-}
-
-func Test_UnsafeImport(t *testing.T) {
-	a := NewThreadUnsafeSet("Z", "Y", "X", "W")
-	num := a.Import(NewThreadUnsafeSet("A", "B", "X", "W"))
-
-	if !a.Equal(NewThreadUnsafeSet("Z", "Y", "X", "W", "A", "B")) {
-		t.Error("Imported set is not correct")
-	}
-	if num != 2 {
-		t.Errorf("Number of imported elements is not correct. num: %d", num)
 	}
 }
 
