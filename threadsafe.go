@@ -115,6 +115,18 @@ func (t *threadSafeSet[T]) IsSubset(other Set[T]) bool {
 	return ret
 }
 
+func (t *threadSafeSet[T]) IsDisjoint(other Set[T]) bool {
+	o := other.(*threadSafeSet[T])
+
+	t.RLock()
+	o.RLock()
+
+	ret := t.uss.IsDisjoint(o.uss)
+	t.RUnlock()
+	o.RUnlock()
+	return ret
+}
+
 func (t *threadSafeSet[T]) IsProperSubset(other Set[T]) bool {
 	o := other.(*threadSafeSet[T])
 

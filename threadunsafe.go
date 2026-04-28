@@ -231,6 +231,10 @@ func (s *threadUnsafeSet[T]) IsSubset(other Set[T]) bool {
 	return true
 }
 
+func (s *threadUnsafeSet[T]) IsDisjoint(other Set[T]) bool {
+	return !s.ContainsAnyElement(other)
+}
+
 func (s *threadUnsafeSet[T]) IsSuperset(other Set[T]) bool {
 	return other.IsSubset(s)
 }
