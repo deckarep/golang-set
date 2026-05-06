@@ -29,7 +29,7 @@ func buildCaseName(n int, safe bool) string {
 		settype = "Unsafe"
 	}
 
-	return fmt.Sprintf("%s(%d)", settype, n)
+	return fmt.Sprintf("%d_%s", n, settype)
 }
 
 type benchCase struct {
@@ -41,8 +41,6 @@ func buildBenchCases(ns ...int) []benchCase {
 	cases := []benchCase{}
 	for _, n := range ns {
 		cases = append(cases, benchCase{n, true})
-	}
-	for _, n := range ns {
 		cases = append(cases, benchCase{n, false})
 	}
 	return cases
