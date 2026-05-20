@@ -30,8 +30,7 @@ import (
 	"fmt"
 	"strings"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type threadUnsafeSet[T comparable] map[T]struct{}
@@ -388,18 +387,19 @@ func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 }
 
 // MarshalBSON creates a BSON array from the set.
-func (s threadUnsafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	return bson.MarshalValue(s.ToSlice())
+func (s threadUnsafeSet[T]) MarshalBSONValue() (byte, []byte, error) {
+	t, bt, err := bson.MarshalValue(s.ToSlice())
+	return byte(t), bt, err
 }
 
 // UnmarshalBSON recreates a set from a BSON array.
-func (s threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
-	if bt != bson.TypeArray {
+func (s threadUnsafeSet[T]) UnmarshalBSONValue(bt byte, b []byte) error {
+	if bt != byte(bson.TypeArray) {
 		return fmt.Errorf("must use BSON Array to unmarshal Set")
 	}
 
 	var i []T
-	err := bson.UnmarshalValue(bt, b, &i)
+	err := bson.UnmarshalValue(bson.Type(bt), b, &i)
 	if err != nil {
 		return err
 	}

@@ -34,7 +34,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const N = 1000
@@ -773,7 +773,7 @@ func TestThreadUnsafeSet_UnmarshalBSONValue(t *testing.T) {
 
 	expected := NewThreadUnsafeSet[int64](1, 2, 3)
 	actual := NewThreadUnsafeSet[int64]()
-	err := actual.UnmarshalBSONValue(bson.TypeArray, []byte(s))
+	err := actual.UnmarshalBSONValue(byte(bson.TypeArray), []byte(s))
 	if err != nil {
 		t.Errorf("Error should be nil: %v", err)
 	}

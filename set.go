@@ -35,7 +35,7 @@ SOFTWARE.
 // that can enforce mutual exclusion through other means.
 package mapset
 
-import "go.mongodb.org/mongo-driver/bson/bsontype"
+import "go.mongodb.org/mongo-driver/v2/bson"
 
 // Set is the primary interface provided by the mapset package.  It
 // represents an unordered set of data and a large number of
@@ -216,12 +216,17 @@ type Set[T comparable] interface {
 	UnmarshalJSON(b []byte) error
 
 	// MarshalBSONValue will marshal the set into a BSON-based representation.
-	MarshalBSONValue() (bsontype.Type, []byte, error)
+	MarshalBSONValue() (byte, []byte, error)
 
 	// UnmarshalBSONValue will unmarshal a BSON-based byte slice into a full Set datastructure.
 	// For this to work, set subtypes must implement the Marshal/Unmarshal interface.
-	UnmarshalBSONValue(bt bsontype.Type, b []byte) error
+	UnmarshalBSONValue(byte, []byte) error
 }
+
+var (
+	_ bson.ValueMarshaler   = (Set[string])(nil)
+	_ bson.ValueUnmarshaler = (Set[string])(nil)
+)
 
 // NewSet creates and returns a new set with the given elements.
 // Operations on the resulting set are thread-safe.

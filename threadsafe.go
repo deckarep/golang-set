@@ -25,11 +25,7 @@ SOFTWARE.
 
 package mapset
 
-import (
-	"sync"
-
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-)
+import "sync"
 
 type threadSafeSet[T comparable] struct {
 	sync.RWMutex
@@ -345,7 +341,7 @@ func (t *threadSafeSet[T]) UnmarshalJSON(p []byte) error {
 	return err
 }
 
-func (t *threadSafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (t *threadSafeSet[T]) MarshalBSONValue() (byte, []byte, error) {
 	t.RLock()
 	bt, b, err := t.uss.MarshalBSONValue()
 	t.RUnlock()
@@ -353,7 +349,7 @@ func (t *threadSafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	return bt, b, err
 }
 
-func (t *threadSafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, p []byte) error {
+func (t *threadSafeSet[T]) UnmarshalBSONValue(bt byte, p []byte) error {
 	t.Lock()
 	err := t.uss.UnmarshalBSONValue(bt, p)
 	t.Unlock()
