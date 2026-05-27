@@ -284,3 +284,12 @@ func Elements[T comparable](s Set[T]) func(func(element T) bool) {
 		})
 	}
 }
+
+// WrapAsThreadSafe upgrades a threadUnsafeSet to threadSafeSet.
+// Intended for use cases where initial data is populated under concurrent processing,
+// then used as read-only afterward.
+func WrapAsThreadSafe[T comparable](uss *threadUnsafeSet[T]) Set[T] {
+	return &threadSafeSet[T]{
+		uss: uss,
+	}
+}
