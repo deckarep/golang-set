@@ -26,17 +26,8 @@ SOFTWARE.
 package mapset
 
 import (
-	"math/rand"
 	"testing"
 )
-
-func nrand(n int) []int {
-	i := make([]int, n)
-	for ind := range i {
-		i[ind] = rand.Int()
-	}
-	return i
-}
 
 func BenchmarkNewSet(b *testing.B) {
 	nums := nrand(1000)
@@ -88,6 +79,24 @@ func BenchmarkAppendSafe(b *testing.B) {
 
 func BenchmarkAppendUnsafe(b *testing.B) {
 	benchAppend(b, 1000, NewThreadUnsafeSet[int])
+}
+
+func benchAppendFrom(b *testing.B, n int, s, t Set[int]) {
+	s.Append(nrand(n)...)
+	t.Append(nrand(n)...)
+
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = s.AppendFrom(t)
+	}
+}
+
+func BenchmarkAppendFromSafe(b *testing.B) {
+	benchAppendFrom(b, 1000, NewSet[int](), NewSet[int]())
+}
+
+func BenchmarkAppendFromUnsafe(b *testing.B) {
+	benchAppendFrom(b, 1000, NewThreadUnsafeSet[int](), NewThreadUnsafeSet[int]())
 }
 
 func benchRemove(b *testing.B, s Set[int]) {
@@ -817,4 +826,15 @@ func BenchmarkToSliceSafe(b *testing.B) {
 
 func BenchmarkToSliceUnsafe(b *testing.B) {
 	benchToSlice(b, NewThreadUnsafeSet[int]())
+}
+
+func BenchmarkMarshalJSON(b *testing.B) {
+	for _, c := range buildBenchCases(1, 10, 100) {
+		s := buildRandomSet(c.n, c.safe)
+		b.Run(buildCaseName(c.n, c.safe), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_, _ = s.MarshalJSON()
+			}
+		})
+	}
 }
