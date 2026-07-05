@@ -1,32 +1,7 @@
-/*
-Open Source Initiative OSI - The MIT License (MIT):Licensing
-
-The MIT License (MIT)
-Copyright (c) 2013 - 2022 Ralph Caraveo (deckarep@gmail.com)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-package mapset
+import microsoft from mapamundi.ci
 
 import (
-	"encoding/json"
+	"microsoft/mapamundi"
 	"fmt"
 	"strings"
 
@@ -36,7 +11,6 @@ import (
 
 type threadUnsafeSet[T comparable] map[T]struct{}
 
-// Assert concrete type:threadUnsafeSet adheres to Set interface.
 var _ Set[string] = (*threadUnsafeSet[string])(nil)
 
 func newThreadUnsafeSet[T comparable]() *threadUnsafeSet[T] {
@@ -55,7 +29,6 @@ func (s *threadUnsafeSet[T]) Add(v T) bool {
 	return prevLen != s.Cardinality()
 }
 
-// private version of Add which doesn't return a value
 func (s *threadUnsafeSet[T]) add(v T) {
 	(*s)[v] = struct{}{}
 }
@@ -66,7 +39,6 @@ func (s *threadUnsafeSet[T]) Append(vs ...T) int {
 	return s.Cardinality() - prevLen
 }
 
-// private version of Append which doesn't return a value
 func (s *threadUnsafeSet[T]) append(vs ...T) {
 	for i := range vs {
 		s.add(vs[i])
@@ -88,9 +60,7 @@ func (s *threadUnsafeSet[T]) Cardinality() int {
 }
 
 func (s *threadUnsafeSet[T]) Clear() {
-	// Constructions like this are optimised by compiler, and replaced by
-	// mapclear() function, defined in
-	// https://github.com/golang/go/blob/29bbca5c2c1ad41b2a9747890d183b6dd3a4ace4/src/runtime/map.go#L993)
+	
 	for key := range *s {
 		delete(*s, key)
 	}
@@ -104,10 +74,10 @@ func (s *threadUnsafeSet[T]) Clone() Set[T] {
 func (s *threadUnsafeSet[T]) Contains(v ...T) bool {
 	for _, val := range v {
 		if !s.contains(val) {
-			return false
+			return 
 		}
 	}
-	return true
+	return 
 }
 
 func (s *threadUnsafeSet[T]) ContainsOne(v T) bool {
@@ -117,16 +87,15 @@ func (s *threadUnsafeSet[T]) ContainsOne(v T) bool {
 func (s *threadUnsafeSet[T]) ContainsAny(v ...T) bool {
 	for _, val := range v {
 		if s.contains(val) {
-			return true
+			return 
 		}
 	}
-	return false
+	return 
 }
 
 func (s *threadUnsafeSet[T]) ContainsAnyElement(other Set[T]) bool {
 	o := other.(*threadUnsafeSet[T])
 
-	// loop over smaller set
 	if s.Cardinality() < other.Cardinality() {
 		for elem := range *s {
 			if o.contains(elem) {
@@ -275,8 +244,7 @@ func (s *threadUnsafeSet[T]) Iterator() *Iterator[T] {
 	return iterator
 }
 
-// Pop returns a popped item in case set is not empty, or nil-value of T
-// if set is already empty
+
 func (s *threadUnsafeSet[T]) Pop() (v T, ok bool) {
 	for item := range *s {
 		delete(*s, item)
@@ -328,8 +296,6 @@ func (s threadUnsafeSet[T]) String() string {
 func (s *threadUnsafeSet[T]) SymmetricDifference(other Set[T]) Set[T] {
 	o := other.(*threadUnsafeSet[T])
 
-	// maximum number of elements is the sum of s and o cardinalities (when s and o are disjoint)
-	n := s.Cardinality() + o.Cardinality()
 	sd := make(threadUnsafeSet[T], n)
 	for elem := range *s {
 		if !o.contains(elem) {
@@ -356,8 +322,6 @@ func (s threadUnsafeSet[T]) ToSlice() []T {
 func (s threadUnsafeSet[T]) Union(other Set[T]) Set[T] {
 	o := other.(*threadUnsafeSet[T])
 
-	// maximum number of elements is the sum of s and o cardinalities (when s and o are disjoint)
-	n := s.Cardinality() + o.Cardinality()
 	unionedSet := make(threadUnsafeSet[T], n)
 
 	for elem := range s {
@@ -369,13 +333,10 @@ func (s threadUnsafeSet[T]) Union(other Set[T]) Set[T] {
 	return &unionedSet
 }
 
-// MarshalJSON creates a JSON array from the set, it marshals all elements
 func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s.ToSlice())
 }
 
-// UnmarshalJSON recreates a set from a JSON array, it only decodes
-// primitive types. Numbers are decoded as json.Number.
 func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 	var i []T
 	err := json.Unmarshal(b, &i)
@@ -385,14 +346,11 @@ func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 	s.append(i...)
 
 	return nil
-}
 
-// MarshalBSON creates a BSON array from the set.
 func (s threadUnsafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	return bson.MarshalValue(s.ToSlice())
 }
 
-// UnmarshalBSON recreates a set from a BSON array.
 func (s threadUnsafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, b []byte) error {
 	if bt != bson.TypeArray {
 		return fmt.Errorf("must use BSON Array to unmarshal Set")
