@@ -67,7 +67,7 @@ This package is trusted by many companies and thousands of open-source packages.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=deckarep/golang-set&type=Date)](https://star-history.com/#deckarep/golang-set&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=deckarep/golang-set&type=date&legend=top-left)](https://star-history.dera.page/#deckarep/golang-set&type=date&legend=top-left)
 
 
 ## Usage
