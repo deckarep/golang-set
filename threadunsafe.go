@@ -50,9 +50,9 @@ func newThreadUnsafeSetWithSize[T comparable](cardinality int) *threadUnsafeSet[
 }
 
 func (s *threadUnsafeSet[T]) Add(v T) bool {
-	prevLen := s.Cardinality()
+	prevLen := len(*s)
 	s.add(v)
-	return prevLen != s.Cardinality()
+	return prevLen != len(*s)
 }
 
 // private version of Add which doesn't return a value
@@ -61,15 +61,15 @@ func (s *threadUnsafeSet[T]) add(v T) {
 }
 
 func (s *threadUnsafeSet[T]) Append(vs ...T) int {
-	prevLen := s.Cardinality()
+	prevLen := len(*s)
 	s.append(vs...)
-	return s.Cardinality() - prevLen
+	return len(*s) - prevLen
 }
 
 // private version of Append which doesn't return a value
 func (s *threadUnsafeSet[T]) append(vs ...T) {
-	for i := range vs {
-		s.add(vs[i])
+	for _, v := range vs {
+		s.add(v)
 	}
 }
 
@@ -217,7 +217,7 @@ func (s *threadUnsafeSet[T]) Intersect(other Set[T]) Set[T] {
 }
 
 func (s *threadUnsafeSet[T]) IsEmpty() bool {
-	return s.Cardinality() == 0
+	return len(*s) == 0
 }
 
 func (s *threadUnsafeSet[T]) IsProperSubset(other Set[T]) bool {
@@ -345,7 +345,7 @@ func (s *threadUnsafeSet[T]) SymmetricDifference(other Set[T]) Set[T] {
 }
 
 func (s threadUnsafeSet[T]) ToSlice() []T {
-	keys := make([]T, 0, s.Cardinality())
+	keys := make([]T, 0, len(s))
 	for elem := range s {
 		keys = append(keys, elem)
 	}
