@@ -10,10 +10,10 @@ The missing `generic` set collection for the Go language.  Until Go has sets bui
 * Hi there, 👋! Do you use or have interest in the [Zig programming language](https://ziglang.org/) created by Andrew Kelley? If so, the golang-set project has a new sibling project: [ziglang-set](https://github.com/deckarep/ziglang-set)! Come check it out!
 
 ## Update 9/15/2026
-Golang-set now squeezes out more performance which add up to something significant thanks to the work of some of our open-source contributors. Additionally some convenience methods
-have been added and a new `IsDisjoint` method. We cut a major release because the Mongo Driver/BSON support is fully removed from this version. The community in general was not
-happy to bring in such a large dependency just for supporting BSON Marshaling/Unmarshaling. Additionally, this did impact the project with a security CVE affecting the Mongo driver.
-Going forward, Golang-set will remain a 100% stdlib only package. The users have spoken and they appreciate the simplicity and smaller attack vector having this package be small in nature.
+Golang-set now squeezes out more performance which adds up to something significant thanks to the work of some of our open-source contributors. (See the benchmarks in the mentioned PRS!)
+Additionally some convenience methods have been added and a new `IsDisjoint` method. We cut a major release because the Mongo Driver/BSON support is fully removed from this version. The community 
+in general was not happy to bring in such a large dependency just for supporting BSON Marshaling/Unmarshaling. Additionally, this did impact the project with a security CVE affecting the Mongo driver.
+Going forward, Golang-set will remain a 100% stdlib only package. The users have spoken and they appreciate the simplicity and minimal attack vector having this package be small in scope.
 
 * Packaged version: `3.0.0` contains the following:
   * New Filter method added for set element filtering: [PR #175](https://github.com/deckarep/golang-set/pull/175)
