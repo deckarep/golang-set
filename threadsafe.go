@@ -27,8 +27,6 @@ package mapset
 
 import (
 	"sync"
-
-	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
 type threadSafeSet[T comparable] struct {
@@ -352,22 +350,6 @@ func (t *threadSafeSet[T]) MarshalJSON() ([]byte, error) {
 func (t *threadSafeSet[T]) UnmarshalJSON(p []byte) error {
 	t.Lock()
 	err := t.uss.UnmarshalJSON(p)
-	t.Unlock()
-
-	return err
-}
-
-func (t *threadSafeSet[T]) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	t.RLock()
-	bt, b, err := t.uss.MarshalBSONValue()
-	t.RUnlock()
-
-	return bt, b, err
-}
-
-func (t *threadSafeSet[T]) UnmarshalBSONValue(bt bsontype.Type, p []byte) error {
-	t.Lock()
-	err := t.uss.UnmarshalBSONValue(bt, p)
 	t.Unlock()
 
 	return err
