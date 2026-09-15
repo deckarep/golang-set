@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Package mapset implements a simple and  set collection.
+// Package mapset implements a simple, generic set collection.
 // Items stored within it are unordered and unique. It supports
 // typical set operations: membership testing, intersection, union,
 // difference, symmetric difference and cloning.
@@ -201,8 +201,8 @@ type Set[T comparable] interface {
 
 	// PopN removes and returns up to n arbitrary items from the set.
 	// It returns a slice of the removed items and the actual number of items removed.
-	// If the set is empty or n is less than or equal to 0s, it returns an empty slice and 0.
-	// If n is greater than the set's size, all items are
+	// If the set is empty or n is less than or equal to 0, it returns an empty slice and 0.
+	// If n is greater than the set's size, all items are popped.
 	PopN(n int) ([]T, int)
 
 	// ToSlice returns the members of the set as a slice.
