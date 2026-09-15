@@ -626,37 +626,37 @@ func Test_SetIsDisjoint(t *testing.T) {
 		expected bool
 	}{
 		{
-			name:     "完全不相交",
+			name:     "completely disjoint",
 			a:        NewSet(1, 2),
 			b:        NewSet(3, 4),
 			expected: true,
 		},
 		{
-			name:     "有交集",
+			name:     "has intersection",
 			a:        NewSet(1, 2),
 			b:        NewSet(2, 3),
 			expected: false,
 		},
 		{
-			name:     "第一个为空",
+			name:     "the first one is empty",
 			a:        NewSet[int](),
 			b:        NewSet(1, 2),
 			expected: true,
 		},
 		{
-			name:     "第二个为空",
+			name:     "the second one is empty",
 			a:        NewSet(1, 2),
 			b:        NewSet[int](),
 			expected: true,
 		},
 		{
-			name:     "两个都为空",
+			name:     "both are empty",
 			a:        NewSet[int](),
 			b:        NewSet[int](),
 			expected: true,
 		},
 		{
-			name:     "两个完全相同的非空集合",
+			name:     "two identical non-empty sets",
 			a:        NewSet(1, 2, 3),
 			b:        NewSet(1, 2, 3),
 			expected: false,
