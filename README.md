@@ -1,6 +1,6 @@
 ![example workflow](https://github.com/deckarep/golang-set/actions/workflows/ci.yml/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/deckarep/golang-set/v2)](https://goreportcard.com/report/github.com/deckarep/golang-set/v2)
-[![GoDoc](https://godoc.org/github.com/deckarep/golang-set/v2?status.svg)](http://godoc.org/github.com/deckarep/golang-set/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/deckarep/golang-set/v3)](https://goreportcard.com/report/github.com/deckarep/golang-set/v3)
+[![GoDoc](https://godoc.org/github.com/deckarep/golang-set/v3?status.svg)](http://godoc.org/github.com/deckarep/golang-set/v3)
 
 # golang-set
 
@@ -58,7 +58,7 @@ You can of course argue that there is no need for a set in Go, otherwise the cre
 Use `go get` to install this package.
 
 ```shell
-go get github.com/deckarep/golang-set/v2
+go get github.com/deckarep/golang-set/v3
 ```
 
 ## Features
@@ -126,7 +126,7 @@ package main
 
 import (
   "fmt"
-  mapset "github.com/deckarep/golang-set/v2"
+  mapset "github.com/deckarep/golang-set/v3"
 )
 
 func main() {
