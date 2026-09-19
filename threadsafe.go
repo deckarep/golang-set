@@ -56,6 +56,9 @@ func (t *threadSafeSet[T]) Append(v ...T) int {
 
 func (t *threadSafeSet[T]) AppendFrom(other Set[T]) int {
 	o := other.(*threadSafeSet[T])
+	if t == o {
+		return 0
+	}
 
 	t.Lock()  // Write Lock
 	o.RLock() // Read Lock

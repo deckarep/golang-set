@@ -27,6 +27,7 @@ package mapset
 
 import (
 	"testing"
+	"time"
 )
 
 func makeSetInt(ints []int) Set[int] {
@@ -173,6 +174,32 @@ func Test_AppendFrom(t *testing.T) {
 	}
 	if num != 2 {
 		t.Errorf("Number of added elements is not correct. num: %d", num)
+	}
+}
+
+func Test_AppendFromSelf(t *testing.T) {
+	for name, set := range map[string]Set[int]{
+		"safe empty":       NewSet[int](),
+		"safe populated":   NewSet(1, 2, 3),
+		"unsafe empty":     NewThreadUnsafeSet[int](),
+		"unsafe populated": NewThreadUnsafeSet(1, 2, 3),
+	} {
+		t.Run(name, func(t *testing.T) {
+			before := set.Clone()
+			done := make(chan int, 1)
+			go func() { done <- set.AppendFrom(set) }()
+			select {
+			case added := <-done:
+				if added != 0 {
+					t.Errorf("appending a set to itself added %d elements", added)
+				}
+			case <-time.After(time.Second):
+				t.Fatal("appending a set to itself did not return")
+			}
+			if !set.Equal(before) {
+				t.Error("appending a set to itself changed its elements")
+			}
+		})
 	}
 }
 
