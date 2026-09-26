@@ -295,7 +295,7 @@ func (s *threadUnsafeSet[T]) PopN(n int) (items []T, count int) {
 		n = sn
 	}
 
-	items = make([]T, 0, sn)
+	items = make([]T, 0, n)
 	for item := range *s {
 		if count >= n {
 			break

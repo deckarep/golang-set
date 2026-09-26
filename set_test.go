@@ -1607,6 +1607,36 @@ func Test_PopNUnsafe(t *testing.T) {
 	}
 }
 
+func Test_PopNResultCapacity(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		newSet func() Set[int]
+	}{
+		{"safe", func() Set[int] { return NewSet[int]() }},
+		{"unsafe", func() Set[int] { return NewThreadUnsafeSet[int]() }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			const size = 1024
+			for _, n := range []int{1, 8, size, size + 1} {
+				s := tc.newSet()
+				for i := 0; i < size; i++ {
+					s.Add(i)
+				}
+
+				items, count := s.PopN(n)
+				want := min(n, size)
+				if count != want || len(items) != want {
+					t.Fatalf("PopN(%d): got %d items and count %d, want %d", n, len(items), count, want)
+				}
+				// A small batch should not retain a backing array sized for the whole set.
+				if cap(items) != want {
+					t.Errorf("PopN(%d): result capacity is %d, want %d", n, cap(items), want)
+				}
+			}
+		})
+	}
+}
+
 func Test_EmptySetProperties(t *testing.T) {
 	empty := NewSet[string]()
 
