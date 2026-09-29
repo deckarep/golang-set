@@ -85,12 +85,7 @@ func (s *threadUnsafeSet[T]) Cardinality() int {
 }
 
 func (s *threadUnsafeSet[T]) Clear() {
-	// Constructions like this are optimised by compiler, and replaced by
-	// mapclear() function, defined in
-	// https://github.com/golang/go/blob/29bbca5c2c1ad41b2a9747890d183b6dd3a4ace4/src/runtime/map.go#L993)
-	for key := range *s {
-		delete(*s, key)
-	}
+	clear(*s)
 }
 
 func (s *threadUnsafeSet[T]) Clone() Set[T] {
