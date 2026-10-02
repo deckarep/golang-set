@@ -141,6 +141,27 @@ func Test_ClearConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
+func Test_ShrinkConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s := NewSet[int]()
+	ints := rand.Perm(N)
+
+	var wg sync.WaitGroup
+	wg.Add(len(ints))
+	for i := 0; i < len(ints); i++ {
+		go func() {
+			s.Shrink()
+			wg.Done()
+		}()
+		go func(i int) {
+			s.Add(i)
+		}(i)
+	}
+
+	wg.Wait()
+}
+
 func Test_CloneConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 

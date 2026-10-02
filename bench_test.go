@@ -140,6 +140,18 @@ func BenchmarkClear(b *testing.B) {
 	}
 }
 
+func BenchmarkShrink(b *testing.B) {
+	for _, c := range buildBenchCases(1, 10, 100) {
+		s := buildRandomSet(c.n, c.safe)
+
+		b.Run(buildCaseName(c.n, c.safe), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				s.Clone().Shrink()
+			}
+		})
+	}
+}
+
 func BenchmarkClone(b *testing.B) {
 	for _, c := range buildBenchCases(1, 10, 100) {
 		s := buildRandomSet(c.n, c.safe)

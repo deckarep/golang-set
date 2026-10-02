@@ -85,8 +85,16 @@ func (s *threadUnsafeSet[T]) Cardinality() int {
 	return len(*s)
 }
 
+// Clear removes all elements from the set. It retains allocated
+// bucket capacity for efficient reuse.
 func (s *threadUnsafeSet[T]) Clear() {
 	clear(*s)
+}
+
+// Shrink removes all elements from the set and reallocates
+// the underlying map to release memory back to the garbage collector.
+func (s *threadUnsafeSet[T]) Shrink() {
+	*s = make(threadUnsafeSet[T])
 }
 
 func (s *threadUnsafeSet[T]) Clone() Set[T] {
