@@ -60,12 +60,12 @@ func (t *threadSafeSet[T]) AppendFrom(other Set[T]) int {
 		return 0
 	}
 
-	t.Lock()  // Write Lock
-	o.RLock() // Read Lock
-	defer t.Unlock()
-	defer o.RUnlock()
+	elems := o.ToSlice()
 
-	return t.uss.AppendFrom(o.uss)
+	t.Lock()
+	defer t.Unlock()
+
+	return t.uss.Append(elems...)
 }
 
 func (t *threadSafeSet[T]) Contains(v ...T) bool {

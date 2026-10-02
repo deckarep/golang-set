@@ -33,6 +33,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 const N = 1000
@@ -720,5 +721,37 @@ func Test_DeadlockOnEachCallbackWhenPanic(t *testing.T) {
 	card = widgets.Cardinality()
 	if widgets.Cardinality() != 5 {
 		t.Errorf("Expected widgets to have 5 elements, but has %d", card)
+	}
+}
+
+func Test_AppendFromDeadlock(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+	a, b := NewSet(1), NewSet(2)
+	start := make(chan struct{})
+	done := make(chan struct{}, 2)
+
+	for _, pair := range [][2]Set[int]{{a, b}, {b, a}} {
+		go func(dst, src Set[int]) {
+			<-start
+			for i := 0; i < 10000; i++ {
+				dst.AppendFrom(src)
+			}
+			done <- struct{}{}
+		}(pair[0], pair[1])
+	}
+	close(start)
+
+	timer := time.NewTimer(3 * time.Second)
+	defer timer.Stop()
+	for i := 0; i < 2; i++ {
+		select {
+		case <-done:
+		case <-timer.C:
+			t.Fatal("deadlock detected: concurrent AppendFrom calls in opposite directions timed out")
+		}
+	}
+
+	if !a.Contains(1, 2) || !b.Contains(1, 2) {
+		t.Error("unexpected elements in sets after concurrent AppendFrom")
 	}
 }
