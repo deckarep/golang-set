@@ -26,9 +26,89 @@ SOFTWARE.
 package mapset
 
 import (
+	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
 	"testing"
 )
+
+var (
+	_ sql.Scanner   = (*threadUnsafeSet[string])(nil)
+	_ driver.Valuer = (*threadUnsafeSet[string])(nil)
+)
+
+func TestThreadUnsafeSet_SQLValueAndScan(t *testing.T) {
+	testSetSQLValueAndScan(t, NewThreadUnsafeSet[int])
+}
+
+func testSetSQLValueAndScan(t *testing.T, newSet func(...int) Set[int]) {
+	t.Helper()
+
+	set := newSet(1, 2, 3)
+	valuer, ok := set.(driver.Valuer)
+	if !ok {
+		t.Fatal("set does not implement driver.Valuer")
+	}
+
+	value, err := valuer.Value()
+	if err != nil {
+		t.Fatalf("Value() returned an error: %v", err)
+	}
+
+	data, ok := value.([]byte)
+	if !ok {
+		t.Fatalf("Value() returned %T, want []byte", value)
+	}
+
+	var values []int
+	if err := json.Unmarshal(data, &values); err != nil {
+		t.Fatalf("Value() returned invalid JSON: %v", err)
+	}
+	if !newSet(1, 2, 3).Equal(newSet(values...)) {
+		t.Fatalf("Value() returned %s, want a JSON array containing [1 2 3]", data)
+	}
+
+	scanner, ok := set.(sql.Scanner)
+	if !ok {
+		t.Fatal("set does not implement sql.Scanner")
+	}
+
+	if err := scanner.Scan(`[-1, 4]`); err != nil {
+		t.Fatalf("Scan(string) returned an error: %v", err)
+	}
+	if !set.Equal(newSet(-1, 4)) {
+		t.Fatalf("Scan(string) did not replace set: got %v", set.ToSlice())
+	}
+
+	if err := scanner.Scan([]byte(`[5]`)); err != nil {
+		t.Fatalf("Scan([]byte) returned an error: %v", err)
+	}
+	if !set.Equal(newSet(5)) {
+		t.Fatalf("Scan([]byte) did not replace set: got %v", set.ToSlice())
+	}
+
+	if err := scanner.Scan(nil); err != nil {
+		t.Fatalf("Scan(nil) returned an error: %v", err)
+	}
+	if !set.IsEmpty() {
+		t.Fatalf("Scan(nil) did not clear set: got %v", set.ToSlice())
+	}
+
+	set.Append(6)
+	if err := scanner.Scan(1); err == nil {
+		t.Fatal("Scan(int) returned nil error")
+	}
+	if !set.Equal(newSet(6)) {
+		t.Fatalf("Scan(int) changed set: got %v", set.ToSlice())
+	}
+
+	if err := scanner.Scan([]byte(`invalid`)); err == nil {
+		t.Fatal("Scan(invalid JSON) returned nil error")
+	}
+	if !set.Equal(newSet(6)) {
+		t.Fatalf("Scan(invalid JSON) changed set: got %v", set.ToSlice())
+	}
+}
 
 func TestThreadUnsafeSet_MarshalJSON(t *testing.T) {
 	expected := NewThreadUnsafeSet[int64](1, 2, 3)

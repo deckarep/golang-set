@@ -67,6 +67,7 @@ go get github.com/deckarep/golang-set/v3
 * One common *interface* to both implementations
   * a **non threadsafe** implementation favoring *performance*
   * a **threadsafe** implementation favoring *concurrent* use
+* SQL support through the standard `sql.Scanner` and `driver.Valuer` interfaces, using JSON arrays
 * Feature complete set implementation modeled after [Python's set implementation](https://docs.python.org/3/library/stdtypes.html#set).
 * Exhaustive unit-test and benchmark suite
 

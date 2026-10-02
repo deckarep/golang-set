@@ -26,6 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
+	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -380,5 +381,37 @@ func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 	}
 	s.append(i...)
 
+	return nil
+}
+
+// Value returns the set encoded as a JSON array for database storage.
+func (s threadUnsafeSet[T]) Value() (driver.Value, error) {
+	return s.MarshalJSON()
+}
+
+// Scan replaces the set with the JSON array read from a database column.
+func (s *threadUnsafeSet[T]) Scan(src any) error {
+	if src == nil {
+		s.Clear()
+		return nil
+	}
+
+	var data []byte
+	switch value := src.(type) {
+	case []byte:
+		data = value
+	case string:
+		data = []byte(value)
+	default:
+		return fmt.Errorf("mapset: cannot scan %T into Set", src)
+	}
+
+	var values []T
+	if err := json.Unmarshal(data, &values); err != nil {
+		return err
+	}
+
+	s.Clear()
+	s.append(values...)
 	return nil
 }

@@ -26,6 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
+	"database/sql/driver"
 	"sync"
 )
 
@@ -349,5 +350,21 @@ func (t *threadSafeSet[T]) UnmarshalJSON(p []byte) error {
 	err := t.uss.UnmarshalJSON(p)
 	t.Unlock()
 
+	return err
+}
+
+// Value returns the set encoded as a JSON array for database storage.
+func (t *threadSafeSet[T]) Value() (driver.Value, error) {
+	t.RLock()
+	value, err := t.uss.Value()
+	t.RUnlock()
+	return value, err
+}
+
+// Scan replaces the set with the JSON array read from a database column.
+func (t *threadSafeSet[T]) Scan(src any) error {
+	t.Lock()
+	err := t.uss.Scan(src)
+	t.Unlock()
 	return err
 }

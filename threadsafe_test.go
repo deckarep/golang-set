@@ -26,6 +26,8 @@ SOFTWARE.
 package mapset
 
 import (
+	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -37,6 +39,15 @@ import (
 )
 
 const N = 1000
+
+var (
+	_ sql.Scanner   = (*threadSafeSet[string])(nil)
+	_ driver.Valuer = (*threadSafeSet[string])(nil)
+)
+
+func TestThreadSafeSet_SQLValueAndScan(t *testing.T) {
+	testSetSQLValueAndScan(t, NewSet[int])
+}
 
 func Test_AddConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
