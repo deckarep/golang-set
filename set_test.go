@@ -26,6 +26,7 @@ SOFTWARE.
 package mapset
 
 import (
+	"math"
 	"testing"
 	"time"
 )
@@ -493,6 +494,25 @@ func Test_ClearUnsafeSet(t *testing.T) {
 
 	if a.Cardinality() != 0 {
 		t.Error("ClearSet should be an empty set")
+	}
+}
+
+func Test_ClearSetWithNaN(t *testing.T) {
+	for name, set := range map[string]Set[float64]{
+		"safe":   NewSet(math.NaN(), 1.0),
+		"unsafe": NewThreadUnsafeSet(math.NaN(), 1.0),
+	} {
+		t.Run(name, func(t *testing.T) {
+			set.Clear()
+			if got := set.Cardinality(); got != 0 {
+				t.Fatalf("Clear left %d elements in the set", got)
+			}
+
+			set.Add(2.0)
+			if set.Cardinality() != 1 || !set.Contains(2.0) {
+				t.Error("cleared set should contain only the newly added element")
+			}
+		})
 	}
 }
 
