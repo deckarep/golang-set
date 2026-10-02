@@ -63,7 +63,7 @@ go get github.com/deckarep/golang-set/v3
 
 ## Features
 
-* *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (requires [Go 1.18](https://go.dev/blog/go1.18beta1) or higher)
+* *NEW* [Generics](https://go.dev/doc/tutorial/generics) based implementation (v3 requires Go 1.25 or higher)
 * One common *interface* to both implementations
   * a **non threadsafe** implementation favoring *performance*
   * a **threadsafe** implementation favoring *concurrent* use
