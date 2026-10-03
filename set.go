@@ -164,6 +164,9 @@ type Set[T comparable] interface {
 
 	// Each iterates over elements and executes the passed func against each element.
 	// If passed func returns true, stop iteration at the time.
+	//
+	// Deprecated: use the Elements range-over-func iterator instead, which
+	// offers the same early-stop behavior via a standard for-range loop.
 	Each(func(T) bool)
 
 	// Filter iterates over elements and executes the passed func against each element.
@@ -172,10 +175,16 @@ type Set[T comparable] interface {
 
 	// Iter returns a channel of elements that you can
 	// range over.
+	//
+	// Deprecated: Iter leaks a goroutine if the returned channel is not
+	// fully drained. Use the Elements range-over-func iterator instead.
 	Iter() <-chan T
 
 	// Iterator returns an Iterator object that you can
 	// use to range over the set.
+	//
+	// Deprecated: Iterator leaks a goroutine unless Stop is called on the
+	// returned Iterator. Use the Elements range-over-func iterator instead.
 	Iterator() *Iterator[T]
 
 	// Remove removes a single element from the set.

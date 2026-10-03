@@ -56,12 +56,10 @@ func Test_AddConcurrent(t *testing.T) {
 	ints := rand.Perm(N)
 
 	var wg sync.WaitGroup
-	wg.Add(len(ints))
 	for i := 0; i < len(ints); i++ {
-		go func(i int) {
+		wg.Go(func() {
 			s.Add(i)
-			wg.Done()
-		}(i)
+		})
 	}
 
 	wg.Wait()
@@ -80,12 +78,10 @@ func Test_AppendConcurrent(t *testing.T) {
 
 	n := len(ints) >> 1
 	var wg sync.WaitGroup
-	wg.Add(n)
 	for i := 0; i < n; i++ {
-		go func(i int) {
+		wg.Go(func() {
 			s.Append(i, N-i-1)
-			wg.Done()
-		}(i)
+		})
 	}
 
 	wg.Wait()
@@ -102,8 +98,7 @@ func Test_CardinalityConcurrent(t *testing.T) {
 	s := NewSet[int]()
 
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
+	wg.Go(func() {
 		elems := s.Cardinality()
 		for i := 0; i < N; i++ {
 			newElems := s.Cardinality()
@@ -111,8 +106,7 @@ func Test_CardinalityConcurrent(t *testing.T) {
 				t.Errorf("Cardinality shrunk from %v to %v", elems, newElems)
 			}
 		}
-		wg.Done()
-	}()
+	})
 
 	for i := 0; i < N; i++ {
 		s.Add(rand.Int())
@@ -127,12 +121,10 @@ func Test_ClearConcurrent(t *testing.T) {
 	ints := rand.Perm(N)
 
 	var wg sync.WaitGroup
-	wg.Add(len(ints))
 	for i := 0; i < len(ints); i++ {
-		go func() {
+		wg.Go(func() {
 			s.Clear()
-			wg.Done()
-		}()
+		})
 		go func(i int) {
 			s.Add(i)
 		}(i)
@@ -152,12 +144,10 @@ func Test_CloneConcurrent(t *testing.T) {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(len(ints))
 	for i := range ints {
-		go func(i int) {
+		wg.Go(func() {
 			s.Remove(i)
-			wg.Done()
-		}(i)
+		})
 	}
 	s.Clone()
 	wg.Wait()
@@ -176,11 +166,9 @@ func Test_ContainsConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.Contains(integers...)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -196,12 +184,9 @@ func Test_ContainsOneConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for _, v := range ints {
-		number := v
-		wg.Add(1)
-		go func() {
-			s.ContainsOne(number)
-			wg.Done()
-		}()
+		wg.Go(func() {
+			s.ContainsOne(v)
+		})
 	}
 	wg.Wait()
 }
@@ -221,11 +206,9 @@ func Test_ContainsAnyConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.ContainsAny(integers...)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -242,11 +225,9 @@ func Test_ContainsAnyElementConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.ContainsAnyElement(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -263,11 +244,9 @@ func Test_DifferenceConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.Difference(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -284,11 +263,9 @@ func Test_EqualConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.Equal(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -305,11 +282,9 @@ func Test_IntersectConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.Intersect(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -320,16 +295,14 @@ func Test_IsEmptyConcurrent(t *testing.T) {
 	s := NewSet[int]()
 
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
+	wg.Go(func() {
 		for i := 0; i < N; i++ {
 			size := s.Cardinality()
 			if s.IsEmpty() && size > 0 {
 				t.Errorf("Is Empty should be return false")
 			}
 		}
-		wg.Done()
-	}()
+	})
 
 	for i := 0; i < N; i++ {
 		s.Add(rand.Int())
@@ -349,11 +322,9 @@ func Test_IsSubsetConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.IsSubset(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -370,11 +341,9 @@ func Test_IsProperSubsetConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.IsProperSubset(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -391,11 +360,9 @@ func Test_IsSupersetConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.IsSuperset(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -412,11 +379,9 @@ func Test_IsProperSupersetConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.IsProperSuperset(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -433,15 +398,13 @@ func Test_EachConcurrent(t *testing.T) {
 
 	var count int64
 	wg := new(sync.WaitGroup)
-	wg.Add(concurrent)
 	for n := 0; n < concurrent; n++ {
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			s.Each(func(elem int) bool {
 				atomic.AddInt64(&count, 1)
 				return false
 			})
-		}()
+		})
 	}
 	wg.Wait()
 
@@ -462,10 +425,8 @@ func Test_FilterConcurrent(t *testing.T) {
 
 	var count int64
 	wg := new(sync.WaitGroup)
-	wg.Add(concurrent)
 	for n := 0; n < concurrent; n++ {
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			mapped := s.Filter(func(elem int) bool {
 				atomic.AddInt64(&count, 1)
 				return elem%2 == 0
@@ -480,7 +441,7 @@ func Test_FilterConcurrent(t *testing.T) {
 				}
 				return false
 			})
-		}()
+		})
 	}
 	wg.Wait()
 
@@ -532,12 +493,10 @@ func Test_RemoveConcurrent(t *testing.T) {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(len(ints))
 	for _, v := range ints {
-		go func(i int) {
-			s.Remove(i)
-			wg.Done()
-		}(v)
+		wg.Go(func() {
+			s.Remove(v)
+		})
 	}
 	wg.Wait()
 
@@ -556,12 +515,10 @@ func Test_StringConcurrent(t *testing.T) {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(len(ints))
 	for range ints {
-		go func() {
+		wg.Go(func() {
 			_ = s.String()
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -578,11 +535,9 @@ func Test_SymmetricDifferenceConcurrent(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range ints {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			s.SymmetricDifference(ss)
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -594,12 +549,10 @@ func Test_ToSlice(t *testing.T) {
 	ints := rand.Perm(N)
 
 	var wg sync.WaitGroup
-	wg.Add(len(ints))
 	for i := 0; i < len(ints); i++ {
-		go func(i int) {
+		wg.Go(func() {
 			s.Add(i)
-			wg.Done()
-		}(i)
+		})
 	}
 
 	wg.Wait()
@@ -623,15 +576,13 @@ func Test_ToSliceDeadlock(t *testing.T) {
 	var wg sync.WaitGroup
 	set := NewSet[int]()
 	workers := 10
-	wg.Add(workers)
 	for i := 1; i <= workers; i++ {
-		go func() {
+		wg.Go(func() {
 			for j := 0; j < 1000; j++ {
 				set.Add(1)
 				set.ToSlice()
 			}
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 }
