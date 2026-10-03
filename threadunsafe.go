@@ -29,6 +29,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"strings"
 )
 
@@ -174,16 +175,7 @@ func (s *threadUnsafeSet[T]) Filter(cb func(T) bool) Set[T] {
 
 func (s *threadUnsafeSet[T]) Equal(other Set[T]) bool {
 	o := other.(*threadUnsafeSet[T])
-
-	if s.Cardinality() != other.Cardinality() {
-		return false
-	}
-	for elem := range *s {
-		if !o.contains(elem) {
-			return false
-		}
-	}
-	return true
+	return maps.Equal(*s, *o)
 }
 
 func (s *threadUnsafeSet[T]) Intersect(other Set[T]) Set[T] {
@@ -287,9 +279,7 @@ func (s *threadUnsafeSet[T]) PopN(n int) (items []T, count int) {
 		return make([]T, 0), 0
 	}
 	sn := s.Cardinality()
-	if n > sn {
-		n = sn
-	}
+	n = min(n, sn)
 
 	items = make([]T, 0, n)
 	for item := range *s {

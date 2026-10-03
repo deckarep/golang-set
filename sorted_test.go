@@ -1,6 +1,3 @@
-//go:build go1.21
-// +build go1.21
-
 /*
 Open Source Initiative OSI - The MIT License (MIT):Licensing
 
