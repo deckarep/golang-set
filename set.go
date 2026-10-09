@@ -55,8 +55,13 @@ type Set[T comparable] interface {
 	Cardinality() int
 
 	// Clear removes all elements from the set, leaving
-	// the empty set.
+	// the empty set. It retains allocated bucket capacity
+	// for efficient reuse.
 	Clear()
+
+	// Shrink removes all elements from the set and reallocates
+	// the underlying map to release memory back to the garbage collector.
+	Shrink()
 
 	// Clone returns a clone of the set using the same
 	// implementation, duplicating all keys.

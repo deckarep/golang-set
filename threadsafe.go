@@ -35,6 +35,9 @@ type threadSafeSet[T comparable] struct {
 	uss *threadUnsafeSet[T]
 }
 
+// Assert concrete type:threadSafeSet adheres to Set interface.
+var _ Set[string] = (*threadSafeSet[string])(nil)
+
 func newThreadSafeSetWithSize[T comparable](cardinality int) *threadSafeSet[T] {
 	return &threadSafeSet[T]{
 		uss: newThreadUnsafeSetWithSize[T](cardinality),
@@ -205,9 +208,19 @@ func (t *threadSafeSet[T]) SymmetricDifference(other Set[T]) Set[T] {
 	return ret
 }
 
+// Clear removes all elements from the set. It retains allocated
+// bucket capacity for efficient reuse.
 func (t *threadSafeSet[T]) Clear() {
 	t.Lock()
 	t.uss.Clear()
+	t.Unlock()
+}
+
+// Shrink removes all elements from the set and reallocates
+// the underlying map to release memory back to the garbage collector.
+func (t *threadSafeSet[T]) Shrink() {
+	t.Lock()
+	t.uss = newThreadUnsafeSet[T]()
 	t.Unlock()
 }
 

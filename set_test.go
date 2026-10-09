@@ -27,6 +27,8 @@ package mapset
 
 import (
 	"math"
+	"runtime"
+	"runtime/debug"
 	"testing"
 	"time"
 )
@@ -511,6 +513,134 @@ func Test_ClearSetWithNaN(t *testing.T) {
 			set.Add(2.0)
 			if set.Cardinality() != 1 || !set.Contains(2.0) {
 				t.Error("cleared set should contain only the newly added element")
+			}
+		})
+	}
+}
+
+func Test_ShrinkSet(t *testing.T) {
+	a := makeSetInt([]int{2, 5, 9, 10})
+
+	a.Shrink()
+
+	if a.Cardinality() != 0 {
+		t.Error("ShrinkSet should be an empty set")
+	}
+
+	if a.Contains(2) || a.Contains(5) || a.Contains(9) || a.Contains(10) {
+		t.Error("ShrinkSet should not contain previously added elements")
+	}
+
+	a.Add(42)
+	if a.Cardinality() != 1 {
+		t.Error("ShrinkSet should have cardinality 1 after adding an element")
+	}
+	if !a.Contains(42) {
+		t.Error("ShrinkSet should contain element added after Shrink")
+	}
+}
+
+func Test_ShrinkUnsafeSet(t *testing.T) {
+	a := makeUnsafeSetInt([]int{2, 5, 9, 10})
+
+	a.Shrink()
+
+	if a.Cardinality() != 0 {
+		t.Error("ShrinkUnsafeSet should be an empty set")
+	}
+
+	if a.Contains(2) || a.Contains(5) || a.Contains(9) || a.Contains(10) {
+		t.Error("ShrinkUnsafeSet should not contain previously added elements")
+	}
+
+	a.Add(42)
+	if a.Cardinality() != 1 {
+		t.Error("ShrinkUnsafeSet should have cardinality 1 after adding an element")
+	}
+	if !a.Contains(42) {
+		t.Error("ShrinkUnsafeSet should contain element added after Shrink")
+	}
+}
+
+func Test_ShrinkLargeGrowth(t *testing.T) {
+	sets := []struct {
+		name string
+		set  Set[int]
+	}{
+		{"safe", NewSet[int]()},
+		{"unsafe", NewThreadUnsafeSet[int]()},
+	}
+
+	for _, tc := range sets {
+		t.Run(tc.name, func(t *testing.T) {
+			s := tc.set
+			for i := 0; i < 100_000; i++ {
+				s.Add(i)
+			}
+			if s.Cardinality() != 100_000 {
+				t.Fatalf("expected cardinality 100000, got %d", s.Cardinality())
+			}
+
+			s.Shrink()
+
+			if s.Cardinality() != 0 {
+				t.Fatalf("expected cardinality 0 after shrink, got %d", s.Cardinality())
+			}
+			if !s.IsEmpty() {
+				t.Fatal("expected set to be empty after shrink")
+			}
+			if s.Contains(50_000) {
+				t.Fatal("set should not contain elements after shrink")
+			}
+
+			s.Add(123)
+			if s.Cardinality() != 1 {
+				t.Fatalf("expected cardinality 1 after adding element, got %d", s.Cardinality())
+			}
+			if !s.Contains(123) {
+				t.Fatal("set should contain element added after shrink")
+			}
+			if s.Contains(50_000) {
+				t.Fatal("set should not contain old element")
+			}
+		})
+	}
+}
+
+func Test_ShrinkReleasesMemory(t *testing.T) {
+	tests := []struct {
+		name string
+		set  Set[int]
+	}{
+		{"safe", NewSet[int]()},
+		{"unsafe", NewThreadUnsafeSet[int]()},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			s := tc.set
+			for i := 0; i < 100_000; i++ {
+				s.Add(i)
+			}
+
+			runtime.GC()
+			debug.FreeOSMemory()
+			runtime.GC()
+			var before runtime.MemStats
+			runtime.ReadMemStats(&before)
+
+			s.Shrink()
+
+			runtime.GC()
+			debug.FreeOSMemory()
+			runtime.GC()
+			var after runtime.MemStats
+			runtime.ReadMemStats(&after)
+			runtime.KeepAlive(s)
+
+			released := int64(after.HeapReleased) - int64(before.HeapReleased)
+			if released < 500*1024 {
+				t.Fatalf("Shrink() did not release memory: released=%d bytes", released)
 			}
 		})
 	}
