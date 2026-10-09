@@ -27,6 +27,7 @@ package mapset
 
 import (
 	"math"
+	"sync"
 	"testing"
 	"time"
 )
@@ -1786,6 +1787,254 @@ func Test_NewThreadUnsafeSetFromMapKey_Strings(t *testing.T) {
 			t.Errorf("Element %q not found in map: %v", k, m)
 		}
 	}
+}
+
+type personForTest struct {
+	name string
+	age  int
+}
+
+func Test_NewSetFromSliceFunc_Struct(t *testing.T) {
+	people := []personForTest{
+		{name: "Alice", age: 30},
+		{name: "Bob", age: 25},
+		{name: "Charlie", age: 35},
+	}
+
+	names := NewSetFromSliceFunc(people, func(p personForTest) string {
+		return p.name
+	})
+
+	if _, ok := names.(*threadSafeSet[string]); !ok {
+		t.Fatalf("expected names set to be *threadSafeSet[string]")
+	}
+
+	if names.Cardinality() != 3 {
+		t.Fatalf("expected cardinality 3, got %d", names.Cardinality())
+	}
+	for _, p := range people {
+		if !names.Contains(p.name) {
+			t.Errorf("expected set to contain %q", p.name)
+		}
+	}
+	if names.Contains("David") {
+		t.Errorf("set unexpectedly contained 'David'")
+	}
+
+	ages := NewSetFromSliceFunc(people, func(p personForTest) int {
+		return p.age
+	})
+
+	if _, ok := ages.(*threadSafeSet[int]); !ok {
+		t.Fatalf("expected ages set to be *threadSafeSet[int]")
+	}
+
+	if ages.Cardinality() != 3 {
+		t.Fatalf("expected cardinality 3, got %d", ages.Cardinality())
+	}
+	for _, p := range people {
+		if !ages.Contains(p.age) {
+			t.Errorf("expected set to contain %d", p.age)
+		}
+	}
+}
+
+func Test_NewSetFromSliceFunc_Duplicates(t *testing.T) {
+	people := []personForTest{
+		{name: "Alice", age: 30},
+		{name: "Bob", age: 25},
+		{name: "Alice", age: 40},
+	}
+
+	names := NewSetFromSliceFunc(people, func(p personForTest) string {
+		return p.name
+	})
+
+	if names.Cardinality() != 2 {
+		t.Fatalf("expected cardinality 2, got %d", names.Cardinality())
+	}
+	if !names.Contains("Alice") || !names.Contains("Bob") {
+		t.Errorf("expected set to contain Alice and Bob")
+	}
+}
+
+func Test_NewSetFromSliceFunc_EmptyAndNil(t *testing.T) {
+	t.Run("empty slice", func(t *testing.T) {
+		empty := []personForTest{}
+		s := NewSetFromSliceFunc(empty, func(p personForTest) string {
+			return p.name
+		})
+
+		if s == nil {
+			t.Fatal("expected non-nil set")
+		}
+		if s.Cardinality() != 0 {
+			t.Errorf("expected cardinality 0, got %d", s.Cardinality())
+		}
+		if !s.IsEmpty() {
+			t.Errorf("expected empty set")
+		}
+		if !s.Add("David") {
+			t.Errorf("expected successful add to previously empty set")
+		}
+		if !s.Contains("David") {
+			t.Errorf("expected set to contain added element")
+		}
+	})
+
+	t.Run("nil slice", func(t *testing.T) {
+		var nilSlice []personForTest
+		s := NewSetFromSliceFunc(nilSlice, func(p personForTest) string {
+			return p.name
+		})
+
+		if s == nil {
+			t.Fatal("expected non-nil set")
+		}
+		if s.Cardinality() != 0 {
+			t.Errorf("expected cardinality 0, got %d", s.Cardinality())
+		}
+		if !s.IsEmpty() {
+			t.Errorf("expected empty set")
+		}
+		if !s.Add("David") {
+			t.Errorf("expected successful add to previously nil slice set")
+		}
+		if !s.Contains("David") {
+			t.Errorf("expected set to contain added element")
+		}
+	})
+}
+
+func Test_NewSetFromSliceFunc_Concurrent(t *testing.T) {
+	items := []int{1, 2, 3, 4, 5}
+	s := NewSetFromSliceFunc(items, func(i int) int {
+		return i * 10
+	})
+
+	var wg sync.WaitGroup
+	for i := 0; i < 50; i++ {
+		wg.Add(1)
+		go func(val int) {
+			defer wg.Done()
+			s.Add(val)
+			_ = s.Contains(val)
+			_ = s.Cardinality()
+		}(i)
+	}
+	wg.Wait()
+}
+
+func Test_NewThreadUnsafeSetFromSliceFunc_Struct(t *testing.T) {
+	people := []personForTest{
+		{name: "Alice", age: 30},
+		{name: "Bob", age: 25},
+		{name: "Charlie", age: 35},
+	}
+
+	names := NewThreadUnsafeSetFromSliceFunc(people, func(p personForTest) string {
+		return p.name
+	})
+
+	if _, ok := names.(*threadUnsafeSet[string]); !ok {
+		t.Fatalf("expected names set to be *threadUnsafeSet[string]")
+	}
+
+	if names.Cardinality() != 3 {
+		t.Fatalf("expected cardinality 3, got %d", names.Cardinality())
+	}
+	for _, p := range people {
+		if !names.Contains(p.name) {
+			t.Errorf("expected set to contain %q", p.name)
+		}
+	}
+	if names.Contains("David") {
+		t.Errorf("set unexpectedly contained 'David'")
+	}
+
+	ages := NewThreadUnsafeSetFromSliceFunc(people, func(p personForTest) int {
+		return p.age
+	})
+
+	if _, ok := ages.(*threadUnsafeSet[int]); !ok {
+		t.Fatalf("expected ages set to be *threadUnsafeSet[int]")
+	}
+
+	if ages.Cardinality() != 3 {
+		t.Fatalf("expected cardinality 3, got %d", ages.Cardinality())
+	}
+	for _, p := range people {
+		if !ages.Contains(p.age) {
+			t.Errorf("expected set to contain %d", p.age)
+		}
+	}
+}
+
+func Test_NewThreadUnsafeSetFromSliceFunc_Duplicates(t *testing.T) {
+	people := []personForTest{
+		{name: "Alice", age: 30},
+		{name: "Bob", age: 25},
+		{name: "Alice", age: 40},
+	}
+
+	names := NewThreadUnsafeSetFromSliceFunc(people, func(p personForTest) string {
+		return p.name
+	})
+
+	if names.Cardinality() != 2 {
+		t.Fatalf("expected cardinality 2, got %d", names.Cardinality())
+	}
+	if !names.Contains("Alice") || !names.Contains("Bob") {
+		t.Errorf("expected set to contain Alice and Bob")
+	}
+}
+
+func Test_NewThreadUnsafeSetFromSliceFunc_EmptyAndNil(t *testing.T) {
+	t.Run("empty slice", func(t *testing.T) {
+		empty := []personForTest{}
+		s := NewThreadUnsafeSetFromSliceFunc(empty, func(p personForTest) string {
+			return p.name
+		})
+
+		if s == nil {
+			t.Fatal("expected non-nil set")
+		}
+		if s.Cardinality() != 0 {
+			t.Errorf("expected cardinality 0, got %d", s.Cardinality())
+		}
+		if !s.IsEmpty() {
+			t.Errorf("expected empty set")
+		}
+		if !s.Add("David") {
+			t.Errorf("expected successful add to previously empty set")
+		}
+		if !s.Contains("David") {
+			t.Errorf("expected set to contain added element")
+		}
+	})
+
+	t.Run("nil slice", func(t *testing.T) {
+		var nilSlice []personForTest
+		s := NewThreadUnsafeSetFromSliceFunc(nilSlice, func(p personForTest) string {
+			return p.name
+		})
+
+		if s == nil {
+			t.Fatal("expected non-nil set")
+		}
+		if s.Cardinality() != 0 {
+			t.Errorf("expected cardinality 0, got %d", s.Cardinality())
+		}
+		if !s.IsEmpty() {
+			t.Errorf("expected empty set")
+		}
+		if !s.Add("David") {
+			t.Errorf("expected successful add to previously nil slice set")
+		}
+		if !s.Contains("David") {
+			t.Errorf("expected set to contain added element")
+		}
+	})
 }
 
 func Test_Elements(t *testing.T) {
