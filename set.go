@@ -276,6 +276,32 @@ func NewThreadUnsafeSetFromMapKeys[T comparable, V any](val map[T]V) Set[T] {
 	return s
 }
 
+// NewSetFromSliceFunc creates and returns a new set populated with the keys extracted
+// from each element of the slice using the provided selector function.
+// Operations on the resulting set are thread-safe.
+func NewSetFromSliceFunc[E any, T comparable](vals []E, f func(e E) T) Set[T] {
+	s := newThreadSafeSetWithSize[T](len(vals))
+
+	for _, val := range vals {
+		s.uss.add(f(val))
+	}
+
+	return s
+}
+
+// NewThreadUnsafeSetFromSliceFunc creates and returns a new set populated with the keys extracted
+// from each element of the slice using the provided selector function.
+// Operations on the resulting set are not thread-safe.
+func NewThreadUnsafeSetFromSliceFunc[E any, T comparable](vals []E, f func(e E) T) Set[T] {
+	s := newThreadUnsafeSetWithSize[T](len(vals))
+
+	for _, val := range vals {
+		s.add(f(val))
+	}
+
+	return s
+}
+
 // Elements returns an iterator that yields the elements of the set. Starting
 // with Go 1.23, users can use a for loop to iterate over it.
 func Elements[T comparable](s Set[T]) func(func(element T) bool) {
