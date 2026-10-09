@@ -27,6 +27,8 @@ package mapset
 
 import (
 	"math"
+	"runtime"
+	"runtime/debug"
 	"testing"
 	"time"
 )
@@ -600,6 +602,45 @@ func Test_ShrinkLargeGrowth(t *testing.T) {
 			}
 			if s.Contains(50_000) {
 				t.Fatal("set should not contain old element")
+			}
+		})
+	}
+}
+
+func Test_ShrinkReleasesMemory(t *testing.T) {
+	tests := []struct {
+		name string
+		set  Set[int]
+	}{
+		{"safe", NewSet[int]()},
+		{"unsafe", NewThreadUnsafeSet[int]()},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			s := tc.set
+			for i := 0; i < 100_000; i++ {
+				s.Add(i)
+			}
+
+			runtime.GC()
+			debug.FreeOSMemory()
+			runtime.GC()
+			var before runtime.MemStats
+			runtime.ReadMemStats(&before)
+
+			s.Shrink()
+
+			runtime.GC()
+			debug.FreeOSMemory()
+			runtime.GC()
+			var after runtime.MemStats
+			runtime.ReadMemStats(&after)
+			runtime.KeepAlive(s)
+
+			released := int64(after.HeapReleased) - int64(before.HeapReleased)
+			if released < 500*1024 {
+				t.Fatalf("Shrink() did not release memory: released=%d bytes", released)
 			}
 		})
 	}
