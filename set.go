@@ -81,6 +81,11 @@ type Set[T comparable] interface {
 	// given element are in the set.
 	ContainsAnyElement(other Set[T]) bool
 
+	// ContainsMatching returns whether at least one element in the set
+	// satisfies the given predicate. Iteration terminates as soon as a
+	// matching element is found.
+	ContainsMatching(predicate func(elem T) bool) bool
+
 	// Difference returns the difference between this set
 	// and other. The returned set will contain
 	// all elements of this set that are not also

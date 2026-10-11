@@ -194,6 +194,21 @@ func BenchmarkContainsAny(b *testing.B) {
 	}
 }
 
+func BenchmarkContainsMatching(b *testing.B) {
+	for _, c := range buildBenchCases(1, 10, 100) {
+		s := buildRandomSet(c.n, c.safe)
+		target := rand.Intn(c.n)
+
+		b.Run(buildCaseName(c.n, c.safe), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_ = s.ContainsMatching(func(elem int) bool {
+					return elem == target
+				})
+			}
+		})
+	}
+}
+
 func BenchmarkEqual(b *testing.B) {
 	for _, c := range buildBenchCases(1, 10, 100) {
 		s := buildRandomSet(c.n, c.safe)

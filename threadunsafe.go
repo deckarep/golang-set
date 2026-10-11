@@ -136,6 +136,15 @@ func (s *threadUnsafeSet[T]) ContainsAnyElement(other Set[T]) bool {
 	return false
 }
 
+func (s *threadUnsafeSet[T]) ContainsMatching(predicate func(elem T) bool) bool {
+	for elem := range *s {
+		if predicate(elem) {
+			return true
+		}
+	}
+	return false
+}
+
 // private version of Contains for a single element v
 func (s *threadUnsafeSet[T]) contains(v T) (ok bool) {
 	_, found := (*s)[v]

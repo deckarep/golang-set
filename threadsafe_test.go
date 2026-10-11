@@ -251,6 +251,28 @@ func Test_ContainsAnyElementConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
+func Test_ContainsMatchingConcurrent(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	s := NewSet[int]()
+	ints := rand.Perm(N)
+	for _, v := range ints {
+		s.Add(v)
+	}
+
+	var wg sync.WaitGroup
+	for range ints {
+		wg.Add(1)
+		go func() {
+			s.ContainsMatching(func(elem int) bool {
+				return elem == N/2
+			})
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
 func Test_DifferenceConcurrent(t *testing.T) {
 	runtime.GOMAXPROCS(2)
 
@@ -711,6 +733,47 @@ func Test_DeadlockOnEachCallbackWhenPanic(t *testing.T) {
 			// NOTE: this will throw a panic once we get to the nil element.
 			_ = *n * 2
 			return false
+		})
+
+		return nil
+	}
+
+	card := widgets.Cardinality()
+	if widgets.Cardinality() != 4 {
+		t.Errorf("Expected widgets to have 4 elements, but has %d", card)
+	}
+
+	doWork(widgets)
+
+	if !panicOccured {
+		t.Error("Expected a panic to occur followed by recover for test to be valid")
+	}
+
+	widgets.Add(&numbers[3])
+
+	card = widgets.Cardinality()
+	if widgets.Cardinality() != 5 {
+		t.Errorf("Expected widgets to have 5 elements, but has %d", card)
+	}
+}
+
+func Test_DeadlockOnContainsMatchingCallbackWhenPanic(t *testing.T) {
+	numbers := []int{1, 2, 3, 4}
+	widgets := NewSet[*int]()
+	widgets.Append(&numbers[0], &numbers[1], nil, &numbers[2])
+
+	var panicOccured = false
+
+	doWork := func(s Set[*int]) (err error) {
+		defer func() {
+			if r := recover(); r != nil {
+				panicOccured = true
+				err = fmt.Errorf("failed to do work: %v", r)
+			}
+		}()
+
+		s.ContainsMatching(func(n *int) bool {
+			panic("intentional panic in predicate")
 		})
 
 		return nil

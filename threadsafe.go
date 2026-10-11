@@ -106,6 +106,13 @@ func (t *threadSafeSet[T]) ContainsAnyElement(other Set[T]) bool {
 	return ret
 }
 
+func (t *threadSafeSet[T]) ContainsMatching(predicate func(elem T) bool) bool {
+	t.RLock()
+	defer t.RUnlock()
+
+	return t.uss.ContainsMatching(predicate)
+}
+
 func (t *threadSafeSet[T]) IsEmpty() bool {
 	return t.Cardinality() == 0
 }

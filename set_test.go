@@ -477,6 +477,95 @@ func Test_ContainsAnyElement(t *testing.T) {
 		t.Errorf("set a contain 10")
 	}
 }
+
+func Test_ContainsMatching(t *testing.T) {
+	s := NewSet[int]()
+	if s.ContainsMatching(func(elem int) bool { return true }) {
+		t.Error("empty set should not match any predicate")
+	}
+
+	s = NewSet(1, 2, 3, 4, 5)
+	if !s.ContainsMatching(func(elem int) bool { return elem == 3 }) {
+		t.Error("expected set to contain matching element 3")
+	}
+	if !s.ContainsMatching(func(elem int) bool { return elem > 4 }) {
+		t.Error("expected set to contain matching element > 4")
+	}
+	if s.ContainsMatching(func(elem int) bool { return elem > 10 }) {
+		t.Error("expected set not to contain matching element > 10")
+	}
+
+	// Short-circuit verification: halts iteration on first match
+	var evaluations int
+	matched := s.ContainsMatching(func(elem int) bool {
+		evaluations++
+		return true
+	})
+	if !matched {
+		t.Error("expected predicate to match")
+	}
+	if evaluations != 1 {
+		t.Errorf("expected short-circuit on first evaluation, got %d evaluations", evaluations)
+	}
+
+	// Test with struct type
+	type item struct {
+		id   int
+		name string
+	}
+	items := NewSet(item{id: 1, name: "foo"}, item{id: 2, name: "bar"})
+	if !items.ContainsMatching(func(it item) bool { return it.name == "foo" }) {
+		t.Error("expected set to contain item with name 'foo'")
+	}
+	if items.ContainsMatching(func(it item) bool { return it.name == "baz" }) {
+		t.Error("expected set not to contain item with name 'baz'")
+	}
+}
+
+func Test_UnsafeContainsMatching(t *testing.T) {
+	s := NewThreadUnsafeSet[int]()
+	if s.ContainsMatching(func(elem int) bool { return true }) {
+		t.Error("empty unsafe set should not match any predicate")
+	}
+
+	s = NewThreadUnsafeSet(1, 2, 3, 4, 5)
+	if !s.ContainsMatching(func(elem int) bool { return elem == 3 }) {
+		t.Error("expected unsafe set to contain matching element 3")
+	}
+	if !s.ContainsMatching(func(elem int) bool { return elem > 4 }) {
+		t.Error("expected unsafe set to contain matching element > 4")
+	}
+	if s.ContainsMatching(func(elem int) bool { return elem > 10 }) {
+		t.Error("expected unsafe set not to contain matching element > 10")
+	}
+
+	// Short-circuit verification
+	var evaluations int
+	matched := s.ContainsMatching(func(elem int) bool {
+		evaluations++
+		return true
+	})
+	if !matched {
+		t.Error("expected predicate to match")
+	}
+	if evaluations != 1 {
+		t.Errorf("expected short-circuit on first evaluation, got %d evaluations", evaluations)
+	}
+
+	// Test with struct type
+	type item struct {
+		id   int
+		name string
+	}
+	items := NewThreadUnsafeSet(item{id: 1, name: "foo"}, item{id: 2, name: "bar"})
+	if !items.ContainsMatching(func(it item) bool { return it.name == "foo" }) {
+		t.Error("expected unsafe set to contain item with name 'foo'")
+	}
+	if items.ContainsMatching(func(it item) bool { return it.name == "baz" }) {
+		t.Error("expected unsafe set not to contain item with name 'baz'")
+	}
+}
+
 func Test_ClearSet(t *testing.T) {
 	a := makeSetInt([]int{2, 5, 9, 10})
 
