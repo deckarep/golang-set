@@ -219,8 +219,8 @@ type Set[T comparable] interface {
 	// MarshalJSON will marshal the set into a JSON-based representation.
 	MarshalJSON() ([]byte, error)
 
-	// UnmarshalJSON will unmarshal a JSON-based byte slice into a full Set datastructure.
-	// For this to work, set subtypes must implement the Marshal/Unmarshal interface.
+	// UnmarshalJSON decodes a JSON array into values of type T using encoding/json
+	// and adds them to the set without removing existing elements.
 	UnmarshalJSON(b []byte) error
 }
 

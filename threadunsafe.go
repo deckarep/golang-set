@@ -371,8 +371,8 @@ func (s threadUnsafeSet[T]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s.ToSlice())
 }
 
-// UnmarshalJSON recreates a set from a JSON array, it only decodes
-// primitive types. Numbers are decoded as json.Number.
+// UnmarshalJSON decodes a JSON array into values of type T using encoding/json
+// and adds them to the set without removing existing elements.
 func (s *threadUnsafeSet[T]) UnmarshalJSON(b []byte) error {
 	var i []T
 	err := json.Unmarshal(b, &i)
