@@ -160,10 +160,10 @@ Create a set of all unique classes.
 Sets will *automatically* deduplicate the same data.
 
 ```go
-  all := required
-    .Union(sciences)
-    .Union(electives)
-    .Union(bonus)
+  all := required.
+    Union(sciences).
+    Union(electives).
+    Union(bonus)
   
   fmt.Println(all)
 ```
