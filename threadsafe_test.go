@@ -766,3 +766,58 @@ func Test_AppendFromDeadlock(t *testing.T) {
 		t.Error("unexpected elements in sets after concurrent AppendFrom")
 	}
 }
+
+func Test_OperationWithItselfDeadlock(t *testing.T) {
+	runtime.GOMAXPROCS(2)
+
+	ops := map[string]func(s Set[int]){
+		"ContainsAnyElement":  func(s Set[int]) { s.ContainsAnyElement(s) },
+		"IsSubset":            func(s Set[int]) { s.IsSubset(s) },
+		"IsDisjoint":          func(s Set[int]) { s.IsDisjoint(s) },
+		"IsProperSubset":      func(s Set[int]) { s.IsProperSubset(s) },
+		"Union":               func(s Set[int]) { s.Union(s) },
+		"Intersect":           func(s Set[int]) { s.Intersect(s) },
+		"Difference":          func(s Set[int]) { s.Difference(s) },
+		"SymmetricDifference": func(s Set[int]) { s.SymmetricDifference(s) },
+		"Equal":               func(s Set[int]) { s.Equal(s) },
+	}
+
+	for name, op := range ops {
+		t.Run(name, func(t *testing.T) {
+			s := NewSet(1, 2, 3)
+			stop := make(chan struct{})
+			writerDone := make(chan struct{})
+			done := make(chan struct{})
+
+			// A writer waiting for the lock blocks new readers, so a second read lock
+			// on the same set taken by the operation would never be granted.
+			go func() {
+				defer close(writerDone)
+				for i := 0; ; i++ {
+					select {
+					case <-stop:
+						return
+					default:
+						s.Add(i % 10)
+					}
+				}
+			}()
+			go func() {
+				for i := 0; i < 10000; i++ {
+					op(s)
+				}
+				close(done)
+			}()
+
+			timer := time.NewTimer(3 * time.Second)
+			defer timer.Stop()
+			select {
+			case <-done:
+			case <-timer.C:
+				t.Fatalf("deadlock detected: %s of a set with itself timed out", name)
+			}
+			close(stop)
+			<-writerDone
+		})
+	}
+}
